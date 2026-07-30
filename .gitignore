@@ -1,0 +1,47 @@
+# Secrets and local configuration
+.env
+*.env
+!.env.example
+
+# Python and virtual environments
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Caches, logs, and local runtime state
+.cache/
+.local/
+*.log
+logs/
+
+# Neo4j local data and volumes
+data/
+volumes/
+neo4j/data/
+neo4j/volumes/
+
+# Generated vector and search index artifacts
+vector_store/
+vector-stores/
+indexes/
+index-data/
+embeddings/
+
+# Source materials and generated extraction outputs
+PDF/
+pdfs/
+OCR/
+ocr/
+outputs/
+source-data/
+raw-data/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
