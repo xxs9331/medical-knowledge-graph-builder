@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "medical-knowledge-graph-builder"
+version = "0.1.0"
+description = "Provenance-first source preparation for downstream medical knowledge graph work"
+requires-python = ">=3.11"
+
+[project.scripts]
+prepare-chunks = "medical_kg_sourceprep.chunks:main"
+prepare-source = "medical_kg_sourceprep.cli:main"
+medical-kg-qa = "medical_kg_sourceprep.qa:main"
+medical-report = "medical_kg_sourceprep.report_pipeline:main"
+medical-report-ocr = "medical_kg_sourceprep.paddleocr_report:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
