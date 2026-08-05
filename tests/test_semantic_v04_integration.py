@@ -59,10 +59,10 @@ class SemanticV04IntegrationTests(unittest.TestCase):
             output = Path(directory) / "v04"
             with patch.object(runner, "_provider_post", fake_provider):
                 result = runner.run(
-                    ROOT / "source-packages/chunks/chapter-01/manifest.json",
-                    ROOT / "source-packages/chapter-01/manifest.json",
-                    ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.2",
-                    ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.3",
+                    ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json",
+                    ROOT / "source-packages/canonical/source/chapter-01/manifest.json",
+                    ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.2",
+                    ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.3",
                     output, "test-secret")
             self.assertEqual(result["stages"]["endpoint"]["completed"], 24)
             self.assertEqual(result["stages"]["relation"]["completed"], 24)
@@ -84,10 +84,10 @@ class SemanticV04IntegrationTests(unittest.TestCase):
             with patch.object(runner, "_provider_post", fake_provider):
                 with self.assertRaisesRegex(RuntimeError, "checkpoint identity drift"):
                     runner.run(
-                        ROOT / "source-packages/chunks/chapter-01/manifest.json",
-                        ROOT / "source-packages/chapter-01/manifest.json",
-                        ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.2",
-                        ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.3",
+                        ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json",
+                        ROOT / "source-packages/canonical/source/chapter-01/manifest.json",
+                        ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.2",
+                        ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.3",
                         output, "test-secret")
 
 

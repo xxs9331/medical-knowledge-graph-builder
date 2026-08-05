@@ -21,9 +21,9 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class IndicatorRuleRunnerTests(unittest.TestCase):
-    chunks = ROOT / "source-packages/chunks/chapter-01/manifest.json"
+    chunks = ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json"
     library = (
-        ROOT / "runtime/chapter-01-indicator-library-deepseek-direct-v0.1/indicator-library.json"
+        ROOT / "runtime/candidates/chapter-01/indicator-library-v0.1/indicator-library.json"
     )
 
     @staticmethod

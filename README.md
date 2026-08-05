@@ -40,7 +40,7 @@ Build a provenance-first medical knowledge graph with hybrid retrieval and contr
 ```bash
 prepare-source \
   --input /path/to/chapter-01-clinical-hematology.md \
-  --output source-packages/chapter-01 \
+  --output source-packages/canonical/source/chapter-01 \
   --document-id clinical-hematology \
   --chapter-id chapter-01 \
   --ocr-engine baidu/Unlimited-OCR \
@@ -79,10 +79,10 @@ prepare-chunks \
 ```bash
 medical-kg-qa build-evidence-index \
   --chunk-package /path/to/evidence-chunks \
-  --output runtime/chapter-01/evidence.sqlite \
+  --output runtime/active/indexes/chapter-01/evidence.sqlite \
   --generation-timestamp 2026-01-01T00:00:00Z
 
-medical-kg-qa serve-qa --index runtime/chapter-01/evidence.sqlite
+medical-kg-qa serve-qa --index runtime/active/indexes/chapter-01/evidence.sqlite
 ```
 
 服务仅绑定 `127.0.0.1`，提供 `GET /api/health`、`GET /api/meta`、`POST /api/search`、`POST /api/answer` 和 `POST /api/report-analysis`，网页在 `/`。默认回答是本地证据原句拼接，并以 `[n]` 绑定返回证据及书内页/PDF 页；无命中时明确说明证据不足。`--answer-mode openai-compatible` 仅在 `MEDICAL_KG_QA_BASE_URL`、`MEDICAL_KG_QA_API_KEY`、`MEDICAL_KG_QA_MODEL`（可选 timeout）均明确设置时启用，并要求返回内容引用提供的证据；缺失、无效或无引用时失败关闭，不会读取或暴露任何本机登录凭据。
@@ -93,9 +93,9 @@ medical-kg-qa serve-qa --index runtime/chapter-01/evidence.sqlite
 
 ```bash
 medical-kg-qa serve-qa \
-  --index runtime/full-book-v0.2/evidence.sqlite \
-  --chunk-package source-packages/full-book-evidence-v0.2 \
-  --knowledge-graph runtime/chapter-01-knowledge-graph-final-v0.1/knowledge.sqlite \
+  --index runtime/active/indexes/full-book-v0.2/evidence.sqlite \
+  --chunk-package source-packages/canonical/evidence/full-book-v0.2 \
+  --knowledge-graph runtime/active/graphs/chapter-01-final-v0.1/knowledge.sqlite \
   --host 127.0.0.1 \
   --port 18852 \
   --source-pdf /absolute/path/to/read-only-book.pdf
@@ -125,7 +125,7 @@ medical-report-ocr --image /path/to/report.jpg --output report.json
 ```bash
 DEEPSEEK_API_KEY=... medical-report analyze \
   --report sample-report.json \
-  --index runtime/full-book-v0.2/evidence.sqlite \
+  --index runtime/active/indexes/full-book-v0.2/evidence.sqlite \
   --output analysis.md
 ```
 

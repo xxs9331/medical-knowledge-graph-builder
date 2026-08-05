@@ -131,8 +131,8 @@ def run(source_manifest: Path, output: Path, key: str, limit: int | None = None)
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/chapter-01/manifest.json")
-    parser.add_argument("--output", type=Path, default=ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.1")
+    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/canonical/source/chapter-01/manifest.json")
+    parser.add_argument("--output", type=Path, default=ROOT / "runtime/archive/entity/chapter-01-entity-extraction-v0.1")
     parser.add_argument("--limit", type=int, default=None, help="Run only the first N pages as a probe")
     args = parser.parse_args()
     key = sys.stdin.readline().strip()

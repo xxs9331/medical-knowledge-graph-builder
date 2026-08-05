@@ -148,10 +148,10 @@ def run(chunks_manifest: Path, source_manifest: Path, v02_dir: Path, output: Pat
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--chunks", type=Path, default=ROOT / "source-packages/chunks/chapter-01/manifest.json")
-    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/chapter-01/manifest.json")
-    parser.add_argument("--v02", type=Path, default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.2")
-    parser.add_argument("--output", type=Path, default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.3")
+    parser.add_argument("--chunks", type=Path, default=ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json")
+    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/canonical/source/chapter-01/manifest.json")
+    parser.add_argument("--v02", type=Path, default=ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.2")
+    parser.add_argument("--output", type=Path, default=ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.3")
     parser.add_argument("--catalog-only", action="store_true", help="write the frozen v0.2-derived catalog without contacting the provider")
     parser.add_argument("--rerun-rule-contract", action="store_true", help="reset only the rule stage after a rule-prompt contract revision")
     args = parser.parse_args()

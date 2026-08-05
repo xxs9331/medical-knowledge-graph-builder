@@ -201,9 +201,9 @@ def run(chunks_manifest: Path, source_manifest: Path, output: Path, key: str) ->
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--chunks", type=Path, default=ROOT / "source-packages/chunks/chapter-01/manifest.json")
-    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/chapter-01/manifest.json")
-    parser.add_argument("--output", type=Path, default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.2")
+    parser.add_argument("--chunks", type=Path, default=ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json")
+    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/canonical/source/chapter-01/manifest.json")
+    parser.add_argument("--output", type=Path, default=ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.2")
     args = parser.parse_args()
     # Read one hidden stdin line so a PTY can submit the secret with newline;
     # the value is never written to checkpoints or logs.

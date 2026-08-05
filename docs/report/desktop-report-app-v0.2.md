@@ -6,8 +6,8 @@
 
 ```bash
 medical-kg-qa serve-qa \
-  --index runtime/full-book-v0.2/evidence.sqlite \
-  --chunk-package source-packages/full-book-evidence-v0.2 \
+  --index runtime/active/indexes/full-book-v0.2/evidence.sqlite \
+  --chunk-package source-packages/canonical/evidence/full-book-v0.2 \
   --host 127.0.0.1 \
   --port 18852 \
   --source-pdf /absolute/path/to/read-only-book.pdf

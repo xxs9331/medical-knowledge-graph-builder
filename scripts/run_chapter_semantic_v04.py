@@ -401,11 +401,11 @@ def run(chunks_manifest: Path, source_manifest: Path, v02_dir: Path, v03_dir: Pa
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--chunks", type=Path, default=ROOT / "source-packages/chunks/chapter-01/manifest.json")
-    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/chapter-01/manifest.json")
-    parser.add_argument("--v02", type=Path, default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.2")
-    parser.add_argument("--v03", type=Path, default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.3")
-    parser.add_argument("--output", type=Path, default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.4")
+    parser.add_argument("--chunks", type=Path, default=ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json")
+    parser.add_argument("--source", type=Path, default=ROOT / "source-packages/canonical/source/chapter-01/manifest.json")
+    parser.add_argument("--v02", type=Path, default=ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.2")
+    parser.add_argument("--v03", type=Path, default=ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.3")
+    parser.add_argument("--output", type=Path, default=ROOT / "runtime/candidates/chapter-01/semantic-v0.4")
     parser.add_argument("--catalog-only", action="store_true")
     args = parser.parse_args()
     if args.catalog_only:

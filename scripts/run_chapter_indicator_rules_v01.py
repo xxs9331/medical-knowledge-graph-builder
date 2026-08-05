@@ -475,15 +475,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--chunks", type=Path,
-        default=ROOT / "source-packages/chunks/chapter-01/manifest.json",
+        default=ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json",
     )
     parser.add_argument(
         "--indicator-library", type=Path,
-        default=ROOT / "runtime/chapter-01-indicator-library-deepseek-direct-v0.1/indicator-library.json",
+        default=ROOT / "runtime/candidates/chapter-01/indicator-library-v0.1/indicator-library.json",
     )
     parser.add_argument(
         "--output", type=Path,
-        default=ROOT / "runtime/chapter-01-indicator-rule-functions-deepseek-direct-v0.1",
+        default=ROOT / "runtime/candidates/chapter-01/indicator-rules-v0.1",
     )
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--probe", action="store_true")

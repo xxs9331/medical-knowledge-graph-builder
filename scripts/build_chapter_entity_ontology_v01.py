@@ -13,10 +13,10 @@ from medical_kg_sourceprep.extraction.llm_extraction import atomic_write_json
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW_DEFAULT = ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.3/entities.json"
-RULES_DEFAULT = ROOT / "runtime/chapter-01-indicator-rule-functions-deepseek-direct-v0.1/rules.json"
-OUTPUT_DEFAULT = ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.4"
-SOURCE_DEFAULT = ROOT / "source-packages/chapter-01/manifest.json"
+RAW_DEFAULT = ROOT / "runtime/archive/entity/chapter-01-entity-extraction-v0.3/entities.json"
+RULES_DEFAULT = ROOT / "runtime/candidates/chapter-01/indicator-rules-v0.1/rules.json"
+OUTPUT_DEFAULT = ROOT / "runtime/candidates/chapter-01/entity-v0.4"
+SOURCE_DEFAULT = ROOT / "source-packages/canonical/source/chapter-01/manifest.json"
 
 
 def _source_pages(manifest_path: Path) -> list[dict]:

@@ -230,13 +230,13 @@ def run(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--chunks", type=Path,
-                        default=ROOT / "source-packages/chunks/chapter-01/manifest.json")
+                        default=ROOT / "source-packages/canonical/evidence/chapter-01/manifest.json")
     parser.add_argument("--index-manifest", type=Path,
-                        default=ROOT / "source-packages/full-book-v0.2/manifest.json")
+                        default=ROOT / "source-packages/canonical/source/full-book-v0.2/manifest.json")
     parser.add_argument("--legacy-extraction", type=Path,
-                        default=ROOT / "runtime/chapter-01-semantic-kg-deepseek-direct-v0.2/extraction.json")
+                        default=ROOT / "runtime/archive/semantic/chapter-01-semantic-v0.2/extraction.json")
     parser.add_argument("--output", type=Path,
-                        default=ROOT / "runtime/chapter-01-indicator-library-deepseek-direct-v0.1")
+                        default=ROOT / "runtime/candidates/chapter-01/indicator-library-v0.1")
     parser.add_argument("--probe-only", action="store_true")
     args = parser.parse_args()
     key = sys.stdin.readline().strip()
