@@ -267,6 +267,10 @@ def _provider_summary(checkpoint: dict[str, Any], page_ids: list[str]) -> dict[s
     }
     return {
         "calls": len(metadata),
+        "response_wrappers": dict(Counter(
+            item.get("format_wrapper") or "none" for item in metadata
+        )),
+        "attempts": dict(Counter(str(item.get("attempts")) for item in metadata)),
         "reasoning_outputs": sum(
             item.get("reasoning_content") is not None or item.get("reasoning_tokens") not in (None, 0)
             for item in metadata
@@ -324,6 +328,42 @@ def _write_full_artifacts(
         } for page_id in page_ids],
     })
     provider = _provider_summary(checkpoint, page_ids)
+    quality_audit = {
+        "schema_version": "indicator-rule-quality-audit/v0.1",
+        "status": "HOLD",
+        "candidate_status": "candidate-only",
+        "approved": 0,
+        "scope": {
+            "chapter_id": manifest["chapter_id"],
+            "pages": manifest["page_count"],
+            "chunks": manifest["chunk_count"],
+            "window_policy": WINDOW_POLICY_VERSION,
+        },
+        "evidence_replay": audit,
+        "accepted_candidates": [{
+            "candidate_id": candidate["candidate_id"],
+            "page_id": candidate["page_id"],
+            "rule_expression": candidate["rule"]["rule_expression"],
+            "has_formula": candidate["rule"]["formula"] is not None,
+            "output_catalog_match": candidate["output_catalog_match"],
+            "source_chunk_ids": candidate["source"]["source_chunk_ids"],
+        } for candidate in candidates],
+        "rejections": {
+            "count": len(rejections),
+            "by_reason": dict(by_reason),
+        },
+        "provider_format": {
+            "response_wrappers": provider["response_wrappers"],
+            "attempts": provider["attempts"],
+            "reasoning_outputs": provider["reasoning_outputs"],
+        },
+        "human_review": {
+            "required": True,
+            "gold_status": "unreviewed",
+            "precision_recall_f1_reported": False,
+        },
+    }
+    atomic_write_json(output / "quality-audit.json", quality_audit)
     run_manifest = {
         "schema_version": RUN_VERSION,
         "status": status,
@@ -361,6 +401,7 @@ def _write_full_artifacts(
         "rules_sha256": _sha(output / "rules.json"),
         "extraction_sha256": _sha(output / "rule-extraction.json"),
         "review_queue_sha256": _sha(output / "review-queue.json"),
+        "quality_audit_sha256": _sha(output / "quality-audit.json"),
         "prompt_template_sha256": _sha(output / "prompt-template.txt"),
     }
     atomic_write_json(output / "run-manifest.json", run_manifest)

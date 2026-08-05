@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 import tempfile
 import threading
 import time
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,6 +60,10 @@ class IndicatorRuleRunnerTests(unittest.TestCase):
             )
             self.assertEqual(result["status"], "complete")
             self.assertEqual(result["counts"]["pages_success"], 24)
+            self.assertIn("quality_audit_sha256", result["artifacts"])
+            quality = RUNNER._load_json(output / "quality-audit.json")
+            self.assertEqual(quality["human_review"]["gold_status"], "unreviewed")
+            self.assertFalse(quality["human_review"]["precision_recall_f1_reported"])
             self.assertEqual(calls, 24)
             self.assertGreater(maximum_active, 1)
             calls = 0
@@ -84,6 +90,56 @@ class IndicatorRuleRunnerTests(unittest.TestCase):
             checkpoint = (output / "checkpoint.json").read_text()
             self.assertNotIn("secret-key", checkpoint)
             self.assertIn("[REDACTED]", checkpoint)
+
+    def test_local_revalidation_does_not_call_provider(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp)
+            RUNNER.run(
+                self.chunks, self.library, output, "secret-key",
+                workers=4, provider_post=lambda _key, _prompt: ([], self.metadata()),
+            )
+            checkpoint_path = output / "checkpoint.json"
+            checkpoint = RUNNER._load_json(checkpoint_path)
+            checkpoint["validator_version"] = "older-validator"
+            RUNNER.atomic_write_json(checkpoint_path, checkpoint)
+
+            def forbidden_post(_key: str, _prompt: str):
+                raise AssertionError("provider must not be called during revalidation")
+
+            result = RUNNER.run(
+                self.chunks, self.library, output, "",
+                workers=4, revalidate=True, provider_post=forbidden_post,
+            )
+            self.assertEqual(result["status"], "complete")
+            refreshed = RUNNER._load_json(checkpoint_path)
+            self.assertEqual(refreshed["validator_version"], RUNNER.VALIDATOR_VERSION)
+            self.assertTrue(all(
+                page.get("revalidated_from") == "older-validator"
+                for page in refreshed["pages"].values()
+            ))
+
+    def test_provider_uses_empty_proxy_handler(self) -> None:
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_args):
+                return None
+
+            def read(self):
+                return json.dumps({
+                    "choices": [{"finish_reason": "stop", "message": {"content": "[]"}}],
+                    "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+                }).encode()
+
+        opener = mock.Mock()
+        opener.open.return_value = Response()
+        with mock.patch.object(RUNNER.request, "build_opener", return_value=opener) as build:
+            payload, metadata = RUNNER._provider_post("secret-key", "prompt")
+        self.assertEqual(payload, [])
+        self.assertEqual(metadata["attempts"], 1)
+        handler = build.call_args.args[0]
+        self.assertEqual(handler.proxies, {})
 
     def test_worker_count_is_bounded(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
