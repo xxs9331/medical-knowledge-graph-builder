@@ -26,6 +26,7 @@ import uuid
 
 from .layout_grid import GridCell, block_text, layout_blocks, table_grids
 from .lab_terminology import canonicalize_laboratory_term
+from .report_model import resolve_report_flag
 
 
 API_URL_ENV = "PADDLEOCR_OCR_API_URL"
@@ -718,7 +719,7 @@ def _table_observation(
     unit = _validated_layout_unit(raw_unit)
     if unit is None and not _normalize_layout_text(raw_unit):
         unit: str | None = "-" if code.upper() in {"A/G", "AST/ALT"} else None
-    report_flag = _flag(value, lower, upper, source_flag) if source_flag or lower is not None or upper is not None else None
+    report_flag = resolve_report_flag(value, lower, upper, source_flag) if source_flag or lower is not None or upper is not None else None
     standard_name, abbreviation = canonicalize_laboratory_term(name, code or None)
     return {
         "raw_name": name,
@@ -973,7 +974,7 @@ def _observation(cells: Sequence[str]) -> dict[str, Any] | None:
         return None
     unit_cells = [cell for cell in normalized[value_index + 1 : range_index] if cell not in {"↑", "↓", "H", "L", "high", "low"}]
     unit = " ".join(unit_cells) or None
-    report_flag = _flag(value, lower, upper, source_flag)
+    report_flag = resolve_report_flag(value, lower, upper, source_flag)
     standard_name, normalized_abbreviation = canonicalize_laboratory_term(
         raw_name, abbreviation
     )
@@ -986,22 +987,6 @@ def _observation(cells: Sequence[str]) -> dict[str, Any] | None:
         "reference_interval": {"lower": lower, "upper": upper},
         "report_flag": report_flag,
     }
-
-
-def _flag(value: str, lower: str | None, upper: str | None, source: str | None) -> str | None:
-    if source:
-        return "high" if source.upper() in {"H", "↑"} else "low"
-    try:
-        measured = Decimal(value)
-        low = Decimal(lower) if lower is not None else None
-        high = Decimal(upper) if upper is not None else None
-    except InvalidOperation:
-        return None
-    if low is not None and measured < low:
-        return "low"
-    if high is not None and measured > high:
-        return "high"
-    return "normal"
 
 
 def _metadata(lines: Sequence[str]) -> dict[str, object]:

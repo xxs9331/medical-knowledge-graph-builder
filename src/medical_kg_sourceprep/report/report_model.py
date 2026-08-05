@@ -67,19 +67,23 @@ class NormalizedObservation:
     method: str | None
     unit_source: str | None
 
-    def to_dict(self) -> dict[str, object]:
+    def to_dict(self, *, include_inclusive: bool = True) -> dict[str, object]:
+        interval = {
+            "lower": _decimal_text(self.lower),
+            "upper": _decimal_text(self.upper),
+        }
+        if include_inclusive:
+            interval.update({
+                "lower_inclusive": self.lower_inclusive,
+                "upper_inclusive": self.upper_inclusive,
+            })
         return {
             "raw_name": self.raw_name,
             "standard_name": self.standard_name,
             "abbreviation": self.abbreviation,
             "value": _decimal_text(self.value),
             "unit": self.unit,
-            "reference_interval": {
-                "lower": _decimal_text(self.lower),
-                "upper": _decimal_text(self.upper),
-                "lower_inclusive": self.lower_inclusive,
-                "upper_inclusive": self.upper_inclusive,
-            },
+            "reference_interval": interval,
             "report_flag": self.report_flag.value if self.report_flag else None,
             "sample_type": self.sample_type,
             "method": self.method,
@@ -221,6 +225,37 @@ def evaluate_observation(
         normalized=normalized,
         evidence=ReportComputationEvidence(value, output_unit, computed, tuple(errors)),
     )
+
+
+def resolve_report_flag(
+    value: str | Decimal | None,
+    lower: str | Decimal | None,
+    upper: str | Decimal | None,
+    source_flag: str | None = None,
+) -> str | None:
+    """Resolve an OCR row's reported flag through the shared evaluator.
+
+    Explicit H/L markers remain report-supplied data. When no marker exists,
+    the deterministic interval result is used instead.
+    """
+    reported = None
+    if source_flag:
+        reported = AbnormalFlag.HIGH if source_flag.upper() in {"H", "↑"} else AbnormalFlag.LOW
+    evaluation = evaluate_observation(
+        Observation(
+            raw_name="ocr-row",
+            standard_name=None,
+            abbreviation=None,
+            value=value,
+            unit=None,
+            reference_interval=ReferenceInterval(lower=lower, upper=upper),
+            report_flag=reported,
+        )
+    )
+    if reported is not None:
+        return reported.value
+    computed = evaluation.evidence.computed_flag
+    return computed.value if computed is not None else None
 
 
 def _parse_decimal(

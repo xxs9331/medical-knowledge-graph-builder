@@ -345,15 +345,9 @@ def collect_metrics(
 def _safe_metric(metric: MetricInput) -> dict[str, Any]:
     normalized = metric.evaluation.normalized
     computation = metric.evaluation.evidence
-    return {
+    payload = normalized.to_dict(include_inclusive=False)
+    payload.update({
         "metric_id": metric.metric_id,
-        "raw_name": normalized.raw_name,
-        "standard_name": normalized.standard_name,
-        "abbreviation": normalized.abbreviation,
-        "value": str(normalized.value) if normalized.value is not None else None,
-        "unit": normalized.unit,
-        "unit_source": normalized.unit_source,
-        "reference_interval": {"lower": str(normalized.lower) if normalized.lower is not None else None, "upper": str(normalized.upper) if normalized.upper is not None else None},
         "computed_flag": computation.computed_flag.value if computation.computed_flag else None,
         "errors": [error.to_dict() for error in computation.errors],
         "evidence": [
@@ -366,7 +360,8 @@ def _safe_metric(metric: MetricInput) -> dict[str, Any]:
             }
             for item in metric.evidence
         ],
-    }
+    })
+    return payload
 
 
 def _retrieval_channels(
