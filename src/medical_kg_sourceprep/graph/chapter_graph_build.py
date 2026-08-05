@@ -8,12 +8,12 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import sqlite3
 import tempfile
 from typing import Any
 
 from ..extraction.entity_extraction import _match_key
 from .semantic_graph import SEMANTIC_RELATIONS
+from .storage import write_graph_sqlite
 
 
 SCHEMA_VERSION = "chapter-knowledge-graph/v0.2"
@@ -1243,106 +1243,94 @@ def _sha256(path: Path) -> str:
 
 
 def _write_sqlite(path: Path, nodes: Sequence[Mapping[str, Any]], edges: Sequence[Mapping[str, Any]]) -> None:
-    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.",
-                                     suffix=".sqlite", delete=False) as handle:
-        staging = Path(handle.name)
-    try:
-        with sqlite3.connect(staging) as db:
-            db.execute("PRAGMA foreign_keys = ON")
-            db.executescript("""
-                CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-                CREATE TABLE nodes (
-                    node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
-                    status TEXT NOT NULL CHECK(status = 'candidate'), properties_json TEXT NOT NULL,
-                    evidence_json TEXT NOT NULL, origins_json TEXT NOT NULL
-                );
-                CREATE TABLE edges (
-                    triple_id TEXT PRIMARY KEY,
-                    subject_id TEXT NOT NULL REFERENCES nodes(node_id), predicate TEXT NOT NULL,
-                    object_id TEXT NOT NULL REFERENCES nodes(node_id), layer TEXT NOT NULL,
-                    status TEXT NOT NULL CHECK(status = 'candidate'), properties_json TEXT NOT NULL,
-                    evidence_json TEXT NOT NULL, origins_json TEXT NOT NULL,
-                    UNIQUE(subject_id, predicate, object_id)
-                );
-                CREATE INDEX nodes_name_type ON nodes(name, node_type);
-                CREATE INDEX edges_subject ON edges(subject_id, predicate);
-                CREATE INDEX edges_object ON edges(object_id, predicate);
-            """)
-            db.executemany("INSERT INTO metadata VALUES (?, ?)", (
-                ("schema_version", SCHEMA_VERSION), ("status", "candidate-only"),
-                ("approved", "0"), ("node_count", str(len(nodes))), ("edge_count", str(len(edges))),
-            ))
-            db.executemany("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?)", (
-                (node["node_id"], node["node_type"], node["name"], node["status"],
-                 _canonical(node["properties"]), _canonical(node["evidence"]), _canonical(node["origins"]))
-                for node in nodes
-            ))
-            db.executemany("INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (
-                (edge["triple_id"], edge["subject_id"], edge["predicate"], edge["object_id"],
-                 edge["layer"], edge["status"], _canonical(edge["properties"]),
-                 _canonical(edge["evidence"]), _canonical(edge["origins"]))
-                for edge in edges
-            ))
-            if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
-                raise ChapterGraphBuildError("SQLite integrity check failed")
-            if db.execute("PRAGMA foreign_key_check").fetchone() is not None:
-                raise ChapterGraphBuildError("SQLite foreign key check failed")
-        staging.replace(path)
-    except Exception:
-        staging.unlink(missing_ok=True)
-        raise
+    write_graph_sqlite(
+        path,
+        schema_sql="""
+            CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE nodes (
+                node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
+                status TEXT NOT NULL CHECK(status = 'candidate'), properties_json TEXT NOT NULL,
+                evidence_json TEXT NOT NULL, origins_json TEXT NOT NULL
+            );
+            CREATE TABLE edges (
+                triple_id TEXT PRIMARY KEY,
+                subject_id TEXT NOT NULL REFERENCES nodes(node_id), predicate TEXT NOT NULL,
+                object_id TEXT NOT NULL REFERENCES nodes(node_id), layer TEXT NOT NULL,
+                status TEXT NOT NULL CHECK(status = 'candidate'), properties_json TEXT NOT NULL,
+                evidence_json TEXT NOT NULL, origins_json TEXT NOT NULL,
+                UNIQUE(subject_id, predicate, object_id)
+            );
+            CREATE INDEX nodes_name_type ON nodes(name, node_type);
+            CREATE INDEX edges_subject ON edges(subject_id, predicate);
+            CREATE INDEX edges_object ON edges(object_id, predicate);
+        """,
+        metadata_rows=(
+            ("schema_version", SCHEMA_VERSION), ("status", "candidate-only"),
+            ("approved", "0"), ("node_count", str(len(nodes))), ("edge_count", str(len(edges))),
+        ),
+        node_rows=(
+            (node["node_id"], node["node_type"], node["name"], node["status"],
+             _canonical(node["properties"]), _canonical(node["evidence"]), _canonical(node["origins"]))
+            for node in nodes
+        ),
+        edge_rows=(
+            (edge["triple_id"], edge["subject_id"], edge["predicate"], edge["object_id"],
+             edge["layer"], edge["status"], _canonical(edge["properties"]),
+             _canonical(edge["evidence"]), _canonical(edge["origins"]))
+            for edge in edges
+        ),
+        node_sql="INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?)",
+        edge_sql="INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        integrity_error=ChapterGraphBuildError,
+        integrity_message="SQLite integrity check failed",
+        foreign_key_message="SQLite foreign key check failed",
+    )
 
 
 def _write_final_sqlite(path: Path, nodes: Sequence[Mapping[str, Any]], edges: Sequence[Mapping[str, Any]]) -> None:
-    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.",
-                                     suffix=".sqlite", delete=False) as handle:
-        staging = Path(handle.name)
-    try:
-        with sqlite3.connect(staging) as db:
-            db.execute("PRAGMA foreign_keys = ON")
-            db.executescript("""
-                CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-                CREATE TABLE nodes (
-                    node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
-                    properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL,
-                    origins_json TEXT NOT NULL
-                );
-                CREATE TABLE edges (
-                    triple_id TEXT PRIMARY KEY,
-                    subject_id TEXT NOT NULL REFERENCES nodes(node_id),
-                    predicate TEXT NOT NULL,
-                    object_id TEXT NOT NULL REFERENCES nodes(node_id),
-                    layer TEXT NOT NULL,
-                    properties_json TEXT NOT NULL,
-                    evidence_json TEXT NOT NULL,
-                    origins_json TEXT NOT NULL,
-                    UNIQUE(subject_id, predicate, object_id)
-                );
-                CREATE INDEX nodes_name_type ON nodes(name, node_type);
-                CREATE INDEX edges_subject ON edges(subject_id, predicate);
-                CREATE INDEX edges_object ON edges(object_id, predicate);
-            """)
-            db.executemany("INSERT INTO metadata VALUES (?, ?)", (
-                ("schema_version", FINAL_SCHEMA_VERSION), ("status", "final"),
-                ("node_count", str(len(nodes))), ("edge_count", str(len(edges))),
-            ))
-            db.executemany("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)", (
-                (node["node_id"], node["node_type"], node["name"],
-                 _canonical(node["properties"]), _canonical(node["evidence"]),
-                 _canonical(node["origins"]))
-                for node in nodes
-            ))
-            db.executemany("INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (
-                (edge["triple_id"], edge["subject_id"], edge["predicate"],
-                 edge["object_id"], edge["layer"], _canonical(edge["properties"]),
-                 _canonical(edge["evidence"]), _canonical(edge["origins"]))
-                for edge in edges
-            ))
-            if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
-                raise ChapterGraphBuildError("final SQLite integrity check failed")
-            if db.execute("PRAGMA foreign_key_check").fetchone() is not None:
-                raise ChapterGraphBuildError("final SQLite foreign key check failed")
-        staging.replace(path)
-    except Exception:
-        staging.unlink(missing_ok=True)
-        raise
+    write_graph_sqlite(
+        path,
+        schema_sql="""
+            CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE nodes (
+                node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
+                properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL,
+                origins_json TEXT NOT NULL
+            );
+            CREATE TABLE edges (
+                triple_id TEXT PRIMARY KEY,
+                subject_id TEXT NOT NULL REFERENCES nodes(node_id),
+                predicate TEXT NOT NULL,
+                object_id TEXT NOT NULL REFERENCES nodes(node_id),
+                layer TEXT NOT NULL,
+                properties_json TEXT NOT NULL,
+                evidence_json TEXT NOT NULL,
+                origins_json TEXT NOT NULL,
+                UNIQUE(subject_id, predicate, object_id)
+            );
+            CREATE INDEX nodes_name_type ON nodes(name, node_type);
+            CREATE INDEX edges_subject ON edges(subject_id, predicate);
+            CREATE INDEX edges_object ON edges(object_id, predicate);
+        """,
+        metadata_rows=(
+            ("schema_version", FINAL_SCHEMA_VERSION), ("status", "final"),
+            ("node_count", str(len(nodes))), ("edge_count", str(len(edges))),
+        ),
+        node_rows=(
+            (node["node_id"], node["node_type"], node["name"],
+             _canonical(node["properties"]), _canonical(node["evidence"]),
+             _canonical(node["origins"]))
+            for node in nodes
+        ),
+        edge_rows=(
+            (edge["triple_id"], edge["subject_id"], edge["predicate"],
+             edge["object_id"], edge["layer"], _canonical(edge["properties"]),
+             _canonical(edge["evidence"]), _canonical(edge["origins"]))
+            for edge in edges
+        ),
+        node_sql="INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)",
+        edge_sql="INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        integrity_error=ChapterGraphBuildError,
+        integrity_message="final SQLite integrity check failed",
+        foreign_key_message="final SQLite foreign key check failed",
+    )

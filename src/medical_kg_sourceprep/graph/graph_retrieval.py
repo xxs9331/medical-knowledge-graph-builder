@@ -7,10 +7,11 @@ import re
 import sqlite3
 import unicodedata
 from collections import deque
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
+from typing import Any
 
 
 class GraphRetrievalError(ValueError):
@@ -232,6 +233,46 @@ def _project_candidate_evidence(
     return tuple(sorted(projected))
 
 
+def _bounded_graph_paths(
+    starts: Sequence[str],
+    graph: Mapping[str, Sequence[tuple[str, str, Any]]],
+    max_hops: int,
+) -> Iterator[tuple[str, tuple[str, ...], tuple[str, ...], tuple[Any, ...]]]:
+    """Yield deterministic simple paths for every graph representation."""
+    for start in sorted(starts):
+        queue = deque([(start, (), (start,), ())])
+        visited = {start}
+        while queue:
+            node, relations, path, path_edges = queue.popleft()
+            yield node, relations, path, path_edges
+            if len(relations) >= max_hops:
+                continue
+            for adjacent, relation, payload in sorted(
+                graph.get(node, ()), key=lambda item: (item[0], item[1])
+            ):
+                if adjacent in visited:
+                    continue
+                visited.add(adjacent)
+                queue.append((
+                    adjacent,
+                    relations + (relation,),
+                    path + (adjacent,),
+                    path_edges + (payload,),
+                ))
+
+
+def _rank_graph_hits(candidates: Sequence[GraphHit], top_k: int) -> tuple[GraphHit, ...]:
+    """Keep the strongest path per evidence chunk and apply the shared top-k order."""
+    best: dict[str, GraphHit] = {}
+    for hit in candidates:
+        current = best.get(hit.chunk_id)
+        if current is None or (-hit.graph_score, hit.path_relations) < (
+            -current.graph_score, current.path_relations
+        ):
+            best[hit.chunk_id] = hit
+    return tuple(sorted(best.values(), key=lambda hit: (-hit.graph_score, hit.chunk_id))[:top_k])
+
+
 def _candidate_graph_retrieve(
     connection: sqlite3.Connection,
     evidence: dict[str, tuple[str, str]],
@@ -242,62 +283,59 @@ def _candidate_graph_retrieve(
     _metadata, graph_status = _chapter_metadata(connection)
     nodes = _chapter_nodes(connection, graph_status)
     edge_rows = _chapter_edge_rows(connection, graph_status)
-    graph: dict[str, list[tuple[str, str, tuple[dict[str, object], ...], str, str]]] = {}
+    graph: dict[str, list[tuple[str, str, dict[str, object]]]] = {}
     for source, predicate, target, status, _properties_json, evidence_json in edge_rows:
         if source not in nodes or target not in nodes or status not in {"candidate", "final"}:
             raise GraphRetrievalError("candidate graph has a dangling or invalid edge")
         edge_evidence = _evidence_items(_json(evidence_json, "edge evidence"))
-        graph.setdefault(source, []).append((target, predicate, edge_evidence, source, target))
-        graph.setdefault(target, []).append((source, predicate, edge_evidence, source, target))
+        forward = {
+            "evidence": edge_evidence,
+            "triple": {
+                "subject_id": source,
+                "subject_name": nodes[source][1],
+                "subject_type": nodes[source][0],
+                "predicate": predicate,
+                "object_id": target,
+                "object_name": nodes[target][1],
+                "object_type": nodes[target][0],
+                "traversal_direction": "forward",
+            },
+        }
+        reverse = {
+            "evidence": edge_evidence,
+            "triple": {
+                "subject_id": source,
+                "subject_name": nodes[source][1],
+                "subject_type": nodes[source][0],
+                "predicate": predicate,
+                "object_id": target,
+                "object_name": nodes[target][1],
+                "object_type": nodes[target][0],
+                "traversal_direction": "reverse",
+            },
+        }
+        graph.setdefault(source, []).append((target, predicate, forward))
+        graph.setdefault(target, []).append((source, predicate, reverse))
     starts = _match_nodes(nodes, query)
     candidates: list[GraphHit] = []
     for start, match_mode in starts:
         start_name = nodes[start][1]
-        queue = deque([(start, (), (start,), (), nodes[start][3])])
-        visited = {start}
-        while queue:
-            node_id, relations, path, path_triples, accumulated_evidence = queue.popleft()
+        for node_id, relations, path, path_edges in _bounded_graph_paths(
+            (start,), graph, max_hops
+        ):
+            accumulated_evidence = nodes[path[0]][3]
+            for edge in path_edges:
+                accumulated_evidence += tuple(edge["evidence"])
             projected = _project_candidate_evidence(accumulated_evidence + nodes[node_id][3], evidence)
             score = round(1.0 / (1 + len(relations)), 6)
             for chunk_id in projected:
+                path_triples = tuple(edge["triple"] for edge in path_edges)
                 candidates.append(GraphHit(
                     chunk_id, score, (), relations, (start,), (start_name,), graph_status,
                     path, tuple(nodes[value][1] for value in path),
                     tuple(nodes[value][0] for value in path), path_triples, match_mode,
                 ))
-            if len(relations) >= max_hops:
-                continue
-            for adjacent, relation, edge_evidence, subject, object_id in sorted(
-                graph.get(node_id, ()), key=lambda item: (item[0], item[1])
-            ):
-                if adjacent in visited:
-                    continue
-                visited.add(adjacent)
-                triple = {
-                    "subject_id": subject,
-                    "subject_name": nodes[subject][1],
-                    "subject_type": nodes[subject][0],
-                    "predicate": relation,
-                    "object_id": object_id,
-                    "object_name": nodes[object_id][1],
-                    "object_type": nodes[object_id][0],
-                    "traversal_direction": "forward" if node_id == subject else "reverse",
-                }
-                queue.append((
-                    adjacent,
-                    relations + (relation,),
-                    path + (adjacent,),
-                    path_triples + (triple,),
-                    accumulated_evidence + edge_evidence,
-                ))
-    best: dict[str, GraphHit] = {}
-    for hit in candidates:
-        current = best.get(hit.chunk_id)
-        if current is None or (-hit.graph_score, hit.path_relations) < (
-            -current.graph_score, current.path_relations
-        ):
-            best[hit.chunk_id] = hit
-    return tuple(sorted(best.values(), key=lambda hit: (-hit.graph_score, hit.chunk_id))[:top_k])
+    return _rank_graph_hits(candidates, top_k)
 
 
 def graph_query_diagnostic(knowledge_db: Path, query: str) -> dict[str, object]:
@@ -754,10 +792,10 @@ def graph_retrieve(knowledge_db: Path, evidence_index: Path, query: str, *, top_
     except sqlite3.Error as error:
         raise GraphRetrievalError("knowledge graph is unreadable") from error
     if any(chunk not in nodes or nodes[chunk][0] != "EvidenceChunk" for chunk in chunks): raise GraphRetrievalError("graph chunk references are invalid")
-    graph: dict[str, list[tuple[str, str]]] = {}
+    graph: dict[str, list[tuple[str, str, None]]] = {}
     for source, target, relation in edges:
         if source not in nodes or target not in nodes: raise GraphRetrievalError("graph has dangling edge")
-        graph.setdefault(source, []).append((target, relation)); graph.setdefault(target, []).append((source, relation))
+        graph.setdefault(source, []).append((target, relation, None)); graph.setdefault(target, []).append((source, relation, None))
     starts = set()
     for node_id, (_, payload) in nodes.items():
         try: searchable = json.dumps(json.loads(payload), ensure_ascii=False, sort_keys=True)
@@ -769,24 +807,15 @@ def graph_retrieve(knowledge_db: Path, evidence_index: Path, query: str, *, top_
         if node_id not in nodes: raise GraphRetrievalError("graph has dangling anchor")
         anchors_by_node.setdefault(node_id, []).append(anchor_id)
     candidates: list[GraphHit] = []
-    for start in sorted(starts):
-        queue = deque([(start, (), (start,))]); visited = {start}
-        while queue:
-            node, relations, path = queue.popleft()
-            if node in chunks:
-                digest = hashlib.sha256(chunks[node].encode()).hexdigest()
-                evidence_value = evidence.get(node)
-                evidence_digest = evidence_value[0] if evidence_value is not None else None
-                if evidence_digest is not None and evidence_digest != digest:
-                    raise GraphRetrievalError("graph evidence chunk binding drift")
-                if evidence_digest == digest:
-                    anchor_ids = tuple(sorted({anchor for path_node in path for anchor in anchors_by_node.get(path_node, ())}))
-                    candidates.append(GraphHit(node, round(1.0 / (1 + len(relations)), 6), anchor_ids, relations))
-            if len(relations) < max_hops:
-                for adjacent, relation in sorted(graph.get(node, ()), key=lambda item: (item[0], item[1])):
-                    if adjacent not in visited:
-                        visited.add(adjacent); queue.append((adjacent, relations + (relation,), path + (adjacent,)))
-    best: dict[str, GraphHit] = {}
-    for hit in candidates:
-        if hit.chunk_id not in best or (-hit.graph_score, hit.path_relations) < (-best[hit.chunk_id].graph_score, best[hit.chunk_id].path_relations): best[hit.chunk_id] = hit
-    return tuple(sorted(best.values(), key=lambda hit: (-hit.graph_score, hit.chunk_id))[:top_k])
+    for node, relations, path, _path_edges in _bounded_graph_paths(starts, graph, max_hops):
+        if node not in chunks:
+            continue
+        digest = hashlib.sha256(chunks[node].encode()).hexdigest()
+        evidence_value = evidence.get(node)
+        evidence_digest = evidence_value[0] if evidence_value is not None else None
+        if evidence_digest is not None and evidence_digest != digest:
+            raise GraphRetrievalError("graph evidence chunk binding drift")
+        if evidence_digest == digest:
+            anchor_ids = tuple(sorted({anchor for path_node in path for anchor in anchors_by_node.get(path_node, ())}))
+            candidates.append(GraphHit(node, round(1.0 / (1 + len(relations)), 6), anchor_ids, relations))
+    return _rank_graph_hits(candidates, top_k)
