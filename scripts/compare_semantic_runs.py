@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
-import hashlib
 import json
 from pathlib import Path
 
+from medical_kg_sourceprep.extraction.artifacts import directory_sha256, load_json as load
 
-def load(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def summarize(path: Path) -> dict:
@@ -38,19 +36,11 @@ def main() -> int:
     args = parser.parse_args()
     result = {"schema_version": "semantic-quality-comparison/v0.2", "old": summarize(args.old), "new": summarize(args.new),
               "gold_status": "not_generated_from_model", "precision_recall_f1": "HOLD",
-              "old_directory_sha256": _directory_hash(args.old), "new_directory_sha256": _directory_hash(args.new)}
+              "old_directory_sha256": directory_sha256(args.old, exclude_names={"quality-comparison.json"}),
+              "new_directory_sha256": directory_sha256(args.new, exclude_names={"quality-comparison.json"})}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return 0
-
-
-def _directory_hash(path: Path) -> str:
-    digest = hashlib.sha256()
-    for item in sorted(path.rglob("*")):
-        if item.is_file() and item.name not in {"quality-comparison.json"}:
-            digest.update(str(item.relative_to(path)).encode())
-            digest.update(hashlib.sha256(item.read_bytes()).digest())
-    return digest.hexdigest()
 
 
 if __name__ == "__main__":

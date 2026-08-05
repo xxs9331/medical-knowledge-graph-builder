@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import hashlib
 import json
 from pathlib import Path
 import re
@@ -28,6 +27,11 @@ from medical_kg_sourceprep.rules.indicator_rule_functions import (
     stable_candidates,
     validate_rule_response,
 )
+from medical_kg_sourceprep.extraction.artifacts import (
+    atomic_write_text as _atomic_write_text,
+    load_json as _load_json,
+    sha256_path as _sha,
+)
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 
 
@@ -41,21 +45,6 @@ MAX_TOKENS = 8192
 TIMEOUT_SECONDS = 120
 RETRY_DELAYS_SECONDS = (0, 2, 8, 20)
 _JSON_FENCE = re.compile(r"^```(?:json)?\s*(?P<body>[\s\S]*?)\s*```$", re.IGNORECASE)
-
-
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _atomic_write_text(path: Path, value: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    staging = path.with_name(f".{path.name}.tmp")
-    staging.write_text(value, encoding="utf-8")
-    staging.replace(path)
 
 
 def _redact(value: Exception, key: str) -> str:

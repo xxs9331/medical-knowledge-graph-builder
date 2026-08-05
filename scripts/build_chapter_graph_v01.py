@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -21,6 +20,7 @@ from medical_kg_sourceprep.graph.chapter_graph_build import (
     write_final_graph_package,
     write_graph_package,
 )
+from medical_kg_sourceprep.extraction.artifacts import load_json as _load, sha256_path as _sha
 
 
 DEFAULTS = {
@@ -42,14 +42,6 @@ DEFAULTS = {
     "output": ROOT / "runtime/chapter-01-knowledge-graph-v0.5",
     "final_output": ROOT / "runtime/chapter-01-knowledge-graph-final-v0.1",
 }
-
-
-def _load(path: Path):
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def main() -> int:

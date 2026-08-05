@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -14,6 +13,12 @@ import time
 from urllib import error as urlerror, request
 
 from medical_kg_sourceprep.provenance.book_sources import build_book_manifest_from_packages
+from medical_kg_sourceprep.extraction.artifacts import (
+    canonical_json as _canonical,
+    directory_sha256,
+    load_json as _load_json,
+    sha256_path as _sha,
+)
 from medical_kg_sourceprep.graph.knowledge_graph import PageText
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 from medical_kg_sourceprep.graph.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
@@ -32,27 +37,6 @@ from run_chapter_semantic_v02 import ENDPOINT, MODEL, _pinned_opener, _records
 ROOT = Path(__file__).resolve().parents[1]
 RUN_VERSION = "chapter-semantic-kg-run/v0.4"
 CHECKPOINT_VERSION = "chapter-semantic-checkpoint/v0.4"
-
-
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _canonical(value: object) -> str:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-
-
-def _load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _directory_hash(path: Path) -> str:
-    digest = hashlib.sha256()
-    for item in sorted(path.rglob("*")):
-        if item.is_file():
-            digest.update(str(item.relative_to(path)).encode())
-            digest.update(hashlib.sha256(item.read_bytes()).digest())
-    return digest.hexdigest()
 
 
 def _pages(chunks: tuple[EvidenceChunk, ...]) -> dict[str, list[EvidenceChunk]]:
@@ -385,8 +369,8 @@ def run(chunks_manifest: Path, source_manifest: Path, v02_dir: Path, v03_dir: Pa
                 "relation_origins": dict(Counter(item["origin"] for item in relations)),
                 "relation_types": dict(Counter(item["relation"] for item in relations)),
                 "rule_types": dict(Counter(item["semantic_type"] for item in rules)), "approved": 0},
-        "audit": audit, "v02_directory_sha256": _directory_hash(v02_dir),
-        "v03_directory_sha256": _directory_hash(v03_dir)}
+        "audit": audit, "v02_directory_sha256": directory_sha256(v02_dir),
+        "v03_directory_sha256": directory_sha256(v03_dir)}
     atomic_write_json(output / "quality-comparison.json", comparison)
     run_manifest = {"schema_version": RUN_VERSION, "provider": "deepseek-direct", "model": MODEL,
         "status": "candidate-only", "hold": True, "supersedes": "chapter-01-semantic-kg-deepseek-direct-v0.3",

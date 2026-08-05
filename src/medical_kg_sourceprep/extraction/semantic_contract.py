@@ -12,6 +12,7 @@ import hashlib
 from typing import Any, Mapping, Sequence
 
 from .llm_extraction import EvidenceChunk
+from .replay import ChunkReplayError, replay_chunk_quote
 from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SUBJECT_LOGICS
 
 CONTRACT_VERSION = "semantic-candidates/v0.2"
@@ -59,28 +60,23 @@ def _candidate_id(kind: str, key: str, span: EvidenceSpan) -> str:
 
 
 def replay(value: Any, chunks: Mapping[str, EvidenceChunk]) -> EvidenceSpan:
-    if not isinstance(value, Mapping):
-        raise ContractError("missing source_ref")
-    chunk_id = value.get("chunk_id")
-    quote = value.get("exact_quote")
-    digest = value.get("chunk_sha256")
-    if not all(isinstance(item, str) and item for item in (chunk_id, quote, digest)):
-        raise ContractError("source_ref requires chunk_id, chunk_sha256, exact_quote")
-    chunk = chunks.get(chunk_id)
-    if chunk is None or digest != chunk.chunk_sha256:
-        raise ContractError("chunk hash drift")
-    starts = []
-    cursor = 0
-    while True:
-        cursor = chunk.text.find(quote, cursor)
-        if cursor < 0:
-            break
-        starts.append(cursor)
-        cursor += 1
-    if len(starts) != 1:
-        raise ContractError("source quote is absent or ambiguous")
-    start = starts[0]
-    return EvidenceSpan(chunk_id, digest, quote, start, start + len(quote))
+    try:
+        replayed = replay_chunk_quote(value, chunks)
+    except ChunkReplayError as error:
+        messages = {
+            "reference_missing": "missing source_ref",
+            "reference_fields_missing": "source_ref requires chunk_id, chunk_sha256, exact_quote",
+            "hash_drift": "chunk hash drift",
+            "quote_absent_or_ambiguous": "source quote is absent or ambiguous",
+        }
+        raise ContractError(messages[error.code]) from error
+    return EvidenceSpan(
+        replayed.chunk_id,
+        replayed.chunk_sha256,
+        replayed.exact_quote,
+        replayed.char_start,
+        replayed.char_end,
+    )
 
 
 def _text(value: Any, span: EvidenceSpan, chunk: EvidenceChunk) -> str:

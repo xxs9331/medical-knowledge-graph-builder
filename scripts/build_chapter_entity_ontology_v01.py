@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import sys
 
 from medical_kg_sourceprep.extraction.entity_ontology import build_ontology_candidate
+from medical_kg_sourceprep.extraction.artifacts import load_json as _load, sha256_path as _sha
 from medical_kg_sourceprep.extraction.llm_extraction import atomic_write_json
 
 
@@ -17,14 +17,6 @@ RAW_DEFAULT = ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.3/
 RULES_DEFAULT = ROOT / "runtime/chapter-01-indicator-rule-functions-deepseek-direct-v0.1/rules.json"
 OUTPUT_DEFAULT = ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.4"
 SOURCE_DEFAULT = ROOT / "source-packages/chapter-01/manifest.json"
-
-
-def _load(path: Path):
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _source_pages(manifest_path: Path) -> list[dict]:

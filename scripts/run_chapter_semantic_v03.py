@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
 import sys
 
 from medical_kg_sourceprep.provenance.book_sources import build_book_manifest_from_packages
+from medical_kg_sourceprep.extraction.artifacts import directory_sha256, load_json as _load_json, sha256_path as _sha
 from medical_kg_sourceprep.graph.knowledge_graph import PageText
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 from medical_kg_sourceprep.graph.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
@@ -23,14 +23,6 @@ from run_chapter_semantic_v02 import MODEL, _post
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def _page_chunks(chunks: tuple[EvidenceChunk, ...]) -> dict[str, list[EvidenceChunk]]:
     return {f"page:{index:04d}": [chunk for chunk in chunks if chunk.page_index == index] for index in range(24)}
 
@@ -42,15 +34,6 @@ def _graph_records(v02: dict, chunks: dict[str, EvidenceChunk]) -> tuple[list[Se
         if record.candidate_key:
             by_key[(chunks[record.chunk_id].page_id, record.candidate_key)] = record
     return records, by_key
-
-
-def _directory_hash(path: Path) -> str:
-    digest = hashlib.sha256()
-    for item in sorted(path.rglob("*")):
-        if item.is_file() and item.name != "quality-comparison.json":
-            digest.update(str(item.relative_to(path)).encode())
-            digest.update(hashlib.sha256(item.read_bytes()).digest())
-    return digest.hexdigest()
 
 
 def run(chunks_manifest: Path, source_manifest: Path, v02_dir: Path, output: Path, key: str | None,
@@ -129,7 +112,7 @@ def run(chunks_manifest: Path, source_manifest: Path, v02_dir: Path, output: Pat
         "v03": {"relations": len(relations), "rules": len(extraction["rules"]), "rejected": len(extraction["rejections"]), "approved": 0,
                 "relation_origins": dict(Counter(item.get("origin") for item in relations)),
                 "rejection_reasons": dict(Counter(item.get("reason_code", "unknown") for item in extraction["rejections"]))},
-        "v02_directory_sha256": _directory_hash(v02_dir),
+        "v02_directory_sha256": directory_sha256(v02_dir, exclude_names={"quality-comparison.json"}),
     })
     source = _load_json(source_manifest)
     book_manifest = build_book_manifest_from_packages(book={"book_id": "clinical-hematology", "title": "Clinical Hematology", "edition": "source-package"}, source_manifest=source, chunk_manifest=manifest)

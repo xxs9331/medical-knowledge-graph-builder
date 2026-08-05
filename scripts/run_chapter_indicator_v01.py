@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -26,25 +25,15 @@ from medical_kg_sourceprep.rules.indicator_catalog import (
     load_index_entries,
     validate_indicator_response,
 )
+from medical_kg_sourceprep.extraction.artifacts import (
+    atomic_write_text as _atomic_write_text,
+    load_json as _load_json,
+    sha256_path as _sha,
+)
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 from run_chapter_semantic_v02 import MODEL, _post
 
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _atomic_write_text(path: Path, value: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    staging = path.with_name(f".{path.name}.tmp")
-    staging.write_text(value, encoding="utf-8")
-    staging.replace(path)
 
 
 def _page_chunks(chunks: tuple[EvidenceChunk, ...]) -> dict[str, list[EvidenceChunk]]:

@@ -8,7 +8,6 @@ to use the old v0.1 output as new evidence.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import http.client
 import json
 import os
@@ -21,6 +20,7 @@ from types import SimpleNamespace
 from urllib import error as urlerror, request
 
 from medical_kg_sourceprep.provenance.book_sources import build_book_manifest_from_packages
+from medical_kg_sourceprep.extraction.artifacts import load_json, sha256_path
 from medical_kg_sourceprep.graph.knowledge_graph import KnowledgeGraphBuilder, PageText
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 from medical_kg_sourceprep.extraction.semantic_contract import (
@@ -140,8 +140,8 @@ def run(chunks_manifest: Path, source_manifest: Path, output: Path, key: str) ->
     chunks = {chunk.chunk_id: chunk for chunk in chunks_tuple}
     output.mkdir(parents=True, exist_ok=True)
     checkpoint_path = output / "checkpoint.json"
-    input_hash = hashlib.sha256(chunks_manifest.read_bytes()).hexdigest()
-    saved = json.loads(checkpoint_path.read_text(encoding="utf-8")) if checkpoint_path.exists() else {}
+    input_hash = sha256_path(chunks_manifest)
+    saved = load_json(checkpoint_path) if checkpoint_path.exists() else {}
     if saved and (saved.get("input_manifest_sha256") != input_hash or saved.get("model") != MODEL
                   or saved.get("prompt_version") != PROMPT_VERSION
                   or saved.get("validator_version") != VALIDATOR_VERSION):
@@ -181,7 +181,7 @@ def run(chunks_manifest: Path, source_manifest: Path, output: Path, key: str) ->
     atomic_write_json(output / "review-queue.json", {"status": "HOLD", "items": rejections,
                                                        "counts": {"review_required": len(rejections)}})
     records, relations = _records({"candidates": candidates}, chunks)
-    source = json.loads(source_manifest.read_text(encoding="utf-8"))
+    source = load_json(source_manifest)
     book_manifest = build_book_manifest_from_packages(book={"book_id": "clinical-hematology", "title": "Clinical Hematology", "edition": "source-package"}, source_manifest=source, chunk_manifest=manifest)
     pages_text = tuple(PageText(page["page_id"], (source_manifest.parent / page["raw_path"]).read_text(encoding="utf-8"), (source_manifest.parent / page["cleaned_path"]).read_text(encoding="utf-8")) for page in source["pages"])
     base = output / "base-knowledge.sqlite"

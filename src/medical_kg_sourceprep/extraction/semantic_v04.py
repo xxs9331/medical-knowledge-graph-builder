@@ -12,6 +12,7 @@ import sqlite3
 from typing import Any, Mapping, Sequence
 
 from .llm_extraction import EvidenceChunk
+from .replay import ChunkReplayError, replay_chunk_quote
 from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
 
 CONTRACT_VERSION = "semantic-candidates/v0.4"
@@ -78,19 +79,23 @@ def _catalog_hash(entries: Sequence[Mapping[str, Any]]) -> str:
 
 
 def replay_ref(value: Any, chunks: Mapping[str, EvidenceChunk]) -> dict[str, Any]:
-    if not isinstance(value, Mapping):
-        raise V04ContractError("source_ref is required")
-    chunk_id, digest, quote = value.get("chunk_id"), value.get("chunk_sha256"), value.get("exact_quote")
-    chunk = chunks.get(chunk_id)
-    if chunk is None or digest != chunk.chunk_sha256:
-        raise V04ContractError("chunk hash drift")
-    if not isinstance(quote, str) or not quote:
-        raise V04ContractError("source quote is missing")
-    start = chunk.text.find(quote)
-    if start < 0 or chunk.text.count(quote) != 1:
-        raise V04ContractError("source quote is absent or ambiguous")
-    return {"chunk_id": chunk_id, "chunk_sha256": digest, "exact_quote": quote,
-            "char_start": start, "char_end": start + len(quote)}
+    try:
+        replayed = replay_chunk_quote(value, chunks)
+    except ChunkReplayError as error:
+        messages = {
+            "reference_missing": "source_ref is required",
+            "reference_fields_missing": "source quote is missing",
+            "hash_drift": "chunk hash drift",
+            "quote_absent_or_ambiguous": "source quote is absent or ambiguous",
+        }
+        raise V04ContractError(messages[error.code]) from error
+    return {
+        "chunk_id": replayed.chunk_id,
+        "chunk_sha256": replayed.chunk_sha256,
+        "exact_quote": replayed.exact_quote,
+        "char_start": replayed.char_start,
+        "char_end": replayed.char_end,
+    }
 
 
 def _text_span(text: Any, source: Mapping[str, Any], chunks: Mapping[str, EvidenceChunk]) -> dict[str, Any]:
