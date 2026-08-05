@@ -1,6 +1,6 @@
 # Source Provenance v0.2
 
-`medical_kg_sourceprep.book_sources` defines a metadata-only contract for a book,
+`medical_kg_sourceprep.provenance.book_sources` defines a metadata-only contract for a book,
 its original PDF identity, an existing OCR Markdown input, cleaned pages, chunks,
 and quote anchors. It does not read PDF content, OCR documents, or write source
 text into the manifest.

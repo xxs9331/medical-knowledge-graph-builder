@@ -1,6 +1,6 @@
 # Structured Report Domain v0.2
 
-`medical_kg_sourceprep.report_model` defines a small, versionable input contract
+`medical_kg_sourceprep.report.report_model` defines a small, versionable input contract
 for structured measurement reports. It is deliberately not a diagnosis, cause,
 treatment, or follow-up recommendation API.
 
@@ -13,7 +13,7 @@ Intervals support optional sex and age conditions as source facts, plus inclusiv
 or exclusive lower and upper boundaries.
 
 ```python
-from medical_kg_sourceprep.report_model import Observation, ReferenceInterval, evaluate_observation
+from medical_kg_sourceprep.report.report_model import Observation, ReferenceInterval, evaluate_observation
 
 result = evaluate_observation(
     Observation(

@@ -1,6 +1,6 @@
 # Report Analysis v0.2
 
-`medical_kg_sourceprep.analysis` is a pure, deterministic adapter between the
+`medical_kg_sourceprep.rules.analysis` is a pure, deterministic adapter between the
 structured report contract, reviewed rule contract, and evidence policy. It
 does not contain analyte, disease, patient, book, page, or sample-value
 special cases.

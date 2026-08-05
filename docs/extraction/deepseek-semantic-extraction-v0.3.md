@@ -1,6 +1,6 @@
 # DeepSeek Semantic Extraction v0.3
 
-`medical_kg_sourceprep.llm_extraction` is a candidate-only adapter for the
+`medical_kg_sourceprep.extraction.llm_extraction` is a candidate-only adapter for the
 OpenCode Go chat-completions endpoint. Its fixed provider identity is
 `opencode-go/deepseek-v4-flash`; the API payload uses `deepseek-v4-flash`,
 temperature zero, JSON-object response format, and a bounded token budget.

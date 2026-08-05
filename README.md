@@ -4,7 +4,7 @@ Build a provenance-first medical knowledge graph with hybrid retrieval and contr
 
 ## 项目目标
 
-本项目用于构建以来源追溯为核心的医学知识图谱，为后续知识抽取、检索和证据组织提供可验证的工程基础。当前仓库仅完成初始化，后续按任务计划逐步实施。
+本项目用于构建以来源追溯为核心的医学知识图谱，为知识抽取、检索、报告分析和证据组织提供可验证的工程基础。运行时结果仍按来源、哈希、候选状态和人工审核边界分层保存。
 
 已确定的架构方向包括：
 
@@ -15,7 +15,21 @@ Build a provenance-first medical knowledge graph with hybrid retrieval and contr
 
 ## 当前状态
 
-当前版本实现了页级来源准备、页内 EvidenceChunk 切片，以及本地 SQLite 证据图索引和抽取式检索问答窗口；尚未实现语义实体、关系或规则抽取。
+当前版本已实现页级来源准备、页内 EvidenceChunk 切片、统一来源包校验、本地 SQLite 证据索引、词法/向量/图谱检索、v0.2-v0.4 候选语义抽取、第一章 candidate/final 图谱构建，以及结构化报告异常判定和证据约束分析。语义抽取与图谱产物仍遵循 candidate-only、HOLD 和人工审核边界，不代表医学规则已经批准发布。
+
+## 代码结构
+
+源码按业务域组织，公共校验和基础机制只保留一个主实现：
+
+- `provenance/`：来源包、页码、EvidenceChunk、manifest 和 hash/replay 校验。
+- `evidence/`：证据索引、词法检索、向量索引，以及明确标记的 `legacy/` 检索实现。
+- `extraction/`：LLM 客户端、实体/指标抽取、语义合同、版本化候选验证和工件工具。
+- `rules/`：指标规则、组合规则、确定性报告分析和证据策略。
+- `graph/`：旧图谱、语义图、章节 candidate/final 图谱、SQLite 存储和图谱遍历。
+- `report/`：报告模型、术语、OCR、布局、报告流水线和桌面页面。
+- `api/` 与 `cli/`：HTTP 服务和命令行入口。
+
+旧实现保留在 `evidence/legacy/` 或带有 legacy 语义的模块中用于审计和回归测试；新代码不通过旧路径转发。
 
 ## 来源准备
 
@@ -40,7 +54,7 @@ prepare-source \
 
 输出包含逐页 raw/cleaned Markdown 与 `manifest.json`。每条页面记录都保留书内页码、原 PDF 页码、章节内索引、稳定页 ID 和内容 SHA-256。对 legacy 合并 Markdown，可提供严格的 `source-page-map/v0.1` JSON：它必须绑定输入文件的精确 SHA-256、声明完整连续且无重叠的 1-based 行范围，并为每页给出与 CLI 一致的三种页码和以下之一的状态：`verified against source PDF`，或 `accepted from upstream page markers`。后者只验证上游 Markdown 页码 marker 的结构，不表示独立 PDF 核验，也不对医学内容或 OCR 准确性作出断言。映射模式还会在 manifest 中原样记录每页选定状态，以及 page-map 的定位与精确 SHA-256；映射无效或处理期间发生字节漂移会在输出提交前失败。未提供映射时，工具仍只接受可自动保守分段的输入；无法证明边界时会失败且不留下部分输出。
 
-章节切片和知识图谱构建是该来源包的下游消费者；实体、关系和规则抽取不属于本阶段。
+章节切片、语义候选抽取、规则候选生成和知识图谱构建都是该来源包的下游消费者；它们必须消费同一套 manifest/page/chunk/hash 校验结果。
 
 ## EvidenceChunk 切片
 

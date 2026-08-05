@@ -1,6 +1,6 @@
 # Offline Retrieval v0.2
 
-`medical_kg_sourceprep.retrieval` is an offline, caller-owned retrieval layer.
+`medical_kg_sourceprep.evidence.legacy.retrieval` is an offline, caller-owned retrieval layer.
 It accepts rule-like records through a small read-only protocol: `record_id` (or
 `id`), `standard_name`, `title`, `text`, `rule_type`, `conditions`, and
 `anchor_ids`. Existing or future `KnowledgeRule` objects can be passed without

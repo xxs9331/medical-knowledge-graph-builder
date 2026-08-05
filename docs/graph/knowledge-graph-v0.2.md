@@ -1,6 +1,6 @@
 # Knowledge Graph v0.2
 
-`medical_kg_sourceprep.knowledge_graph` builds a local, deterministic SQLite graph
+`medical_kg_sourceprep.graph.knowledge_graph` builds a local, deterministic SQLite graph
 from a validated `book-source-manifest/v0.2` and caller-supplied `PageText` values.
 It does not open PDFs, run OCR, call models, retrieve network content, or infer
 domain-specific meaning.
