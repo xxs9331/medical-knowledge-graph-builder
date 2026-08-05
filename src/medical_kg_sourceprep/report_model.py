@@ -48,6 +48,7 @@ class Observation:
     report_flag: AbnormalFlag | None = None
     sample_type: str | None = None
     method: str | None = None
+    unit_source: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +65,7 @@ class NormalizedObservation:
     report_flag: AbnormalFlag | None
     sample_type: str | None
     method: str | None
+    unit_source: str | None
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -81,6 +83,7 @@ class NormalizedObservation:
             "report_flag": self.report_flag.value if self.report_flag else None,
             "sample_type": self.sample_type,
             "method": self.method,
+            "unit_source": self.unit_source,
         }
 
 
@@ -147,8 +150,10 @@ def evaluate_observation(
 ) -> EvaluationResult:
     """Normalize one observation and produce deterministic comparison evidence.
 
-    Invalid input is represented in ``evidence.errors`` and never receives a
-    computed flag. Unit conversion is only available through an exact mapping.
+    Invalid numeric input never receives a computed flag. A missing unit remains
+    a structured warning, but the value may still be compared with its own
+    report-row interval when no unit conversion is requested. Unit-dependent
+    rules and conversions continue to require an explicit unit.
     """
 
     errors: list[StructuredError] = []
@@ -161,6 +166,10 @@ def evaluate_observation(
     )
     if not observation.unit:
         errors.append(_error("missing_unit", "unit", "A unit is required for comparison."))
+    elif observation.unit_source == "controlled_default":
+        errors.append(_error(
+            "default_unit_applied", "unit", "A controlled default unit was applied."
+        ))
     if lower is None and upper is None:
         if not any(error.field.startswith("reference_interval") for error in errors):
             errors.append(_error("invalid_interval", "reference_interval", "At least one interval bound is required."))
@@ -198,8 +207,14 @@ def evaluate_observation(
         report_flag=observation.report_flag,
         sample_type=observation.sample_type,
         method=observation.method,
+        unit_source=observation.unit_source,
     )
-    computed = None if errors else _compare(normalized)
+    fatal_errors = [
+        error for error in errors
+        if error.code not in {"missing_unit", "default_unit_applied"}
+        or (error.code == "missing_unit" and target_unit is not None)
+    ]
+    computed = None if fatal_errors else _compare(normalized)
     if computed and observation.report_flag and computed != observation.report_flag:
         errors.append(_error("report_flag_conflict", "report_flag", "Reported flag differs from interval comparison."))
     return EvaluationResult(

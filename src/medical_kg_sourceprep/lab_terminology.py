@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
+import unicodedata
 
 
 @dataclass(frozen=True, slots=True)
@@ -10,9 +12,14 @@ class LaboratoryTerm:
     standard_name: str
     abbreviation: str
     aliases: tuple[str, ...]
+    report_codes: tuple[str, ...] = ()
+    default_unit: str | None = None
 
 
 _TERMS = (
+    LaboratoryTerm(
+        "红细胞计数", "RBC", ("红细胞计数",), default_unit="10^12/L"
+    ),
     LaboratoryTerm("丙氨酸氨基转移酶", "ALT", ("丙氨酸氨基转移酶", "谷丙转氨酶")),
     LaboratoryTerm(
         "天冬氨酸氨基转移酶",
@@ -63,9 +70,48 @@ _TERMS = (
     LaboratoryTerm("总胆固醇", "TC", ("总胆固醇",)),
     LaboratoryTerm("高密度脂蛋白胆固醇", "HDL-C", ("高密度脂蛋白", "高密度脂蛋白胆固醇",)),
     LaboratoryTerm("低密度脂蛋白胆固醇", "LDL-C", ("低密度脂蛋白", "低密度脂蛋白胆固醇",)),
+    LaboratoryTerm(
+        "中性粒细胞百分数",
+        "NEUT",
+        ("中性粒细胞百分数", "中性粒细胞百分率"),
+        ("NEUT%",),
+    ),
+    LaboratoryTerm(
+        "淋巴细胞百分数",
+        "LYM",
+        ("淋巴细胞百分数", "淋巴细胞百分率"),
+        ("LYM%",),
+    ),
 )
 
 _BY_ALIAS = {alias: term for term in _TERMS for alias in term.aliases}
+
+
+def _code_key(value: str | None) -> str:
+    return re.sub(r"\s+", "", unicodedata.normalize("NFKC", value or "")).casefold()
+
+
+_BY_CODE = {
+    _code_key(code): term
+    for term in _TERMS
+    for code in (term.abbreviation, *term.report_codes)
+}
+
+
+def canonicalize_laboratory_code(value: str) -> tuple[str, str | None]:
+    """Resolve an exact laboratory code without normalizing descriptive names."""
+    term = _BY_CODE.get(_code_key(value))
+    if term is None:
+        return value, None
+    return term.standard_name, term.abbreviation
+
+
+def default_laboratory_unit(name: str, abbreviation: str | None) -> str | None:
+    """Return a controlled default only for explicitly registered test items."""
+    term = _BY_ALIAS.get(name)
+    if term is None:
+        term = _BY_CODE.get(_code_key(abbreviation)) or _BY_CODE.get(_code_key(name))
+    return term.default_unit if term is not None else None
 
 
 def canonicalize_laboratory_term(raw_name: str, abbreviation: str | None) -> tuple[str, str | None]:
@@ -75,6 +121,8 @@ def canonicalize_laboratory_term(raw_name: str, abbreviation: str | None) -> tup
         if raw_name.startswith(prefix) and len(raw_name) > len(prefix):
             candidates.append(raw_name[len(prefix):])
     term = next((_BY_ALIAS[name] for name in candidates if name in _BY_ALIAS), None)
+    if term is None:
+        term = _BY_CODE.get(_code_key(raw_name))
     if term is None:
         return raw_name, abbreviation
     return term.standard_name, term.abbreviation

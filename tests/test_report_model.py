@@ -61,20 +61,37 @@ class ReportModelTests(unittest.TestCase):
                 self.assertEqual(outcome.evidence.computed_flag, expected)
                 self.assertFalse(outcome.evidence.errors)
 
-    def test_invalid_values_intervals_and_missing_unit_fail_closed_with_structured_errors(self) -> None:
+    def test_invalid_values_and_intervals_fail_closed_with_structured_errors(self) -> None:
         cases = [
             (_observation(value=""), "invalid_value"),
             (_observation(value="NaN"), "non_finite_value"),
             (_observation(value="Infinity"), "non_finite_value"),
             (_observation(reference_interval=ReferenceInterval(lower="6", upper="2")), "reversed_interval"),
             (_observation(reference_interval=ReferenceInterval(lower=None, upper=None)), "invalid_interval"),
-            (_observation(unit=None), "missing_unit"),
         ]
         for observation, code in cases:
             with self.subTest(code=code):
                 outcome = evaluate_observation(observation)
                 self.assertIsNone(outcome.evidence.computed_flag)
                 self.assertEqual(outcome.evidence.errors[0].code, code)
+
+    def test_missing_unit_allows_only_same_row_interval_comparison(self) -> None:
+        outcome = evaluate_observation(_observation(
+            value="5.15",
+            unit=None,
+            reference_interval=ReferenceInterval(lower="3.8", upper="5.1"),
+            report_flag=None,
+        ))
+
+        self.assertEqual(outcome.evidence.computed_flag, AbnormalFlag.HIGH)
+        self.assertEqual([error.code for error in outcome.evidence.errors], ["missing_unit"])
+        self.assertIsNone(outcome.normalized.unit)
+
+        conversion = evaluate_observation(
+            _observation(value="5.15", unit=None), target_unit="10^12/L"
+        )
+        self.assertIsNone(conversion.evidence.computed_flag)
+        self.assertEqual(conversion.evidence.errors[0].code, "missing_unit")
 
     def test_report_arrow_conflict_is_preserved(self) -> None:
         outcome = evaluate_observation(_observation(value="6", report_flag=AbnormalFlag.LOW))

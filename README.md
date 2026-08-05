@@ -81,15 +81,15 @@ medical-kg-qa serve-qa --index runtime/chapter-01/evidence.sqlite
 medical-kg-qa serve-qa \
   --index runtime/full-book-v0.2/evidence.sqlite \
   --chunk-package source-packages/full-book-evidence-v0.2 \
-  --knowledge-graph runtime/chapter-01-knowledge-graph-v0.2/knowledge.sqlite \
+  --knowledge-graph runtime/chapter-01-knowledge-graph-final-v0.1/knowledge.sqlite \
   --host 127.0.0.1 \
   --port 18852 \
   --source-pdf /absolute/path/to/read-only-book.pdf
 ```
 
-`--knowledge-graph`当前挂载的是第一章候选图谱。`/api/search`、`/api/answer`和`/api/report-generation`会合并整书词法检索与图谱辅助召回，返回`channels.graph`、缺词诊断及有向三元组路径；报告页面会额外展示多异常指标共同命中的候选推理路径。医学引文仍只来自证据索引中逐字、哈希校验通过的原文块。第一章之外或未命中图节点的查询继续使用整书词法检索；候选图谱保持`candidate-only/HOLD`，不会升级为approved规则或直接生成诊断。
+`--knowledge-graph`当前挂载的是第一章最终图谱。`/api/search`、`/api/answer`和`/api/report-generation`会合并整书词法检索与最终图谱检索，返回`channels.graph`、逐词诊断及有向三元组路径；报告页面会列出缺失缩写、未收录实体和成功匹配映射。最终规则会用报告实际数值、单位和程序状态匹配规则case，并沿显式`RULE_SATISFIES_PRECONDITION`边做受控两跳搜索，例如先由HGB和性别产生贫血程度规则结果，再决定是否满足贫血形态分类的前置条件。图谱路径自己的哈希绑定证据可按chunk ID从只读证据索引注入，不受词法top-k截断；某指标存在图谱锚定证据时，报告分析优先使用这些证据，图谱无证据时才回退整书词法结果。最终证据列表只保留报告正文、关联分析、建议或规则路径实际引用的逐字哈希证据。第一章之外或未命中图节点的查询继续使用整书词法检索；运行时不加载候选图谱。
 
-打开 `http://127.0.0.1:18852/` 后可上传 PNG/JPEG 报告单，或粘贴 `structured-report/v0.2` JSON。图片入口调用 PaddleOCR AI Studio Jobs API：`PaddleOCR-VL-1.6` 提取版面表格，`PP-OCRv6` 独立提取原始文字和非敏感元数据。格式对齐采用固定管线：读取官方 `prunedResult` 版面块、将 HTML 或管道 Markdown 表格归一为带来源单元格 ID 的矩形网格、按通用字段角色发现表头和重复列组、按视觉栏顺序读取、用受控检验术语表规范标准名和缩写、重算参考区间与异常标记，最后校验为 `structured-report/v0.2`。它支持表头不在首行、左右双栏以及 `rowspan`/`colspan`，不包含医院或指标专用模板。无法确定的风险分层区间或被水印覆盖的单位保留为空，不猜测；同一来源单元格重复会去重，不同来源却同名则失败关闭。OCR 开始和失败时都会清空上一张报告的 JSON。图片最大 10 MiB，只在当前 HTTP 请求和 PaddleOCR 作业中使用，本服务不落盘。JSON 输入也只在当前请求和浏览器内存中使用：服务不写日志、不写数据库，也不使用浏览器存储。
+打开 `http://127.0.0.1:18852/` 后可上传 PNG/JPEG 报告单，或粘贴 `structured-report/v0.2` JSON。图片入口调用 PaddleOCR AI Studio Jobs API：`PaddleOCR-VL-1.6` 提取版面表格，`PP-OCRv6` 独立提取原始文字和非敏感元数据。格式对齐采用固定管线：读取官方 `prunedResult` 版面块、将 HTML 或管道 Markdown 表格归一为带来源单元格 ID 的矩形网格、按通用字段角色发现表头和重复列组、按视觉栏顺序读取、用受控检验术语表规范标准名和缩写、重算参考区间与异常标记，最后校验为 `structured-report/v0.2`。报告术语层会把原始写法`NEUT%`、`LYM%`拆解为规范缩写`NEUT`、`LYM`和“百分数”结果类型，并分别链接到“中性粒细胞百分数”“淋巴细胞百分数”；原始写法继续保留用于溯源，也不会据此推断绝对值项目。对明确登记默认单位的项目可在报告单位缺失时应用受控默认值，目前红细胞计数使用`10^12/L`；输出同时携带`unit_source=controlled_default`和可见提示，未登记项目不会获得猜测单位。这些属于报告实体链接，不伪装成书籍原文别名。它支持表头不在首行、左右双栏以及 `rowspan`/`colspan`，不包含医院或指标专用模板。无法确定的风险分层区间或被水印覆盖的单位保留为空，不猜测；同一来源单元格重复会去重，不同来源却同名则失败关闭。OCR 开始和失败时都会清空上一张报告的 JSON。图片最大 10 MiB，只在当前 HTTP 请求和 PaddleOCR 作业中使用，本服务不落盘。JSON 输入也只在当前请求和浏览器内存中使用：服务不写日志、不写数据库，也不使用浏览器存储。
 
 图片识别凭证只从环境读取：
 

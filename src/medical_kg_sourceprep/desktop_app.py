@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .lab_terminology import canonicalize_laboratory_code, default_laboratory_unit
 from .report_model import AbnormalFlag, Observation, ReferenceInterval
 
 
@@ -57,7 +58,17 @@ def _parse_observation(value: object) -> Observation:
     raw_name = _text(value.get("raw_name"), "raw_name", required=True)
     standard_name = _text(value.get("standard_name"), "standard_name")
     abbreviation = _text(value.get("abbreviation"), "abbreviation")
+    resolved_name, resolved_abbreviation = canonicalize_laboratory_code(
+        standard_name or raw_name
+    )
+    if resolved_abbreviation is not None:
+        standard_name, abbreviation = resolved_name, resolved_abbreviation
     unit = _text(value.get("unit"), "unit")
+    unit_source = "report" if unit else None
+    if unit is None:
+        unit = default_laboratory_unit(standard_name or raw_name, abbreviation)
+        if unit is not None:
+            unit_source = "controlled_default"
     sample_type = _text(value.get("sample_type"), "sample_type")
     method = _text(value.get("method"), "method")
     reference = value.get("reference_interval")
@@ -87,6 +98,7 @@ def _parse_observation(value: object) -> Observation:
         report_flag=AbnormalFlag(flag) if flag else None,
         sample_type=sample_type,
         method=method,
+        unit_source=unit_source,
     )
 
 
@@ -197,12 +209,23 @@ const analysisBasis=channels=>{
   const section=node('section');section.className='report-section';section.append(node('h2','分析依据'));
   const list=node('dl');list.className='analysis-basis';
   const graph=channels?.graph||{};
+  const diagnostics=graph.query_diagnostics||[];
+  const uniqueQueries=status=>[...new Set(diagnostics.filter(item=>item.status===status).map(item=>item.query))];
+  const statusLabels={alias_missing:'缺失缩写',entity_missing:'未收录实体',matched:'已匹配',structural_match:'结构匹配'};
+  const diagnosticSummary=Object.entries(graph.query_diagnostic_counts||{}).map(([key,value])=>`${statusLabels[key]||key} ${value}`).join(' · ')||'无查询';
+  const matchedDetails=diagnostics.filter(item=>item.status==='matched'||item.status==='structural_match').map(item=>{
+    const targets=[...new Set((item.matches||[]).map(match=>match.name))].join('、');
+    return `${item.query} → ${targets||'未返回节点'}（${item.match_mode||item.status}）`;
+  });
   const values=[
     ['异常判定','程序重算'],
     ['书内检索',`全书 · ${channels?.lexical?.evidence_count||0} 条证据`],
-    ['知识图谱',graph.enabled?`第一章候选图谱 · 辅助召回 ${graph.evidence_count||0} 条证据 · 候选路径 ${graph.reasoning_path_count||0} 条`:'未启用'],
-    ['缺词诊断',graph.enabled?Object.entries(graph.query_diagnostic_counts||{}).map(([key,value])=>`${key} ${value}`).join(' · ')||'无查询':'未启用'],
+    ['知识图谱',graph.enabled?`${graph.status==='final'?'第一章最终知识图谱':'第一章候选图谱'} · 辅助召回 ${graph.evidence_count||0} 条证据 · ${graph.status==='final'?'规则路径':'候选路径'} ${graph.reasoning_path_count||0} 条${graph.reasoning_context_sent_to_model?' · 已送入关联分析上下文':''}`:'未启用'],
+    ['缺词诊断',graph.enabled?diagnosticSummary:'未启用'],
   ];
+  if(graph.enabled&&uniqueQueries('alias_missing').length)values.push(['缺失缩写',uniqueQueries('alias_missing').join('、')]);
+  if(graph.enabled&&uniqueQueries('entity_missing').length)values.push(['未收录实体',uniqueQueries('entity_missing').join('、')]);
+  if(graph.enabled&&matchedDetails.length)values.push(['匹配明细',matchedDetails.join('；')]);
   values.forEach(([label,value])=>{const item=node('div');item.append(node('dt',label),node('dd',value));list.append(item)});
   section.append(list);return section;
 };
@@ -216,9 +239,21 @@ const renderReport=()=>{
   const metrics=new Map(reportState.metrics.map(item=>[item.metric_id,item]));
   const children=[];
   const graphEnabled=Boolean(reportState.channels?.graph?.enabled);
-  const notice=node('blockquote',`基于程序异常判定、整书检索证据${graphEnabled?'和第一章候选知识图谱辅助召回':''}生成，不构成诊断、治疗或用药建议。`);notice.className='report-notice';children.push(notice);
+  const finalGraph=reportState.channels?.graph?.status==='final';
+  const notice=node('blockquote',`基于程序异常判定、整书检索证据${graphEnabled?(finalGraph?'和第一章最终知识图谱':'和第一章候选知识图谱辅助召回'):''}生成，不构成诊断、治疗或用药建议。`);notice.className='report-notice';children.push(notice);
   children.push(analysisBasis(reportState.channels));
   children.push(reportSection('摘要',report.summary,[]));
+  if(reportState.metrics?.length){
+    const section=node('section');section.className='report-section';section.append(node('h2',`报告输入指标（${reportState.metrics.length}）`));
+    const list=node('ul');list.className='report-list metric-inventory';
+    reportState.metrics.forEach(metric=>{
+      const flagLabel=metric.computed_flag==='high'?'偏高':metric.computed_flag==='low'?'偏低':metric.computed_flag==='normal'?'正常':'无法判定';
+      const unitLabel=metric.unit_source==='controlled_default'?`${metric.unit||''}（默认）`:metric.unit||'';
+      const value=[unavailable(metric.value),unitLabel].filter(Boolean).join(' ');
+      list.append(node('li',`${metric.raw_name||metric.metric_id}：${value} · ${flagLabel}`));
+    });
+    section.append(list);children.push(section);
+  }
   (report.abnormal_analyses||[]).forEach(item=>{
     const metric=metrics.get(item.metric_id)||{};
     const section=node('section');section.className='report-section';
@@ -226,7 +261,8 @@ const renderReport=()=>{
     const title=node('h2',metric.raw_name||item.metric_id);
     if(metric.computed_flag)title.className=`flag-${metric.computed_flag}`;
     const flagLabel=metric.computed_flag==='high'?'偏高':metric.computed_flag==='low'?'偏低':'无法判定';
-    heading.append(title,node('span',`${unavailable(metric.value)} ${metric.unit||''} · ${flagLabel}`));
+    const unitLabel=metric.unit_source==='controlled_default'?`${metric.unit||''}（默认）`:metric.unit||'';
+    heading.append(title,node('span',`${unavailable(metric.value)} ${unitLabel} · ${flagLabel}`));
     heading.lastChild.className='metric-value';
     section.append(heading,node('p',item.analysis));
     if(item.evidence_ids?.length)section.append(citations(item.evidence_ids));
@@ -234,12 +270,18 @@ const renderReport=()=>{
   });
   children.push(reportSection('关联分析',report.association_analysis.analysis,report.association_analysis.evidence_ids));
   if(reportState.reasoning_paths?.length){
-    const section=node('section');section.className='report-section';section.append(node('h2','候选推理路径'));
-    const warning=node('blockquote','以下路径只用于合并书内关联，未执行图谱规则，不构成诊断。');warning.className='report-notice';section.append(warning);
+    const section=node('section');section.className='report-section';section.append(node('h2',finalGraph?'规则推理路径':'候选推理路径'));
+    const warning=node('blockquote',finalGraph?'以下路径来自最终图谱规则执行，并附带书内证据；不构成诊断。':'以下路径已作为大模型关联分析的受限上下文；只做候选条件匹配，未进入approved判定，不构成诊断。');warning.className='report-notice';section.append(warning);
     reportState.reasoning_paths.forEach(path=>{
       const item=node('div');item.className='reasoning-path';
       item.append(node('h3',path.rule_name||'候选规则'));
       item.append(node('p',`${path.status} · 共同命中：${(path.matched_metric_ids||[]).join('、')}`));
+      const evaluation=path.candidate_evaluation;
+      if(evaluation?.candidate_result!==null&&evaluation?.candidate_result!==undefined)item.append(node('p',`${finalGraph?'规则':'候选'}结果：${Array.isArray(evaluation.candidate_result)?evaluation.candidate_result.join('、'):evaluation.candidate_result}`));
+      if(evaluation?.condition_trace?.length){const conditions=node('ul');evaluation.condition_trace.forEach(condition=>{const expected=condition.expected_value??`${condition.expected_lower}~${condition.expected_upper}`;const actual=condition.actual_unit?`${condition.actual_value} ${condition.actual_unit}`:`${condition.actual_value}`;conditions.append(node('li',`${condition.input} ${condition.op} ${expected}；实际 ${actual}；${condition.status}`))});item.append(conditions)}
+      if(path.preconditions_verified&&path.precondition_evaluations?.length)item.append(node('p',`已由图谱规则链确认前置条件：${path.precondition_evaluations.map(value=>`${value.context} ${value.op} ${value.expected_value}（来源：${value.source_rule_name} → ${value.source_candidate_result}）`).join('；')}`));
+      else if(path.precondition_evaluations?.length)item.append(node('p',`前置条件未满足：${path.precondition_evaluations.map(value=>`${value.context}：${value.actual_value}（来源：${value.source_rule_name}）`).join('；')}`));
+      else if(path.preconditions?.length)item.append(node('p',`未验证前置条件：${path.preconditions.map(value=>`${value.context||value.input} ${value.op} ${value.value}`).join('；')}`));
       const triples=node('ol');(path.triples||[]).forEach(triple=>triples.append(node('li',tripleText(triple))));item.append(triples);
       if(path.evidence_ids?.length)item.append(citations(path.evidence_ids));
       section.append(item);

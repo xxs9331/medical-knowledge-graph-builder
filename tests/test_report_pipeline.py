@@ -9,6 +9,9 @@ from medical_kg_sourceprep.report_pipeline import (
     analyze_report,
     analyze_report_document,
     collect_metrics,
+    _prompt,
+    _reportable_reasoning_paths,
+    _reasoning_context,
     _retrieval_queries,
     validate_model_result,
 )
@@ -62,6 +65,26 @@ def _model():
 
 
 class ReportPipelineTests(unittest.TestCase):
+    def test_final_non_actionable_paths_are_not_reported_or_sent_to_model(self):
+        paths = _reportable_reasoning_paths((
+            {"graph_status": "final", "status": "final-precondition-failed"},
+            {"graph_status": "final", "status": "final-no-case-match"},
+            {"graph_status": "final", "status": "final-ambiguous"},
+            {"graph_status": "final", "status": "final-unsupported"},
+            {"graph_status": "final", "status": "final-case-match"},
+            {"graph_status": "final", "status": "final-case-match-precondition-derived"},
+            {"graph_status": "candidate-only", "status": "candidate-precondition-unverified"},
+        ))
+
+        self.assertEqual(
+            [path["status"] for path in paths],
+            [
+                "final-case-match",
+                "final-case-match-precondition-derived",
+                "candidate-precondition-unverified",
+            ],
+        )
+
     def test_retrieval_queries_search_code_standard_name_and_raw_alias_separately(self):
         observation = Observation(
             raw_name="医院别名谷草转氨酶",
@@ -99,6 +122,198 @@ class ReportPipelineTests(unittest.TestCase):
             [call.args[1] for call in query.call_args_list],
             ["AST 升高", "天冬氨酸氨基转移酶 升高", "医院别名谷草转氨酶 升高"],
         )
+
+    def test_missing_unit_metric_is_compared_and_sent_to_candidate_reasoning(self):
+        report = {
+            "schema_version": "structured-report/v0.2",
+            "observations": [{
+                "raw_name": "红细胞计数",
+                "standard_name": "红细胞计数",
+                "abbreviation": "RBC",
+                "value": "5.15",
+                "unit": None,
+                "reference_interval": {"lower": "3.8", "upper": "5.1"},
+            }],
+        }
+        diagnostic = {"status": "matched", "matches": []}
+        with (
+            patch(
+                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                return_value=diagnostic,
+            ),
+            patch(
+                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                return_value=([], {}),
+            ),
+        ):
+            metrics = collect_metrics(
+                report, Path("unused.sqlite"), knowledge_graph=Path("unused-graph.sqlite")
+            )
+
+        self.assertEqual(metrics[0].evaluation.evidence.computed_flag, AbnormalFlag.HIGH)
+        self.assertEqual(metrics[0].evaluation.normalized.unit, "10^12/L")
+        self.assertEqual(metrics[0].evaluation.normalized.unit_source, "controlled_default")
+        self.assertEqual(
+            [error.code for error in metrics[0].evaluation.evidence.errors],
+            ["default_unit_applied"],
+        )
+        with patch(
+            "medical_kg_sourceprep.report_pipeline.graph_reasoning_paths",
+            return_value=GraphReasoningResult(),
+        ) as graph_paths:
+            expanded, paths, rejections = _reasoning_context(
+                metrics, Path("unused-graph.sqlite"), Path("unused.sqlite")
+            )
+
+        observation = graph_paths.call_args.args[2][0]
+        self.assertEqual(observation["value"], "5.15")
+        self.assertEqual(observation["unit"], "10^12/L")
+        self.assertEqual(observation["computed_flag"], "high")
+        self.assertEqual(expanded, metrics)
+        self.assertEqual(paths, ())
+        self.assertEqual(rejections, ())
+
+    def test_report_code_is_resolved_before_graph_lookup(self):
+        report = {
+            "schema_version": "structured-report/v0.2",
+            "observations": [{
+                "raw_name": "NEUT%",
+                "standard_name": "NEUT%",
+                "abbreviation": None,
+                "value": "76",
+                "unit": "%",
+                "reference_interval": {"lower": "40", "upper": "75"},
+            }],
+        }
+        diagnostic = {
+            "status": "matched",
+            "match_mode": "exact_name",
+            "matches": [{"name": "中性粒细胞百分数"}],
+        }
+        with (
+            patch(
+                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                return_value=diagnostic,
+            ) as graph_diagnostic,
+            patch(
+                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                return_value=([], {}),
+            ) as graph_query,
+        ):
+            metrics = collect_metrics(
+                report, Path("unused.sqlite"), knowledge_graph=Path("unused-graph.sqlite")
+            )
+
+        self.assertTrue(graph_diagnostic.call_args_list)
+        self.assertTrue(all(
+            call.args[1] == "中性粒细胞百分数"
+            for call in graph_diagnostic.call_args_list
+        ))
+        self.assertTrue(all(
+            call.kwargs["graph_query"] == "中性粒细胞百分数"
+            for call in graph_query.call_args_list
+        ))
+        self.assertEqual(metrics[0].metric_id, "中性粒细胞百分数")
+        self.assertEqual(metrics[0].observation.abbreviation, "NEUT")
+        diagnostics = {
+            item["query"]: item for item in metrics[0].graph_diagnostics
+        }
+        self.assertEqual(set(diagnostics), {"NEUT", "NEUT%", "中性粒细胞百分数"})
+        self.assertEqual(
+            diagnostics["NEUT"]["resolved_query"], "中性粒细胞百分数"
+        )
+        self.assertEqual(
+            diagnostics["NEUT%"]["resolved_query"], "中性粒细胞百分数"
+        )
+        self.assertEqual(diagnostics["NEUT%"]["status"], "matched")
+
+    def test_bare_neut_uses_the_observation_name_for_graph_lookup(self):
+        report = {
+            "schema_version": "structured-report/v0.2",
+            "observations": [{
+                "raw_name": "中性粒细胞绝对数",
+                "standard_name": "中性粒细胞绝对数",
+                "abbreviation": "NEUT",
+                "value": "7.61",
+                "unit": "10^9/L",
+                "reference_interval": {"lower": "1.8", "upper": "6.3"},
+            }],
+        }
+        diagnostic = {
+            "status": "matched",
+            "match_mode": "normalized_variant",
+            "matches": [{"name": "中性粒细胞绝对值"}],
+        }
+        with (
+            patch(
+                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                return_value=diagnostic,
+            ) as graph_diagnostic,
+            patch(
+                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                return_value=([], {}),
+            ) as graph_query,
+        ):
+            metrics = collect_metrics(
+                report, Path("unused.sqlite"), knowledge_graph=Path("unused-graph.sqlite")
+            )
+
+        self.assertIn(
+            (Path("unused-graph.sqlite"), "中性粒细胞绝对数"),
+            [call.args for call in graph_diagnostic.call_args_list],
+        )
+        self.assertIn(
+            "中性粒细胞绝对数",
+            [call.kwargs["graph_query"] for call in graph_query.call_args_list],
+        )
+        diagnostics = {item["query"]: item for item in metrics[0].graph_diagnostics}
+        self.assertEqual(diagnostics["NEUT"]["resolved_query"], "中性粒细胞绝对数")
+
+    def test_graph_bound_evidence_displaces_unanchored_lexical_noise(self):
+        report = {
+            "schema_version": "structured-report/v0.2",
+            "observations": [{
+                "raw_name": "LYM%",
+                "standard_name": "LYM%",
+                "value": "19",
+                "unit": "%",
+                "reference_interval": {"lower": "20", "upper": "50"},
+            }],
+        }
+        lexical_noise = {
+            "chunk_id": "noise",
+            "text": "unrelated B-cell evidence",
+            "chunk_sha256": "noise-hash",
+            "printed_page_number": 172,
+            "source_pdf_page_number": 189,
+            "score": 99.0,
+            "retrieval_reason": "term_match",
+        }
+        graph_evidence = {
+            "chunk_id": "chapter-01",
+            "text": "淋巴细胞减少的第一章证据",
+            "chunk_sha256": "graph-hash",
+            "printed_page_number": 11,
+            "source_pdf_page_number": 28,
+            "score": 1.0,
+            "retrieval_reason": "graph_path",
+            "graph": {"status": "candidate-only", "matched_node_names": ["淋巴细胞百分数"]},
+        }
+        with (
+            patch(
+                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                return_value={"status": "matched", "matches": []},
+            ),
+            patch(
+                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                return_value=([lexical_noise, graph_evidence], {}),
+            ),
+        ):
+            metric = collect_metrics(
+                report, Path("unused.sqlite"), knowledge_graph=Path("unused-graph.sqlite")
+            )[0]
+
+        self.assertEqual([item.chunk_id for item in metric.evidence], ["chapter-01"])
 
     def test_abnormal_only_retrieval_and_private_markdown(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -198,19 +413,57 @@ class ReportPipelineTests(unittest.TestCase):
                 "chunk_ids": [first["chunk_id"]],
             }
             transport = FakeTransport(_model())
+            report = _report()
+            report["metadata"]["patient_sex"] = "女"
             with patch(
                 "medical_kg_sourceprep.report_pipeline.graph_reasoning_paths",
                 return_value=GraphReasoningResult((candidate,), ()),
-            ):
+            ) as graph_paths:
                 document = analyze_report_document(
-                    _report(), index, knowledge_graph=graph, transport=transport
+                    report, index, knowledge_graph=graph, transport=transport
                 ).to_dict()
 
         self.assertEqual(document["channels"]["graph"]["reasoning_path_count"], 1)
+        self.assertTrue(document["channels"]["graph"]["reasoning_context_sent_to_model"])
+        self.assertEqual(
+            graph_paths.call_args.kwargs["context_facts"]["性别"]["value"], "女"
+        )
         self.assertEqual(document["reasoning_paths"][0]["evidence_ids"], ["E" + first["chunk_id"]])
         self.assertIn("## 候选推理路径", document["markdown"])
         self.assertIn('"candidate_reasoning_paths"', transport.payload["messages"][1]["content"])
-        self.assertIn("未经批准且未执行", transport.payload["messages"][1]["content"])
+        self.assertIn("未经批准的候选条件求值", transport.payload["messages"][1]["content"])
+
+    def test_final_prompt_limits_multi_metric_conclusions_to_reported_rule_paths(self):
+        prompt = _prompt((), ({
+            "graph_status": "final",
+            "status": "final-case-match",
+        },))
+
+        self.assertIn("多指标规则结论的唯一授权来源", prompt)
+        self.assertIn("不得在 association_analysis 中据此拼接疾病", prompt)
+
+    def test_final_report_prunes_unreferenced_evidence_and_renders_association_citations(self):
+        result = _model()
+        result["association_analysis"] = {
+            "analysis": "两个异常指标存在书内关联。",
+            "evidence_ids": ["Edemo:chapter:page:0:0000"],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            index = root / "evidence.sqlite"
+            build_evidence_index(_chunk_package(root), index, "2026-01-01T00:00:00Z")
+            document = analyze_report_document(
+                _report(), index, transport=FakeTransport(result)
+            ).to_dict()
+
+        self.assertEqual(
+            [item["evidence_id"] for item in document["evidence"]],
+            ["Edemo:chapter:page:0:0000"],
+        )
+        self.assertIn(
+            "## 关联分析\n\n两个异常指标存在书内关联。\n\n证据：",
+            document["markdown"],
+        )
 
     def test_unknown_evidence_fails_closed(self):
         result = _model()

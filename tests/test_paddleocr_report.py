@@ -484,6 +484,23 @@ class PaddleOcrReportTests(unittest.TestCase):
         self.assertEqual(parsed["C1q循环复合物"].abbreviation, "C1q")
         self.assertEqual(parsed["估算肾小球滤过率"].unit, "mL/min/1.73m^2")
 
+    def test_vl_layout_canonicalizes_neut_and_lym_percentage_codes(self) -> None:
+        markdown = """<table>
+<tr><th>项目</th><th>结果</th><th>单位</th><th>参考范围</th></tr>
+<tr><td>NEUT%</td><td>76</td><td>%</td><td>40-75</td></tr>
+<tr><td>LYM%</td><td>19</td><td>%</td><td>20-50</td></tr>
+</table>"""
+        job = PaddleOcrJobResult(
+            "job-1", "PaddleOCR-VL-1.6", "done", "https://result.example/job.jsonl",
+            (_layout_record(markdown),),
+        )
+
+        parsed = parse_report_payload(convert_layout_job_to_report(job))
+
+        self.assertEqual(set(parsed), {"中性粒细胞百分数", "淋巴细胞百分数"})
+        self.assertEqual(parsed["中性粒细胞百分数"].abbreviation, "NEUT")
+        self.assertEqual(parsed["淋巴细胞百分数"].abbreviation, "LYM")
+
     def test_image_report_job_uses_layout_and_text_ocr(self) -> None:
         class FakeJobsClient:
             models = []

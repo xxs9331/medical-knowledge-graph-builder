@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import socket
+import sqlite3
 import ssl
 import time
 from dataclasses import dataclass
@@ -25,6 +26,7 @@ from .graph_retrieval import (
     graph_query_diagnostic,
     graph_reasoning_paths,
 )
+from .lab_terminology import canonicalize_laboratory_term
 from .qa import ProvenanceContext, QaError, query_index, query_index_with_graph
 from .report_model import AbnormalFlag, EvaluationResult, Observation, evaluate_observation
 
@@ -37,6 +39,7 @@ MAX_EVIDENCE_PER_METRIC = 3
 
 VALIDATION_ISSUE_LABELS = {
     "missing_unit": "缺少单位",
+    "default_unit_applied": "使用受控默认单位",
     "invalid_interval": "缺少有效参考区间",
     "reversed_interval": "参考区间上下限异常",
     "invalid_value": "检验结果或参考值无法解析",
@@ -118,6 +121,7 @@ class ReportDocument:
                     if item.evaluation.normalized.value is not None
                     else None,
                     "unit": item.evaluation.normalized.unit,
+                    "unit_source": item.evaluation.normalized.unit_source,
                     "computed_flag": item.evaluation.evidence.computed_flag.value
                     if item.evaluation.evidence.computed_flag
                     else None,
@@ -279,14 +283,31 @@ def collect_metrics(
                         items = query_index(index, query, top_k=10, provenance=provenance)
                     else:
                         graph_term = query.rsplit(" ", 1)[0]
-                        graph_diagnostics.append(graph_query_diagnostic(knowledge_graph, graph_term))
+                        # Bare abbreviations such as NEUT are ambiguous between an
+                        # absolute count and a percentage.  The parsed standard name
+                        # retains the report-column meaning, so use it for graph
+                        # lookup while preserving the abbreviation in diagnostics.
+                        if channel == "abbreviation" and observation.standard_name:
+                            graph_query_term, _ = canonicalize_laboratory_term(
+                                observation.standard_name, observation.abbreviation
+                            )
+                        else:
+                            graph_query_term, _ = canonicalize_laboratory_term(
+                                graph_term, graph_term
+                            )
+                        diagnostic = graph_query_diagnostic(knowledge_graph, graph_query_term)
+                        graph_diagnostics.append({
+                            **diagnostic,
+                            "query": graph_term,
+                            "resolved_query": graph_query_term,
+                        })
                         items, _ = query_index_with_graph(
                             index,
                             knowledge_graph,
                             query,
                             top_k=10,
                             provenance=provenance,
-                            graph_query=graph_term,
+                            graph_query=graph_query_term,
                         )
                     channels.append((channel, items))
             except (QaError, GraphRetrievalError) as error:
@@ -300,6 +321,11 @@ def collect_metrics(
                         f"{channel}:" + str(row.get("retrieval_reason", "term_match"))
                     )
                     rows.append(row)
+            graph_bound_rows = [
+                row for row in rows if isinstance(row.get("graph"), Mapping)
+            ]
+            if graph_bound_rows:
+                rows = graph_bound_rows
         deduplicated: dict[str, Evidence] = {}
         for row in rows:
             item = _evidence(row)
@@ -326,6 +352,7 @@ def _safe_metric(metric: MetricInput) -> dict[str, Any]:
         "abbreviation": normalized.abbreviation,
         "value": str(normalized.value) if normalized.value is not None else None,
         "unit": normalized.unit,
+        "unit_source": normalized.unit_source,
         "reference_interval": {"lower": str(normalized.lower) if normalized.lower is not None else None, "upper": str(normalized.upper) if normalized.upper is not None else None},
         "computed_flag": computation.computed_flag.value if computation.computed_flag else None,
         "errors": [error.to_dict() for error in computation.errors],
@@ -357,6 +384,7 @@ def _retrieval_channels(
         if item.retrieval_reason.rsplit(":", 1)[-1] != "graph_path"
     ]
     graph_enabled = knowledge_graph is not None
+    graph_status = _graph_runtime_status(metrics)
     diagnostics = [item for metric in metrics for item in metric.graph_diagnostics]
     diagnostic_counts: dict[str, int] = {}
     for diagnostic in diagnostics:
@@ -372,7 +400,7 @@ def _retrieval_channels(
         "graph": {
             "enabled": graph_enabled,
             "coverage": "chapter-01-only" if graph_enabled else None,
-            "status": "candidate-only" if graph_enabled else None,
+            "status": graph_status if graph_enabled else None,
             "evidence_count": len(graph_evidence),
             "query_diagnostics": diagnostics,
             "query_diagnostic_counts": dict(sorted(diagnostic_counts.items())),
@@ -380,16 +408,48 @@ def _retrieval_channels(
     }
 
 
+def _graph_runtime_status(metrics: Sequence[MetricInput]) -> str | None:
+    statuses = {
+        str(item.graph.get("status"))
+        for metric in metrics
+        for item in metric.evidence
+        if item.graph and item.graph.get("status")
+    }
+    for metric in metrics:
+        statuses.update(
+            str(item.get("graph_status"))
+            for item in metric.graph_diagnostics
+            if item.get("graph_status")
+        )
+    return "final" if "final" in statuses else "candidate-only" if statuses else None
+
+
+_FINAL_ACTIONABLE_RULE_STATUSES = frozenset({
+    "final-case-match",
+    "final-case-match-precondition-derived",
+})
+
+
+def _reportable_reasoning_paths(
+    paths: Sequence[Mapping[str, Any]],
+) -> tuple[Mapping[str, Any], ...]:
+    """Project final graph output to rules with applicable conclusions only."""
+    return tuple(
+        path for path in paths
+        if path.get("graph_status") != "final"
+        or path.get("status") in _FINAL_ACTIONABLE_RULE_STATUSES
+    )
+
+
 def _reasoning_context(
-    metrics: Sequence[MetricInput], knowledge_graph: Path | None, evidence_index: Path
-) -> tuple[tuple[Mapping[str, Any], ...], tuple[Mapping[str, Any], ...]]:
+    metrics: Sequence[MetricInput], knowledge_graph: Path | None, evidence_index: Path,
+    metadata: Mapping[str, Any] | None = None,
+) -> tuple[tuple[MetricInput, ...], tuple[Mapping[str, Any], ...], tuple[Mapping[str, Any], ...]]:
     if knowledge_graph is None:
-        return (), ()
+        return tuple(metrics), (), ()
     observations = []
     for metric in metrics:
         flag = metric.evaluation.evidence.computed_flag
-        if flag not in (AbnormalFlag.HIGH, AbnormalFlag.LOW):
-            continue
         normalized = metric.evaluation.normalized
         terms = [
             value for value in (
@@ -399,12 +459,103 @@ def _reasoning_context(
         observations.append({
             "metric_id": metric.metric_id,
             "terms": terms,
-            "computed_flag": flag.value,
+            "value": str(normalized.value) if normalized.value is not None else None,
+            "unit": normalized.unit,
+            "unit_source": normalized.unit_source,
+            "computed_flag": flag.value if flag is not None else None,
+            "reference_interval": {
+                "lower": str(normalized.lower) if normalized.lower is not None else None,
+                "upper": str(normalized.upper) if normalized.upper is not None else None,
+            },
+            "sample_type": normalized.sample_type,
+            "method": normalized.method,
         })
+    sex = str((metadata or {}).get("patient_sex") or "").strip().casefold()
+    sex_value = {
+        "男": "男", "男性": "男", "male": "男", "m": "男",
+        "女": "女", "女性": "女", "female": "女", "f": "女",
+    }.get(sex)
+    context_facts = ({
+        "性别": {"metric_id": "metadata:patient_sex", "value": sex_value, "unit": None}
+    } if sex_value else {})
     try:
-        result = graph_reasoning_paths(knowledge_graph, evidence_index, observations)
+        result = graph_reasoning_paths(
+            knowledge_graph, evidence_index, observations, context_facts=context_facts
+        )
     except GraphRetrievalError as error:
         raise ReportPipelineError(str(error)) from error
+    reportable_paths = _reportable_reasoning_paths(result.paths)
+    metric_positions = {metric.metric_id: index for index, metric in enumerate(metrics)}
+    expanded_metrics = list(metrics)
+    existing_chunks = {
+        item.chunk_id for metric in expanded_metrics for item in metric.evidence
+    }
+    needed_chunks = {
+        str(chunk_id)
+        for path in reportable_paths
+        for chunk_id in path.get("chunk_ids", [])
+        if str(chunk_id) not in existing_chunks
+    }
+    rows: dict[str, Mapping[str, Any]] = {}
+    if needed_chunks:
+        placeholders = ",".join("?" for _ in needed_chunks)
+        try:
+            connection = sqlite3.connect(f"file:{Path(evidence_index).resolve()}?mode=ro", uri=True)
+            connection.row_factory = sqlite3.Row
+            rows = {
+                str(row["chunk_id"]): dict(row)
+                for row in connection.execute(
+                    "SELECT c.chunk_id,c.text,c.chunk_sha256,c.cleaned_char_start,c.cleaned_char_end,"
+                    "p.printed_page_number,p.source_pdf_page_number "
+                    "FROM chunks c JOIN pages p ON p.page_id=c.page_id "
+                    f"WHERE c.chunk_id IN ({placeholders})",
+                    tuple(sorted(needed_chunks)),
+                )
+            }
+        except sqlite3.Error as error:
+            raise ReportPipelineError("reasoning evidence index is unreadable") from error
+        finally:
+            if "connection" in locals():
+                connection.close()
+    for path in reportable_paths:
+        metric_id = next(
+            (str(value) for value in path.get("matched_metric_ids", []) if str(value) in metric_positions),
+            None,
+        )
+        if metric_id is None:
+            continue
+        position = metric_positions[metric_id]
+        additions: list[Evidence] = []
+        for chunk_id in path.get("chunk_ids", []):
+            chunk_id = str(chunk_id)
+            if chunk_id in existing_chunks:
+                continue
+            row = rows.get(chunk_id)
+            if row is None:
+                continue
+            additions.append(Evidence(
+                evidence_id="E" + chunk_id,
+                chunk_id=chunk_id,
+                text=str(row["text"]),
+                printed_page_number=int(row["printed_page_number"]),
+                source_pdf_page_number=int(row["source_pdf_page_number"]),
+                chunk_sha256=str(row["chunk_sha256"]),
+                score=0.0,
+                retrieval_reason="graph_reasoning_path",
+                graph={
+                    "status": path.get("graph_status"),
+                    "reasoning_path_id": path.get("path_id"),
+                    "rule_id": path.get("rule_id"),
+                },
+            ))
+            existing_chunks.add(chunk_id)
+        if additions:
+            metric = expanded_metrics[position]
+            expanded_metrics[position] = MetricInput(
+                metric.metric_id, metric.observation, metric.evaluation,
+                (*metric.evidence, *additions), metric.graph_diagnostics,
+            )
+    metrics = tuple(expanded_metrics)
     evidence_ids_by_chunk = {
         item.chunk_id: item.evidence_id
         for metric in metrics
@@ -412,7 +563,7 @@ def _reasoning_context(
     }
     accepted: list[Mapping[str, Any]] = []
     rejections = list(result.rejections)
-    for path in result.paths:
+    for path in reportable_paths:
         value = dict(path)
         value["evidence_ids"] = [
             evidence_ids_by_chunk[chunk_id]
@@ -427,7 +578,38 @@ def _reasoning_context(
             })
             continue
         accepted.append(value)
-    return tuple(accepted), tuple(rejections)
+    return metrics, tuple(accepted), tuple(rejections)
+
+
+def _used_evidence_ids(
+    result: Mapping[str, Any], reasoning_paths: Sequence[Mapping[str, Any]]
+) -> set[str]:
+    used: set[str] = set()
+    for item in result.get("abnormal_analyses", []):
+        used.update(str(value) for value in item.get("evidence_ids", []))
+    association = result.get("association_analysis", {})
+    if isinstance(association, Mapping):
+        used.update(str(value) for value in association.get("evidence_ids", []))
+    for item in result.get("attention_suggestions", []):
+        used.update(str(value) for value in item.get("evidence_ids", []))
+    for path in reasoning_paths:
+        used.update(str(value) for value in path.get("evidence_ids", []))
+    return used
+
+
+def _prune_metric_evidence(
+    metrics: Sequence[MetricInput], used_evidence_ids: set[str]
+) -> tuple[MetricInput, ...]:
+    return tuple(
+        MetricInput(
+            metric.metric_id,
+            metric.observation,
+            metric.evaluation,
+            tuple(item for item in metric.evidence if item.evidence_id in used_evidence_ids),
+            metric.graph_diagnostics,
+        )
+        for metric in metrics
+    )
 
 
 def _prompt(
@@ -440,6 +622,15 @@ def _prompt(
     ]
     abnormal_metric_ids = [item.metric_id for item in abnormal_metrics]
     flags = [item.evaluation.evidence.computed_flag for item in metrics]
+    graph_statuses = {
+        str(path.get("graph_status")) for path in reasoning_paths if path.get("graph_status")
+    }
+    graph_statuses.update(
+        str(item.graph.get("status"))
+        for metric in metrics for item in metric.evidence
+        if item.graph and item.graph.get("status")
+    )
+    final_graph = "final" in graph_statuses
     payload = {
         "abnormal_metric_ids": abnormal_metric_ids,
         "report_overview": {
@@ -450,12 +641,36 @@ def _prompt(
             "indeterminate": sum(flag is None for flag in flags),
         },
         "metrics": [_safe_metric(item) for item in abnormal_metrics],
-        "candidate_reasoning_paths": [dict(item) for item in reasoning_paths],
+        "final_rule_paths" if final_graph else "candidate_reasoning_paths": [
+            dict(item) for item in reasoning_paths
+        ],
     }
-    return (
-        "你是证据约束的医学报告表达器。只能使用 INPUT 中的程序判定和书内证据，禁止使用常识补充。"
+    graph_instruction = (
+        "evidence 中的 final graph 是最终图谱投影；仅当路径的 diagnostic_use=allowed 且 approved_execution=true 时，"
+        "可将该规则匹配作为书内规则结论的结构化依据；"
+        if final_graph else
         "evidence 中的 candidate-only graph 仅用于召回、排序和发现关联，不能单独支持医学结论；"
-        "candidate_reasoning_paths 是未经批准且未执行的候选关联路径，只能帮助合并分析；"
+    )
+    path_instruction = (
+        "final_rule_paths 是多指标规则结论的唯一授权来源：仅可使用其中状态为 final-case-match 或 "
+        "final-case-match-precondition-derived 的结论。未出现在该数组的规则代表未命中、前置条件失败、歧义或不支持；"
+        "不得在 association_analysis 中据此拼接疾病、贫血形态或其他多指标模式。final rule paths 已按最终图规则计算，"
+        "但仍须引用同次输入中的书内 evidence_id，且不构成诊断；"
+        if final_graph else
+        "candidate_reasoning_paths 是未经批准的候选条件求值，只能帮助合并分析；"
+    )
+    instructions = (
+        "你是证据约束的医学报告表达器。只能使用 INPUT 中的程序判定和书内证据，禁止使用常识补充。"
+        + graph_instruction + path_instruction +
+        (
+            "rule_evaluation 可以说明报告实际值是否满足书中规则case，但不得替代未验证前置条件；"
+            if final_graph else
+            "candidate_evaluation 可以说明报告实际值是否满足书中候选case，但不得替代未验证前置条件；"
+        ) +
+        "路径状态包含 precondition-unverified 时，只能描述数值组合满足候选条件，禁止直接写成患者已患该疾病。"
+        "路径状态包含 precondition-derived 时，表示显式上游候选规则满足了前置条件，但仍只能称候选判定；"
+        "路径状态包含 precondition-failed 时，不得输出该路径的疾病分类结果。"
+        "不得把百分数降低等同于绝对值降低，不得用降低方向证据解释升高结果，反之亦然。"
         "不得把路径状态当成诊断结果，也不得引用路径中没有对应 evidence_ids 的内容。"
         "所有医学表述仍必须由同一 evidence 项的 text 原文支持并引用其 evidence_id。"
         "不得诊断、给出治疗/用药结论。每个医学解释的 evidence_ids 必须引用本次输入中的 evidence_id；"
@@ -468,8 +683,8 @@ def _prompt(
         "association_analysis:{analysis:string,evidence_ids:string[]}, attention_suggestions:[{text:string,evidence_ids:string[]}], "
         "insufficient_evidence:[string]}。建议只能是关注/复查提示，不得是治疗或用药；"
         "attention_suggestions 中每项必须有非空 evidence_ids，没有可引用证据就省略该建议。INPUT:\n"
-        + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     )
+    return instructions + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
 
 def _content(response: Mapping[str, Any]) -> str:
@@ -547,9 +762,10 @@ def render_markdown(
 
     graph = channels.get("graph", {}) if channels else {}
     graph_enabled = bool(graph.get("enabled"))
+    final_graph = graph.get("status") == "final"
     notice = "程序异常判定、整书检索证据"
     if graph_enabled:
-        notice += "和第一章候选知识图谱辅助召回"
+        notice += "和第一章最终知识图谱" if final_graph else "和第一章候选知识图谱辅助召回"
     lines = [
         "# 体检报告分析", "",
         f"> 这是基于{notice}生成的辅助性摘要，不构成诊断、治疗或用药建议。", "",
@@ -557,7 +773,7 @@ def render_markdown(
         "- 异常判定：程序按报告参考区间重算",
         "- 书内检索：全书证据索引",
         (
-            f"- 知识图谱：第一章候选图谱（candidate-only），辅助召回证据 "
+            f"- 知识图谱：第一章{'最终' if final_graph else '候选'}图谱（{graph.get('status') or 'unknown'}），辅助召回证据 "
             f"{int(graph.get('evidence_count', 0))} 条"
             if graph_enabled else "- 知识图谱：未启用"
         ),
@@ -577,10 +793,18 @@ def render_markdown(
             lines.append("证据：" + references(item["evidence_ids"]))
             lines.append("")
     lines += ["## 关联分析", "", str(result["association_analysis"]["analysis"]), ""]
+    association_evidence = result["association_analysis"].get("evidence_ids", [])
+    if association_evidence:
+        lines += ["证据：" + references(association_evidence), ""]
     if reasoning_paths:
-        lines += ["## 候选推理路径", ""]
+        lines += ["## 规则推理路径" if final_graph else "## 候选推理路径", ""]
         lines += [
-            "> 以下路径只用于合并书内关联，未执行图谱规则，不构成诊断。", "",
+            (
+                "> 以下路径来自最终图谱规则执行，并附带书内证据；不构成诊断。"
+                if final_graph else
+                "> 以下路径已作为大模型关联分析的受限上下文；只做候选条件匹配，未进入approved判定，不构成诊断。"
+            ),
+            "",
         ]
         for path in reasoning_paths:
             metric_names = "、".join(str(item) for item in path.get("matched_metric_ids", []))
@@ -588,6 +812,49 @@ def render_markdown(
             lines.append("")
             lines.append(f"状态：`{path.get('status', 'candidate-only')}`；共同命中指标：{metric_names}。")
             lines.append("")
+            evaluation = path.get("candidate_evaluation")
+            if isinstance(evaluation, Mapping):
+                if evaluation.get("candidate_result") is not None:
+                    lines.append(
+                        f"{'规则' if final_graph else '候选'}结果：{evaluation.get('candidate_result')}。"
+                    )
+                    lines.append("")
+                for condition in evaluation.get("condition_trace", []):
+                    expected = condition.get("expected_value")
+                    if expected is None and condition.get("expected_lower") is not None:
+                        expected = f"{condition.get('expected_lower')}~{condition.get('expected_upper')}"
+                    actual = str(condition.get("actual_value"))
+                    if condition.get("actual_unit"):
+                        actual += f" {condition.get('actual_unit')}"
+                    lines.append(
+                        f"- 条件 `{condition.get('input')} {condition.get('op')} {expected}`："
+                        f"实际值 `{actual}`，"
+                        f"结果 `{condition.get('status')}`"
+                    )
+                if evaluation.get("condition_trace"):
+                    lines.append("")
+            preconditions = path.get("preconditions", [])
+            precondition_evaluations = path.get("precondition_evaluations", [])
+            if path.get("preconditions_verified") and precondition_evaluations:
+                lines.append("已由图谱规则链确认前置条件：" + "；".join(
+                    f"{item.get('context')} {item.get('op')} {item.get('expected_value')}"
+                    f"（来源：{item.get('source_rule_name')} → {item.get('source_candidate_result')}）"
+                    for item in precondition_evaluations
+                ))
+                lines.append("")
+            elif precondition_evaluations:
+                lines.append("前置条件未满足：" + "；".join(
+                    f"{item.get('context')}：{item.get('actual_value')}"
+                    f"（来源：{item.get('source_rule_name')}）"
+                    for item in precondition_evaluations
+                ))
+                lines.append("")
+            elif preconditions:
+                lines.append("未验证前置条件：" + "；".join(
+                    f"{item.get('context') or item.get('input')} {item.get('op')} {item.get('value')}"
+                    for item in preconditions
+                ))
+                lines.append("")
             for triple in path.get("triples", []):
                 lines.append(
                     f"- {triple.get('subject_name')} -[{triple.get('predicate')}]-> {triple.get('object_name')}"
@@ -637,18 +904,10 @@ def analyze_report_document(
     metrics = collect_metrics(
         report, index, knowledge_graph=knowledge_graph, provenance=provenance
     )
-    channels = _retrieval_channels(metrics, knowledge_graph)
-    reasoning_paths, reasoning_rejections = _reasoning_context(
-        metrics, knowledge_graph, index
+    metrics, reasoning_paths, reasoning_rejections = _reasoning_context(
+        metrics, knowledge_graph, index,
+        report.get("metadata") if isinstance(report.get("metadata"), Mapping) else None,
     )
-    channels = {
-        **channels,
-        "graph": {
-            **channels["graph"],
-            "reasoning_path_count": len(reasoning_paths),
-            "reasoning_rejection_count": len(reasoning_rejections),
-        },
-    }
     if transport is None:
         key = os.environ.get("DEEPSEEK_API_KEY", "")
         transport = DeepSeekTransport(key)
@@ -662,6 +921,19 @@ def analyze_report_document(
         )
     except (json.JSONDecodeError, TypeError) as error:
         raise ReportPipelineError("DeepSeek returned invalid JSON") from error
+    metrics = _prune_metric_evidence(
+        metrics, _used_evidence_ids(model_result, reasoning_paths)
+    )
+    channels = _retrieval_channels(metrics, knowledge_graph)
+    channels = {
+        **channels,
+        "graph": {
+            **channels["graph"],
+            "reasoning_path_count": len(reasoning_paths),
+            "reasoning_rejection_count": len(reasoning_rejections),
+            "reasoning_context_sent_to_model": bool(reasoning_paths),
+        },
+    }
     return ReportDocument(
         render_markdown(metrics, model_result, channels, reasoning_paths),
         model_result, metrics, channels, reasoning_paths, reasoning_rejections,

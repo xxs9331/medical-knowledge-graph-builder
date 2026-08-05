@@ -14,6 +14,7 @@ from tests.test_qa import _candidate_graph, _chunk_package
 from tests.test_report_pipeline import FakeTransport, _model, _report
 from tests.test_paddleocr_report import _vl_record
 from medical_kg_sourceprep.paddleocr_report import PaddleOcrJobResult
+from medical_kg_sourceprep.desktop_app import parse_report_payload
 
 
 class _FakeOcrClient:
@@ -35,6 +36,52 @@ class _FakeOcrClient:
 
 
 class DesktopApplicationTests(unittest.TestCase):
+    def test_reading_view_lists_all_report_input_metrics(self) -> None:
+        from medical_kg_sourceprep.desktop_app import javascript
+
+        self.assertIn("报告输入指标", javascript())
+
+    def test_red_cell_count_uses_a_traceable_controlled_default_unit(self) -> None:
+        parsed = parse_report_payload({
+            "schema_version": "structured-report/v0.2",
+            "metadata": {"patient_sex": "女"},
+            "observations": [{
+                "raw_name": "红细胞计数",
+                "standard_name": "红细胞计数",
+                "abbreviation": "RBC",
+                "value": "5.15",
+                "unit": None,
+                "reference_interval": {"lower": "3.8", "upper": "5.1"},
+            }],
+        })
+
+        observation = parsed["红细胞计数"]
+        self.assertEqual(observation.unit, "10^12/L")
+        self.assertEqual(observation.unit_source, "controlled_default")
+
+    def test_report_codes_neut_percent_and_lym_percent_are_canonicalized(self) -> None:
+        parsed = parse_report_payload({
+            "schema_version": "structured-report/v0.2",
+            "metadata": {},
+            "observations": [
+                {
+                    "raw_name": "NEUT%", "standard_name": "NEUT%", "abbreviation": None,
+                    "value": "76", "unit": "%",
+                    "reference_interval": {"lower": "40", "upper": "75"},
+                },
+                {
+                    "raw_name": "LYM%", "standard_name": "LYM%", "abbreviation": None,
+                    "value": "19", "unit": "%",
+                    "reference_interval": {"lower": "20", "upper": "50"},
+                },
+            ],
+        })
+
+        self.assertEqual(set(parsed), {"中性粒细胞百分数", "淋巴细胞百分数"})
+        self.assertEqual(parsed["中性粒细胞百分数"].abbreviation, "NEUT")
+        self.assertEqual(parsed["淋巴细胞百分数"].abbreviation, "LYM")
+        self.assertNotIn("绝对值", "".join(parsed))
+
     def test_report_analysis_emits_claim_only_with_three_chain_rule(self) -> None:
         from tests.test_evidence_policy import _provenance
 
@@ -204,6 +251,11 @@ class DesktopApplicationTests(unittest.TestCase):
                 self.assertIn("图谱辅助召回", javascript)
                 self.assertIn("候选推理路径", javascript)
                 self.assertIn("缺词诊断", javascript)
+                self.assertIn("缺失缩写", javascript)
+                self.assertIn("未收录实体", javascript)
+                self.assertIn("匹配明细", javascript)
+                self.assertIn("已作为大模型关联分析的受限上下文", javascript)
+                self.assertIn("（默认）", javascript)
                 self.assertIn("evidenceDrawer(item)", javascript)
                 self.assertIn("/source.pdf#page=", javascript)
                 self.assertNotIn("drawer('书内证据',JSON.stringify", javascript)

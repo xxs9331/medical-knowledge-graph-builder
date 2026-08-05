@@ -405,7 +405,10 @@ def query_index_with_graph(
         "graph": {
             "enabled": True,
             "coverage": "chapter-01-only",
-            "status": "candidate-only",
+            "status": (
+                graph_hits[0].graph_status if graph_hits
+                else diagnostic.get("graph_status")
+            ),
             "count": len(graph_hits),
             "returned_count": sum("graph" in item for item in ranked),
             "query_diagnostic": diagnostic,
