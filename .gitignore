@@ -40,6 +40,9 @@ indexes/
 index-data/
 runtime/
 *.sqlite
+!docs/runtime/
+!docs/runtime/artifact-registry.json
+!docs/runtime/artifact-cleanup-*.md
 embeddings/
 
 # Source materials and generated extraction outputs
