@@ -32,7 +32,7 @@ SEMANTIC_RELATIONS = {
     "ITEM_SUPPORTED_BY": ("TestItem", "SourceLocator"),
     "RANGE_SUPPORTED_BY": ("ReferenceRange", "SourceLocator"),
     "RULE_HAS_SUBJECT": ("InterpretationRule", ("TestItem", "MedicalConcept")),
-    "RULE_HAS_CONCLUSION": ("InterpretationRule", "MedicalConcept"),
+    "RULE_HAS_CONCLUSION": ("InterpretationRule", ("MedicalConcept", "TestItem")),
     "RULE_APPLIES_TO_POPULATION": ("InterpretationRule", "Population"),
     "RULE_REQUIRES_METHOD": ("InterpretationRule", "TestMethod"),
     "RULE_SUPPORTED_BY": ("InterpretationRule", "SourceLocator"),
