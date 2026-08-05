@@ -7,7 +7,9 @@ import unittest
 from medical_kg_sourceprep.chapter_graph_build import (
     ChapterGraphBuilder,
     build_entity_evidence,
+    build_final_graph,
     validate_rule_evidence,
+    write_final_graph_package,
     write_graph_package,
 )
 
@@ -101,6 +103,7 @@ class ChapterGraphBuildTests(unittest.TestCase):
         graph = ChapterGraphBuilder().build(*self.packages())
         by_name = {(node["node_type"], node["name"]): node for node in graph["nodes"]}
         self.assertIn(("TestItem", "血红蛋白"), by_name)
+        self.assertIn("HGB", by_name[("TestItem", "血红蛋白")]["properties"]["aliases"])
         self.assertIn(("ReferenceRange", "血红蛋白参考范围/ref1/1"), by_name)
         predicates = [edge["predicate"] for edge in graph["edges"]]
         self.assertIn("IS_A", predicates)
@@ -155,6 +158,97 @@ class ChapterGraphBuildTests(unittest.TestCase):
             for edge in graph["edges"]
         ))
 
+    def test_reference_state_rule_uses_distinct_mcv_and_rdw_endpoints(self):
+        packages = list(self.packages())
+        core = dict(packages[6])
+        core["rules"] = [*core["rules"], {
+            "rule_id": "chapter01:classification:mcv-rdw-fixture",
+            "rule_type": "classification",
+            "execution_readiness": "executable_with_precondition",
+            "function": {
+                "expression": "形态 = 分类(MCV状态, RDW状态)",
+                "rule_name": "MCV RDW分类",
+                "output": {"name": "红细胞形态", "value_type": "category"},
+                "inputs": [
+                    {"name": "MCV状态", "value_type": "reference_state"},
+                    {"name": "RDW状态", "value_type": "reference_state"},
+                ],
+            },
+            "applicability": {
+                "required_inputs": ["MCV", "RDW-CV"],
+                "preconditions": [{"context": "贫血状态", "op": "EQ", "value": "已确认"}],
+            },
+            "cases": [{"condition_ast": {"all": [
+                {"input": "MCV状态", "op": "EQ", "value": "低"},
+                {"input": "RDW状态", "op": "EQ", "value": "高"},
+            ]}, "result": "小细胞不均一性贫血"}],
+            "source_ambiguity": None,
+            "evidence": {"chunk_id": "c1", "chunk_sha256": "a" * 64,
+                         "source_quote": "血红蛋白 男性 130~175g/L"},
+        }]
+        packages[6] = core
+
+        graph = ChapterGraphBuilder().build(*packages)
+        nodes = {node["node_id"]: node for node in graph["nodes"]}
+        rule = next(node for node in graph["nodes"]
+                    if node["properties"].get("rule_id") == "chapter01:classification:mcv-rdw-fixture")
+        subjects = {
+            nodes[edge["object_id"]]["name"]
+            for edge in graph["edges"]
+            if edge["subject_id"] == rule["node_id"] and edge["predicate"] == "RULE_HAS_SUBJECT"
+        }
+        self.assertIn("平均红细胞容积", subjects)
+        self.assertIn("变异系数", subjects)
+        self.assertNotIn("血红蛋白", subjects)
+        self.assertFalse(any("None" in node["properties"].get("aliases", [])
+                             for node in graph["nodes"]))
+
+    def test_explicit_rule_dependency_creates_precondition_edge(self):
+        packages = list(self.packages())
+        core = dict(packages[6])
+        core["rules"] = [*core["rules"], {
+            "rule_id": "chapter01:classification:morphology-fixture",
+            "rule_type": "classification",
+            "execution_readiness": "executable_with_precondition",
+            "function": {
+                "expression": "形态 = 示例形态(MCV, MCH)",
+                "rule_name": "示例形态",
+                "output": {"name": "贫血形态", "value_type": "category"},
+                "inputs": [
+                    {"name": "MCV", "value_type": "number"},
+                    {"name": "MCH", "value_type": "number"},
+                ],
+            },
+            "applicability": {
+                "required_inputs": ["MCV", "MCH"],
+                "preconditions": [{"context": "贫血状态", "op": "EQ", "value": "已确认"}],
+            },
+            "cases": [],
+            "evidence": {"chunk_id": "c1", "chunk_sha256": "a" * 64,
+                         "source_quote": "血红蛋白 男性 130~175g/L"},
+        }]
+        packages[6] = core
+        dependencies = {
+            "status": "candidate-only",
+            "approved": 0,
+            "dependencies": [{
+                "producer_rule_id": "chapter01:classification:hgb-sex",
+                "consumer_rule_ids": ["chapter01:classification:morphology-fixture"],
+                "satisfies": {"context": "贫血状态", "op": "EQ", "value": "已确认"},
+                "producer_results": ["贫血"],
+            }],
+        }
+
+        graph = ChapterGraphBuilder().build(*packages, rule_dependencies=dependencies)
+        nodes = {node["node_id"]: node for node in graph["nodes"]}
+        edge = next(item for item in graph["edges"]
+                    if item["predicate"] == "RULE_SATISFIES_PRECONDITION")
+        self.assertEqual(nodes[edge["subject_id"]]["properties"]["rule_id"],
+                         "chapter01:classification:hgb-sex")
+        self.assertEqual(nodes[edge["object_id"]]["properties"]["rule_id"],
+                         "chapter01:classification:morphology-fixture")
+        self.assertEqual(edge["properties"]["satisfies"]["context"], "贫血状态")
+
     def test_sqlite_has_no_dangling_edges(self):
         graph = ChapterGraphBuilder().build(*self.packages())
         with tempfile.TemporaryDirectory() as directory:
@@ -171,6 +265,36 @@ class ChapterGraphBuildTests(unittest.TestCase):
             self.assertEqual(superseded["count"], 1)
             self.assertEqual(manifest["schema_version"], "chapter-graph-run/v0.2")
             self.assertEqual(manifest["validation"]["book_rule_evidence_anchors_replayed"], 3)
+
+    def test_final_projection_removes_review_state_and_splits_claims_from_rules(self):
+        graph = ChapterGraphBuilder().build(*self.packages())
+        final = build_final_graph(graph)
+        rendered = json.dumps(final, ensure_ascii=False)
+        self.assertEqual(final["schema_version"], "chapter-final-knowledge-graph/v0.1")
+        self.assertNotIn("candidate", rendered)
+        self.assertNotIn("approved", rendered)
+        self.assertNotIn("HOLD", rendered)
+
+        node_types = {node["node_type"] for node in final["nodes"]}
+        self.assertIn("Rule", node_types)
+        self.assertIn("Claim", node_types)
+        predicates = {edge["predicate"] for edge in final["edges"]}
+        self.assertIn("CONSUMES", predicates)
+        self.assertIn("PRODUCES", predicates)
+        self.assertIn("SUPPORTED_BY", predicates)
+        self.assertIn("CLAIM_HAS_SUBJECT", predicates)
+        self.assertNotIn("RULE_HAS_SUBJECT", predicates)
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            write_final_graph_package(output, final, {"fixture": "b" * 64})
+            with sqlite3.connect(output / "knowledge.sqlite") as db:
+                self.assertEqual(db.execute("PRAGMA integrity_check").fetchone()[0], "ok")
+                self.assertEqual(db.execute("PRAGMA foreign_key_check").fetchall(), [])
+                metadata = dict(db.execute("SELECT key, value FROM metadata"))
+                self.assertEqual(metadata["schema_version"], "chapter-final-knowledge-graph/v0.1")
+                self.assertEqual(metadata["status"], "final")
+                self.assertNotIn("approved", metadata)
 
     def test_rule_evidence_replays_chunk_hash_and_quote(self):
         with tempfile.TemporaryDirectory() as directory:

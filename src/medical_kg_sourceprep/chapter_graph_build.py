@@ -17,6 +17,7 @@ from .semantic_graph import SEMANTIC_RELATIONS
 
 
 SCHEMA_VERSION = "chapter-knowledge-graph/v0.2"
+FINAL_SCHEMA_VERSION = "chapter-final-knowledge-graph/v0.1"
 ENTITY_NODE_TYPES = frozenset({"TestItem", "MedicalConcept", "Population", "TestMethod"})
 BOOK_RULE_ORIGIN = "book-rule-library-v0.1"
 _CATEGORY_TYPE = {
@@ -56,6 +57,36 @@ _LEGACY_RULE_SUPERSESSIONS = {
     "indicator-rule:932edeb443539b3b472d06e3": "chapter01:threshold:neutropenia",
     "indicator-rule:b70c6f519d82198aa1eeeeae": "chapter01:temporal:mpv-plt-sustained-decline",
 }
+_RULE_GRAPH_RELATIONS = {
+    "RULE_SATISFIES_PRECONDITION": ("InterpretationRule", "InterpretationRule"),
+}
+_FINAL_RULE_PREDICATES = {
+    "RULE_HAS_SUBJECT": "CONSUMES",
+    "RULE_HAS_CONCLUSION": "PRODUCES",
+    "RULE_SUPPORTED_BY": "SUPPORTED_BY",
+    "RULE_REQUIRES_METHOD": "REQUIRES_METHOD",
+    "RULE_APPLIES_TO_POPULATION": "APPLIES_TO",
+    "RULE_SATISFIES_PRECONDITION": "SATISFIES_PRECONDITION",
+}
+_FINAL_CLAIM_PREDICATES = {
+    "RULE_HAS_SUBJECT": "CLAIM_HAS_SUBJECT",
+    "RULE_HAS_CONCLUSION": "CLAIM_HAS_CONCLUSION",
+    "RULE_SUPPORTED_BY": "CLAIM_SUPPORTED_BY",
+    "RULE_REQUIRES_METHOD": "CLAIM_REQUIRES_METHOD",
+    "RULE_APPLIES_TO_POPULATION": "CLAIM_APPLIES_TO",
+}
+_FINAL_REFERENCE_PREDICATES = {
+    "ITEM_HAS_REFERENCE_RANGE": "HAS_REFERENCE_RANGE",
+    "RANGE_APPLIES_TO_POPULATION": "APPLIES_TO",
+    "RANGE_SUPPORTED_BY": "SUPPORTED_BY",
+    "ITEM_SUPPORTED_BY": "SUPPORTED_BY",
+}
+_FINAL_REMOVE_PROPERTIES = {
+    "candidate_id",
+    "candidate_keys",
+    "execution_scope",
+    "review_action",
+}
 
 
 class ChapterGraphBuildError(ValueError):
@@ -75,6 +106,8 @@ def _dedupe_strings(values: Sequence[object]) -> list[str]:
     result: list[str] = []
     seen: set[str] = set()
     for raw in values:
+        if raw is None:
+            continue
         value = str(raw).strip()
         key = _match_key(value)
         if value and key and key not in seen:
@@ -167,6 +200,7 @@ class ChapterGraphBuilder:
         quality_report: Mapping[str, Any],
         manual_review: Mapping[str, Any],
         entity_evidence: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
+        rule_dependencies: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         self._validate_inputs(ontology, catalog, semantic_relations, semantic_rules,
                               reference_rules, core_rules, temporal_rules, quality_report, manual_review)
@@ -180,6 +214,7 @@ class ChapterGraphBuilder:
         self._semantic_rule_nodes(semantic_rules)
         self._book_rules(core_rules, rule_kind="core")
         self._book_rules(temporal_rules, rule_kind="temporal")
+        self._rule_dependencies(rule_dependencies or {"dependencies": []})
         self._quality_review_items(quality_report)
         self._record_superseded_rules(manual_review)
         self._finalize_review_items()
@@ -210,6 +245,50 @@ class ChapterGraphBuilder:
                 "approved": 0,
             },
         }
+
+    def _rule_dependencies(self, package: Mapping[str, Any]) -> None:
+        if package.get("status") not in (None, "candidate-only") or package.get("approved", 0) != 0:
+            raise ChapterGraphBuildError("rule dependencies must remain candidate-only")
+        rule_nodes = {
+            str(node["properties"].get("rule_id")): node_id
+            for node_id, node in self.nodes.items()
+            if node["node_type"] == "InterpretationRule" and node["properties"].get("rule_id")
+        }
+        for dependency in package.get("dependencies", []):
+            producer_rule_id = str(dependency.get("producer_rule_id", ""))
+            consumer_rule_ids = dependency.get("consumer_rule_ids", [])
+            satisfies = dependency.get("satisfies")
+            producer_results = dependency.get("producer_results", [])
+            if (
+                producer_rule_id not in rule_nodes
+                or not isinstance(consumer_rule_ids, list)
+                or not consumer_rule_ids
+                or not isinstance(satisfies, Mapping)
+                or not satisfies.get("context")
+                or not isinstance(producer_results, list)
+                or not producer_results
+            ):
+                raise ChapterGraphBuildError("rule dependency is invalid")
+            producer = rule_nodes[producer_rule_id]
+            for consumer_rule_id in consumer_rule_ids:
+                consumer = rule_nodes.get(str(consumer_rule_id))
+                if consumer is None:
+                    raise ChapterGraphBuildError(f"rule dependency consumer is missing: {consumer_rule_id}")
+                evidence = self._merge_evidence(
+                    self.nodes[producer]["evidence"], self.nodes[consumer]["evidence"]
+                )
+                self._add_edge(
+                    producer,
+                    "RULE_SATISFIES_PRECONDITION",
+                    consumer,
+                    layer="rule",
+                    origin="rule-dependencies-v0.1",
+                    properties={
+                        "satisfies": dict(satisfies),
+                        "producer_results": _dedupe_strings(producer_results),
+                    },
+                    evidence=evidence,
+                )
 
     @staticmethod
     def _validate_inputs(*packages: Mapping[str, Any]) -> None:
@@ -633,9 +712,18 @@ class ChapterGraphBuilder:
             preferred = next((_INPUT_CANONICAL_NAMES[term] for term in terms
                               if term in _INPUT_CANONICAL_NAMES), name)
             endpoint = self._add_node(endpoint_type, preferred, properties={
-                "aliases": _dedupe_strings([term for term in terms if _match_key(term) != _match_key(preferred)]),
+                "aliases": [],
                 "categories": ["RuleInputEndpoint"],
             }, evidence=evidence, origin=BOOK_RULE_ORIGIN)
+        node = self.nodes[endpoint]
+        controlled_aliases = [
+            term for term in terms
+            if not term.endswith(("状态", "时序"))
+            and _match_key(term) != _match_key(node["name"])
+        ]
+        node["properties"]["aliases"] = _dedupe_strings([
+            *node["properties"].get("aliases", []), *controlled_aliases,
+        ])
         self._register_terms(endpoint, terms)
         return endpoint, endpoint_type, terms
 
@@ -853,7 +941,7 @@ class ChapterGraphBuilder:
         for edge in self.edges.values():
             if edge["subject_id"] not in self.nodes or edge["object_id"] not in self.nodes:
                 raise ChapterGraphBuildError("graph contains a dangling endpoint")
-            relation = SEMANTIC_RELATIONS.get(edge["predicate"])
+            relation = SEMANTIC_RELATIONS.get(edge["predicate"]) or _RULE_GRAPH_RELATIONS.get(edge["predicate"])
             if relation is None:
                 continue
             expected_source, expected_target = relation
@@ -919,6 +1007,161 @@ def write_graph_package(output: Path, graph: Mapping[str, Any], input_hashes: Ma
     manifest = {
         "schema_version": "chapter-graph-run/v0.2", "status": "candidate-only", "hold": True,
         "approved": 0, "input_sha256": dict(sorted(input_hashes.items())), "counts": graph["counts"],
+        "validation": dict(validation or {}),
+        "outputs": {name: _sha256(output / name) for name in [*documents, "knowledge.sqlite"]},
+    }
+    _atomic_json(output / "run-manifest.json", manifest)
+
+
+def build_final_graph(graph: Mapping[str, Any]) -> dict[str, Any]:
+    """Project the candidate package into a clean publishable graph.
+
+    The candidate package remains the audit boundary. The final projection keeps
+    provenance, rules, ranges, and semantic claims, but strips review state and
+    separates executable rules from retrieval-only claims.
+    """
+    nodes: list[dict[str, Any]] = []
+    node_type_by_id: dict[str, str] = {}
+    for node in graph.get("nodes", []):
+        properties = {
+            key: value
+            for key, value in dict(node.get("properties", {})).items()
+            if key not in _FINAL_REMOVE_PROPERTIES
+        }
+        original_type = str(node["node_type"])
+        final_type = original_type
+        if original_type == "InterpretationRule":
+            scope = node.get("properties", {}).get("execution_scope")
+            final_type = "Claim" if scope == "retrieval_only" else "Rule"
+            if final_type == "Claim":
+                properties.pop("components", None)
+                properties.pop("subject_logic", None)
+            else:
+                readiness = properties.pop("execution_readiness", None)
+                if readiness:
+                    properties["operational_scope"] = readiness
+        node_type_by_id[str(node["node_id"])] = final_type
+        nodes.append({
+            "node_id": node["node_id"],
+            "node_type": final_type,
+            "name": node["name"],
+            "properties": properties,
+            "evidence": list(node.get("evidence", [])),
+            "origins": list(node.get("origins", [])),
+        })
+
+    edges: list[dict[str, Any]] = []
+    for edge in graph.get("edges", []):
+        subject_type = node_type_by_id[str(edge["subject_id"])]
+        object_type = node_type_by_id[str(edge["object_id"])]
+        predicate = str(edge["predicate"])
+        if subject_type == "Rule":
+            predicate = _FINAL_RULE_PREDICATES.get(predicate, predicate)
+        elif subject_type == "Claim":
+            predicate = _FINAL_CLAIM_PREDICATES.get(predicate, predicate)
+        else:
+            predicate = _FINAL_REFERENCE_PREDICATES.get(predicate, predicate)
+        edges.append({
+            "triple_id": _stable_id(
+                "final-triple", edge["subject_id"], predicate, edge["object_id"]
+            ),
+            "subject_id": edge["subject_id"],
+            "predicate": predicate,
+            "object_id": edge["object_id"],
+            "layer": edge.get("layer"),
+            "properties": dict(edge.get("properties", {})),
+            "evidence": list(edge.get("evidence", [])),
+            "origins": list(edge.get("origins", [])),
+            "subject_type": subject_type,
+            "object_type": object_type,
+        })
+
+    counts = {
+        "nodes": len(nodes),
+        "edges": len(edges),
+        "merged_entities": sum(1 for node in nodes if node["node_type"] in ENTITY_NODE_TYPES),
+        "node_types": dict(sorted(Counter(node["node_type"] for node in nodes).items())),
+        "predicates": dict(sorted(Counter(edge["predicate"] for edge in edges).items())),
+        "layers": dict(sorted(Counter(str(edge.get("layer")) for edge in edges).items())),
+        "origins": dict(sorted(Counter(
+            origin for item in [*nodes, *edges] for origin in item.get("origins", [])
+        ).items())),
+    }
+    result = {
+        "schema_version": FINAL_SCHEMA_VERSION,
+        "status": "final",
+        "nodes": sorted(nodes, key=lambda item: item["node_id"]),
+        "edges": sorted(edges, key=lambda item: item["triple_id"]),
+        "merged_entities": sorted(
+            (node for node in nodes if node["node_type"] in ENTITY_NODE_TYPES),
+            key=lambda item: item["node_id"],
+        ),
+        "counts": counts,
+    }
+    _validate_final_graph(result)
+    return result
+
+
+def _validate_final_graph(graph: Mapping[str, Any]) -> None:
+    forbidden = {"candidate", "candidate-only", "HOLD"}
+    rendered = _canonical(graph)
+    if any(value in rendered for value in forbidden) or "approved" in rendered:
+        raise ChapterGraphBuildError("final graph leaked candidate/review state")
+    node_ids = {node["node_id"] for node in graph.get("nodes", [])}
+    for edge in graph.get("edges", []):
+        if edge["subject_id"] not in node_ids or edge["object_id"] not in node_ids:
+            raise ChapterGraphBuildError("final graph contains a dangling endpoint")
+    nodes = {node["node_id"]: node for node in graph.get("nodes", [])}
+    for rule in [node for node in nodes.values() if node["node_type"] == "Rule"]:
+        outgoing = [edge for edge in graph.get("edges", []) if edge["subject_id"] == rule["node_id"]]
+        if not any(edge["predicate"] == "PRODUCES" for edge in outgoing):
+            raise ChapterGraphBuildError(f"final rule has no produced fact: {rule['name']}")
+        if not any(edge["predicate"] == "SUPPORTED_BY" for edge in outgoing):
+            raise ChapterGraphBuildError(f"final rule has no source support: {rule['name']}")
+        if not any(edge["predicate"] in {"CONSUMES", "APPLIES_TO", "REQUIRES_METHOD"} for edge in outgoing):
+            raise ChapterGraphBuildError(f"final rule has no input or applicability edge: {rule['name']}")
+    for edge in graph.get("edges", []):
+        if edge["predicate"].startswith("RULE_"):
+            raise ChapterGraphBuildError("candidate rule predicate leaked into final graph")
+        if nodes[edge["subject_id"]]["node_type"] == "Claim" and edge["predicate"] in {
+            "CONSUMES", "PRODUCES",
+        }:
+            raise ChapterGraphBuildError("retrieval-only claim leaked as executable rule edge")
+
+
+def write_final_graph_package(output: Path, graph: Mapping[str, Any], input_hashes: Mapping[str, str],
+                              validation: Mapping[str, Any] | None = None) -> None:
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
+    documents = {
+        "merged-entities.json": {
+            "schema_version": "final-merged-entities/v0.1",
+            "status": "final",
+            "count": len(graph["merged_entities"]),
+            "entities": graph["merged_entities"],
+        },
+        "triples.json": {
+            "schema_version": "final-chapter-triples/v0.1",
+            "status": "final",
+            "count": len(graph["edges"]),
+            "triples": graph["edges"],
+        },
+        "graph.json": {
+            "schema_version": graph["schema_version"],
+            "status": "final",
+            "counts": graph["counts"],
+            "nodes": graph["nodes"],
+            "edges": graph["edges"],
+        },
+    }
+    for name, document in documents.items():
+        _atomic_json(output / name, document)
+    _write_final_sqlite(output / "knowledge.sqlite", graph["nodes"], graph["edges"])
+    manifest = {
+        "schema_version": "chapter-final-graph-run/v0.1",
+        "status": "final",
+        "input_sha256": dict(sorted(input_hashes.items())),
+        "counts": graph["counts"],
         "validation": dict(validation or {}),
         "outputs": {name: _sha256(output / name) for name in [*documents, "knowledge.sqlite"]},
     }
@@ -1044,6 +1287,61 @@ def _write_sqlite(path: Path, nodes: Sequence[Mapping[str, Any]], edges: Sequenc
                 raise ChapterGraphBuildError("SQLite integrity check failed")
             if db.execute("PRAGMA foreign_key_check").fetchone() is not None:
                 raise ChapterGraphBuildError("SQLite foreign key check failed")
+        staging.replace(path)
+    except Exception:
+        staging.unlink(missing_ok=True)
+        raise
+
+
+def _write_final_sqlite(path: Path, nodes: Sequence[Mapping[str, Any]], edges: Sequence[Mapping[str, Any]]) -> None:
+    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.",
+                                     suffix=".sqlite", delete=False) as handle:
+        staging = Path(handle.name)
+    try:
+        with sqlite3.connect(staging) as db:
+            db.execute("PRAGMA foreign_keys = ON")
+            db.executescript("""
+                CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+                CREATE TABLE nodes (
+                    node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
+                    properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL,
+                    origins_json TEXT NOT NULL
+                );
+                CREATE TABLE edges (
+                    triple_id TEXT PRIMARY KEY,
+                    subject_id TEXT NOT NULL REFERENCES nodes(node_id),
+                    predicate TEXT NOT NULL,
+                    object_id TEXT NOT NULL REFERENCES nodes(node_id),
+                    layer TEXT NOT NULL,
+                    properties_json TEXT NOT NULL,
+                    evidence_json TEXT NOT NULL,
+                    origins_json TEXT NOT NULL,
+                    UNIQUE(subject_id, predicate, object_id)
+                );
+                CREATE INDEX nodes_name_type ON nodes(name, node_type);
+                CREATE INDEX edges_subject ON edges(subject_id, predicate);
+                CREATE INDEX edges_object ON edges(object_id, predicate);
+            """)
+            db.executemany("INSERT INTO metadata VALUES (?, ?)", (
+                ("schema_version", FINAL_SCHEMA_VERSION), ("status", "final"),
+                ("node_count", str(len(nodes))), ("edge_count", str(len(edges))),
+            ))
+            db.executemany("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)", (
+                (node["node_id"], node["node_type"], node["name"],
+                 _canonical(node["properties"]), _canonical(node["evidence"]),
+                 _canonical(node["origins"]))
+                for node in nodes
+            ))
+            db.executemany("INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (
+                (edge["triple_id"], edge["subject_id"], edge["predicate"],
+                 edge["object_id"], edge["layer"], _canonical(edge["properties"]),
+                 _canonical(edge["evidence"]), _canonical(edge["origins"]))
+                for edge in edges
+            ))
+            if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
+                raise ChapterGraphBuildError("final SQLite integrity check failed")
+            if db.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise ChapterGraphBuildError("final SQLite foreign key check failed")
         staging.replace(path)
     except Exception:
         staging.unlink(missing_ok=True)

@@ -16,7 +16,9 @@ sys.path.insert(0, str(ROOT / "src"))
 from medical_kg_sourceprep.chapter_graph_build import (
     ChapterGraphBuilder,
     build_entity_evidence,
+    build_final_graph,
     validate_rule_evidence,
+    write_final_graph_package,
     write_graph_package,
 )
 
@@ -34,9 +36,11 @@ DEFAULTS = {
     "manual": ROOT / "runtime/chapter-01-indicator-rule-functions-reviewed-v0.2/manual-review.json",
     "entity_checkpoint": ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.3/checkpoint.json",
     "rule_alignment": ROOT / "runtime/chapter-01-entity-extraction-deepseek-direct-v0.4/rule-alignment.json",
+    "rule_dependencies": ROOT / "knowledge/chapter-01-rule-dependencies-v0.1.json",
     "source_manifest": ROOT / "source-packages/chapter-01/manifest.json",
     "chunk_manifest": ROOT / "source-packages/chunks/chapter-01/manifest.json",
-    "output": ROOT / "runtime/chapter-01-knowledge-graph-v0.2",
+    "output": ROOT / "runtime/chapter-01-knowledge-graph-v0.5",
+    "final_output": ROOT / "runtime/chapter-01-knowledge-graph-final-v0.1",
 }
 
 
@@ -53,7 +57,7 @@ def main() -> int:
     for name, default in DEFAULTS.items():
         parser.add_argument(f"--{name}", type=Path, default=default)
     args = parser.parse_args()
-    paths = {name: getattr(args, name) for name in DEFAULTS if name != "output"}
+    paths = {name: getattr(args, name) for name in DEFAULTS if name not in {"output", "final_output"}}
     checkpoint = _load(paths["entity_checkpoint"])
     source_manifest = _load(paths["source_manifest"])
     entity_evidence = build_entity_evidence(checkpoint, source_manifest, paths["source_manifest"].parent)
@@ -86,6 +90,7 @@ def main() -> int:
         _load(paths["relations"]), _load(paths["rules"]), reference_rules,
         core_rules, temporal_rules, _load(paths["rule_quality"]),
         _load(paths["manual"]), entity_evidence,
+        rule_dependencies=_load(paths["rule_dependencies"]),
     )
     write_graph_package(
         args.output,
@@ -93,7 +98,22 @@ def main() -> int:
         {name: _sha(path) for name, path in paths.items()},
         {"book_rule_evidence_anchors_replayed": evidence_anchors_replayed},
     )
-    print(json.dumps({"output": str(args.output), **graph["counts"]}, ensure_ascii=False, indent=2))
+    final_graph = build_final_graph(graph)
+    write_final_graph_package(
+        args.final_output,
+        final_graph,
+        {
+            **{name: _sha(path) for name, path in paths.items()},
+            "candidate_graph": _sha(args.output / "graph.json"),
+        },
+        {"book_rule_evidence_anchors_replayed": evidence_anchors_replayed},
+    )
+    print(json.dumps({
+        "output": str(args.output),
+        "final_output": str(args.final_output),
+        "candidate": graph["counts"],
+        "final": final_graph["counts"],
+    }, ensure_ascii=False, indent=2))
     return 0
 
 

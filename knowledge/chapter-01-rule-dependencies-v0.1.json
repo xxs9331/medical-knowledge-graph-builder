@@ -1,0 +1,22 @@
+{
+  "schema_version": "rule-dependencies/v0.1",
+  "status": "candidate-only",
+  "approved": 0,
+  "dependencies": [
+    {
+      "producer_rule_id": "chapter01:classification:anemia-status-hgb-sex",
+      "consumer_rule_ids": [
+        "chapter01:classification:anemia-morphology-mcv-mch-mchc",
+        "chapter01:classification:anemia-morphology-mcv-rdw"
+      ],
+      "satisfies": {
+        "context": "贫血状态",
+        "op": "EQ",
+        "value": "已确认"
+      },
+      "producer_results": [
+        "已确认"
+      ]
+    }
+  ]
+}
