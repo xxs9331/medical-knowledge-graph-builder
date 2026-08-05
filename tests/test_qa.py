@@ -74,7 +74,74 @@ def _chunk_package(
     return package
 
 
+def _candidate_graph(
+    path: Path, chunk_id: str, chunk_text: str, node_name: str = "隐含实体"
+) -> Path:
+    evidence = json.dumps([{
+        "chunk_id": chunk_id,
+        "chunk_sha256": _sha256(chunk_text.encode()),
+        "exact_quote": chunk_text.strip(),
+    }])
+    with sqlite3.connect(path) as connection:
+        connection.executescript("""
+            CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE nodes (node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
+                status TEXT NOT NULL, properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL,
+                origins_json TEXT NOT NULL);
+            CREATE TABLE edges (triple_id TEXT PRIMARY KEY, subject_id TEXT NOT NULL,
+                predicate TEXT NOT NULL, object_id TEXT NOT NULL, layer TEXT NOT NULL,
+                status TEXT NOT NULL, properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL,
+                origins_json TEXT NOT NULL);
+        """)
+        connection.executemany("INSERT INTO metadata VALUES (?, ?)", (
+            ("schema_version", "chapter-knowledge-graph/v0.1"),
+            ("status", "candidate-only"),
+            ("approved", "0"),
+        ))
+        connection.execute("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?)", (
+            "hidden", "MedicalConcept", node_name, "candidate", "{}", evidence, "[]",
+        ))
+    return path
+
+
 class QaTests(unittest.TestCase):
+    def test_http_search_uses_candidate_graph_but_returns_index_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = _chunk_package(root)
+            index = root / "evidence.sqlite"
+            build_evidence_index(package, index, "2026-01-01T00:00:00Z")
+            manifest = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
+            first = manifest["chunks"][0]
+            graph = _candidate_graph(
+                root / "candidate.sqlite", first["chunk_id"],
+                (package / first["chunk_path"]).read_text(encoding="utf-8"),
+            )
+            server = make_server(index, "127.0.0.1", 0, chunk_package=package, knowledge_graph=graph)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                request = Request(
+                    f"http://127.0.0.1:{server.server_port}/api/search",
+                    data=json.dumps({"query": "隐含实体"}).encode(),
+                    headers={"Content-Type": "application/json"}, method="POST",
+                )
+                with build_opener(ProxyHandler({})).open(request, timeout=3) as response:
+                    result = json.loads(response.read())
+                self.assertEqual(result["channels"]["lexical"]["count"], 0)
+                self.assertTrue(result["channels"]["graph"]["enabled"])
+                self.assertEqual(
+                    result["channels"]["graph"]["query_diagnostic"]["status"],
+                    "matched",
+                )
+                self.assertEqual(result["evidence"][0]["chunk_id"], first["chunk_id"])
+                self.assertEqual(result["evidence"][0]["retrieval_reason"], "graph_path")
+                self.assertEqual(result["evidence"][0]["location_status"], "verified")
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=3)
+
     def test_lan_binding_requires_explicit_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

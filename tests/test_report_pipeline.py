@@ -12,9 +12,10 @@ from medical_kg_sourceprep.report_pipeline import (
     _retrieval_queries,
     validate_model_result,
 )
+from medical_kg_sourceprep.graph_retrieval import GraphReasoningResult
 from medical_kg_sourceprep.report_model import AbnormalFlag, Observation, ReferenceInterval
 from medical_kg_sourceprep.qa import build_evidence_index
-from tests.test_qa import _chunk_package
+from tests.test_qa import _candidate_graph, _chunk_package
 
 
 class FakeTransport:
@@ -134,6 +135,82 @@ class ReportPipelineTests(unittest.TestCase):
                 len(document["evidence"]),
             )
             self.assertEqual(document["evidence"][0]["source_pdf_page_number"], 21)
+            self.assertEqual(document["channels"]["mode"], "lexical")
+            self.assertFalse(document["channels"]["graph"]["enabled"])
+
+    def test_report_analysis_merges_graph_and_lexical_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = _chunk_package(root)
+            index = root / "evidence.sqlite"
+            build_evidence_index(package, index, "2026-01-01T00:00:00Z")
+            manifest = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
+            first = manifest["chunks"][0]
+            graph = _candidate_graph(
+                root / "candidate.sqlite",
+                first["chunk_id"],
+                (package / first["chunk_path"]).read_text(encoding="utf-8"),
+                node_name="alpha",
+            )
+            transport = FakeTransport(_model())
+            document = analyze_report_document(
+                _report(), index, knowledge_graph=graph, transport=transport
+            ).to_dict()
+
+        self.assertEqual(document["channels"]["mode"], "lexical+knowledge_graph")
+        self.assertTrue(document["channels"]["graph"]["enabled"])
+        self.assertEqual(document["channels"]["graph"]["status"], "candidate-only")
+        self.assertGreaterEqual(document["channels"]["graph"]["evidence_count"], 1)
+        graph_evidence = [item for item in document["evidence"] if "graph" in item]
+        self.assertTrue(graph_evidence)
+        self.assertIn("graph_path", graph_evidence[0]["retrieval_reason"])
+        self.assertEqual(graph_evidence[0]["graph"]["matched_node_names"], ["alpha"])
+        self.assertIn("第一章候选知识图谱辅助召回", document["markdown"])
+        self.assertIn("candidate-only graph", transport.payload["messages"][1]["content"])
+
+    def test_candidate_reasoning_path_is_exposed_without_executing_rule(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = _chunk_package(root)
+            index = root / "evidence.sqlite"
+            build_evidence_index(package, index, "2026-01-01T00:00:00Z")
+            manifest = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
+            first = manifest["chunks"][0]
+            graph = _candidate_graph(
+                root / "candidate.sqlite", first["chunk_id"],
+                (package / first["chunk_path"]).read_text(encoding="utf-8"),
+                node_name="alpha",
+            )
+            candidate = {
+                "path_id": "candidate-path:test",
+                "rule_id": "rule:test",
+                "rule_name": "多指标候选关联",
+                "status": "candidate-precondition-unverified",
+                "graph_status": "candidate-only",
+                "matched_metric_ids": ["alpha", "related"],
+                "missing_inputs": [],
+                "preconditions": [{"context": "前置状态", "op": "EQ", "value": "已确认"}],
+                "triples": [{
+                    "subject_name": "多指标候选关联",
+                    "predicate": "RULE_HAS_SUBJECT",
+                    "object_name": "alpha",
+                }],
+                "chunk_ids": [first["chunk_id"]],
+            }
+            transport = FakeTransport(_model())
+            with patch(
+                "medical_kg_sourceprep.report_pipeline.graph_reasoning_paths",
+                return_value=GraphReasoningResult((candidate,), ()),
+            ):
+                document = analyze_report_document(
+                    _report(), index, knowledge_graph=graph, transport=transport
+                ).to_dict()
+
+        self.assertEqual(document["channels"]["graph"]["reasoning_path_count"], 1)
+        self.assertEqual(document["reasoning_paths"][0]["evidence_ids"], ["E" + first["chunk_id"]])
+        self.assertIn("## 候选推理路径", document["markdown"])
+        self.assertIn('"candidate_reasoning_paths"', transport.payload["messages"][1]["content"])
+        self.assertIn("未经批准且未执行", transport.payload["messages"][1]["content"])
 
     def test_unknown_evidence_fails_closed(self):
         result = _model()

@@ -26,6 +26,7 @@ from .analysis import AnalysisRule, analyze_report, result_to_dict
 from .desktop_app import DesktopAppError, css as desktop_css, html as desktop_html
 from .desktop_app import javascript as desktop_javascript
 from .desktop_app import parse_report_payload
+from .graph_retrieval import GraphRetrievalError, graph_query_diagnostic, graph_retrieve
 from .paddleocr_report import (
     PaddleOcrJobsClient,
     PaddleOcrReportError,
@@ -331,6 +332,88 @@ def query_index(
     return ranked
 
 
+def query_index_with_graph(
+    index: Path,
+    knowledge_graph: Path | None,
+    query: str,
+    top_k: int = 5,
+    provenance: ProvenanceContext | None = None,
+    *,
+    graph_query: str | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    lexical = query_index(index, query, top_k, provenance)
+    if knowledge_graph is None:
+        return lexical, {"lexical": {"count": len(lexical)}, "graph": {"enabled": False, "count": 0}}
+    try:
+        diagnostic = graph_query_diagnostic(knowledge_graph, graph_query or query)
+        graph_hits = graph_retrieve(
+            knowledge_graph, index, graph_query or query, top_k=min(20, top_k * 3)
+        )
+    except GraphRetrievalError as error:
+        raise QaError(str(error)) from error
+    connection = sqlite3.connect(f"file:{index.resolve()}?mode=ro", uri=True)
+    connection.row_factory = sqlite3.Row
+    try:
+        rows = {
+            row["chunk_id"]: dict(row)
+            for row in connection.execute(
+                "SELECT c.chunk_id, c.page_id, c.text, c.chunk_sha256, c.cleaned_char_start, "
+                "c.cleaned_char_end, p.printed_page_number, p.source_pdf_page_number, "
+                "p.chapter_page_index, c.review_status FROM chunks c "
+                "JOIN pages p ON p.page_id=c.page_id ORDER BY c.chunk_id"
+            )
+        }
+    except sqlite3.Error as error:
+        raise QaError("index is not a readable evidence index") from error
+    finally:
+        connection.close()
+    combined = {item["chunk_id"]: dict(item) for item in lexical}
+    for hit in graph_hits:
+        item = combined.get(hit.chunk_id)
+        if item is None:
+            row = rows.get(hit.chunk_id)
+            if row is None:
+                raise QaError("graph projected an unavailable evidence chunk")
+            item = {
+                **row,
+                **_location(row, provenance),
+                "score": 0.0,
+                "matched_terms": [],
+                "score_components": {"term_idf": 0.0, "exact_substring_bonus": 0.0},
+                "retrieval_reason": "graph_path",
+            }
+            combined[hit.chunk_id] = item
+        item["score_components"] = {**item["score_components"], "graph_path": hit.graph_score}
+        item["score"] = round(float(item["score"]) + hit.graph_score * 2.0, 6)
+        if "graph_path" not in item["retrieval_reason"]:
+            item["retrieval_reason"] += "+graph_path"
+        item["graph"] = {
+            "status": hit.graph_status,
+            "score": hit.graph_score,
+            "path_relations": list(hit.path_relations),
+            "matched_node_ids": list(hit.matched_node_ids),
+            "matched_node_names": list(hit.matched_node_names),
+            "path_node_ids": list(hit.path_node_ids),
+            "path_node_names": list(hit.path_node_names),
+            "path_node_types": list(hit.path_node_types),
+            "path_triples": list(hit.path_triples),
+            "match_mode": hit.match_mode,
+        }
+    ranked = sorted(combined.values(), key=lambda item: (-item["score"], item["chunk_id"]))[:top_k]
+    channels = {
+        "lexical": {"count": len(lexical)},
+        "graph": {
+            "enabled": True,
+            "coverage": "chapter-01-only",
+            "status": "candidate-only",
+            "count": len(graph_hits),
+            "returned_count": sum("graph" in item for item in ranked),
+            "query_diagnostic": diagnostic,
+        },
+    }
+    return ranked, channels
+
+
 def _load_provenance(index: Path, package: Path) -> ProvenanceContext:
     manifest_bytes, manifest, chunks = _validate_package(package)
     if _index_meta(index).get("chunk_manifest_sha256") != _sha256(manifest_bytes):
@@ -468,10 +551,11 @@ def _model_answer(query: str, evidence: list[dict[str, Any]]) -> str:
 def _answer(
     index: Path, query: str, top_k: int, mode: str = "extractive",
     provenance: ProvenanceContext | None = None,
+    knowledge_graph: Path | None = None,
 ) -> dict[str, Any]:
-    evidence = query_index(index, query, top_k, provenance)
+    evidence, channels = query_index_with_graph(index, knowledge_graph, query, top_k, provenance)
     if not evidence:
-        return {"mode": mode, "answer": "未检索到足够证据。", "citations": [], "evidence": []}
+        return {"mode": mode, "answer": "未检索到足够证据。", "citations": [], "evidence": [], "channels": channels}
     sentences = []
     citations = []
     for number, item in enumerate(evidence, 1):
@@ -479,7 +563,7 @@ def _answer(
         sentences.append(f"{sentence} [{number}]")
         citations.append({key: item[key] for key in ("chunk_id", "printed_page_number", "source_pdf_page_number", "chapter_page_index")})
     answer = " ".join(sentences) if mode == "extractive" else _model_answer(query, evidence)
-    return {"mode": mode, "answer": answer, "citations": citations, "evidence": evidence}
+    return {"mode": mode, "answer": answer, "citations": citations, "evidence": evidence, "channels": channels}
 
 
 class _QaHandler(BaseHTTPRequestHandler):
@@ -505,7 +589,7 @@ class _QaHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         if self.path == "/api/health":
-            self._send(200, {"status": "ready", "mode": "extractive"})
+            self._send(200, {"status": "ready", "mode": "extractive", "graph_enabled": self.server.qa_knowledge_graph is not None})  # type: ignore[attr-defined]
         elif self.path == "/api/meta":
             self._send(200, _index_meta(self.qa_index))
         elif self.path == "/":
@@ -569,6 +653,8 @@ class _QaHandler(BaseHTTPRequestHandler):
                     result = analyze_report_document(
                         value,
                         self.qa_index,
+                        knowledge_graph=self.server.qa_knowledge_graph,  # type: ignore[attr-defined]
+                        provenance=self.server.qa_provenance,  # type: ignore[attr-defined]
                         transport=self.server.qa_report_transport,  # type: ignore[attr-defined]
                     ).to_dict()
                 except ReportPipelineError as error:
@@ -594,7 +680,17 @@ class _QaHandler(BaseHTTPRequestHandler):
             else:
                 query = value.get("query")
                 top_k = value.get("top_k", 5)
-                result = {"evidence": query_index(self.qa_index, query, top_k, self.server.qa_provenance)} if self.path.endswith("search") else _answer(self.qa_index, query, top_k, self.server.qa_answer_mode, self.server.qa_provenance)  # type: ignore[attr-defined]
+                if self.path.endswith("search"):
+                    evidence, channels = query_index_with_graph(
+                        self.qa_index, self.server.qa_knowledge_graph, query, top_k,
+                        self.server.qa_provenance,  # type: ignore[attr-defined]
+                    )
+                    result = {"evidence": evidence, "channels": channels}
+                else:
+                    result = _answer(
+                        self.qa_index, query, top_k, self.server.qa_answer_mode,
+                        self.server.qa_provenance, self.server.qa_knowledge_graph,  # type: ignore[attr-defined]
+                    )
             self._send(200, result)
         except (UnicodeDecodeError, json.JSONDecodeError, QaError, DesktopAppError) as error:
             self._send(400, {"error": "invalid_request", "detail": str(error)})
@@ -608,7 +704,7 @@ def _index_meta(index: Path) -> dict[str, str]:
         connection.close()
 
 
-def make_server(index: Path, host: str = "127.0.0.1", port: int = 18852, answer_mode: str = "extractive", *, analysis_rules: tuple[AnalysisRule, ...] = (), approved_book_registry: dict[str, dict[str, Any]] | None = None, source_pdf_path: Path | None = None, chunk_package: Path | None = None, report_transport: Any | None = None, ocr_client: PaddleOcrJobsClient | None = None, allow_lan: bool = False) -> ThreadingHTTPServer:
+def make_server(index: Path, host: str = "127.0.0.1", port: int = 18852, answer_mode: str = "extractive", *, analysis_rules: tuple[AnalysisRule, ...] = (), approved_book_registry: dict[str, dict[str, Any]] | None = None, source_pdf_path: Path | None = None, chunk_package: Path | None = None, knowledge_graph: Path | None = None, report_transport: Any | None = None, ocr_client: PaddleOcrJobsClient | None = None, allow_lan: bool = False) -> ThreadingHTTPServer:
     if answer_mode not in {"extractive", "openai-compatible"}:
         raise QaError("unsupported answer mode")
     if answer_mode == "openai-compatible":
@@ -623,6 +719,13 @@ def make_server(index: Path, host: str = "127.0.0.1", port: int = 18852, answer_
     provenance = _load_provenance(index, chunk_package) if chunk_package is not None else None
     if provenance is not None:
         _validate_index_bindings(index, provenance)
+    if knowledge_graph is not None:
+        if not knowledge_graph.is_file():
+            raise QaError("knowledge graph must be an existing SQLite file")
+        try:
+            graph_retrieve(knowledge_graph, index, "__startup_validation__", top_k=1)
+        except GraphRetrievalError as error:
+            raise QaError(str(error)) from error
     server = ThreadingHTTPServer((host, port), _QaHandler)
     server.qa_index = index.resolve()  # type: ignore[attr-defined]
     server.qa_answer_mode = answer_mode  # type: ignore[attr-defined]
@@ -632,6 +735,7 @@ def make_server(index: Path, host: str = "127.0.0.1", port: int = 18852, answer_
     server.qa_ocr_client = ocr_client  # type: ignore[attr-defined]
     server.qa_source_pdf = source_pdf_path.resolve() if source_pdf_path else None  # type: ignore[attr-defined]
     server.qa_provenance = provenance  # type: ignore[attr-defined]
+    server.qa_knowledge_graph = knowledge_graph.resolve() if knowledge_graph else None  # type: ignore[attr-defined]
     return server
 
 
@@ -649,13 +753,14 @@ def main(argv: list[str] | None = None) -> None:
     serve.add_argument("--answer-mode", default="extractive", choices=("extractive", "openai-compatible"))
     serve.add_argument("--source-pdf", type=Path)
     serve.add_argument("--chunk-package", type=Path)
+    serve.add_argument("--knowledge-graph", type=Path)
     serve.add_argument("--allow-lan", action="store_true")
     args = parser.parse_args(argv)
     try:
         if args.command == "build-evidence-index":
             print(json.dumps(build_evidence_index(args.chunk_package, args.output, args.generation_timestamp), ensure_ascii=False))
         else:
-            make_server(args.index, args.host, args.port, args.answer_mode, source_pdf_path=args.source_pdf, chunk_package=args.chunk_package, allow_lan=args.allow_lan).serve_forever()
+            make_server(args.index, args.host, args.port, args.answer_mode, source_pdf_path=args.source_pdf, chunk_package=args.chunk_package, knowledge_graph=args.knowledge_graph, allow_lan=args.allow_lan).serve_forever()
     except QaError as error:
         parser.error(str(error))
 

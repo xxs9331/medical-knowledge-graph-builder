@@ -10,7 +10,7 @@ from urllib.request import ProxyHandler, Request, build_opener
 from medical_kg_sourceprep.analysis import AnalysisRule
 from medical_kg_sourceprep.composite_rules import AtomicPredicate, CandidateStatus, ReviewRecord, TextAnchor
 from medical_kg_sourceprep.qa import MAX_BODY_BYTES, build_evidence_index, make_server
-from tests.test_qa import _chunk_package
+from tests.test_qa import _candidate_graph, _chunk_package
 from tests.test_report_pipeline import FakeTransport, _model, _report
 from tests.test_paddleocr_report import _vl_record
 from medical_kg_sourceprep.paddleocr_report import PaddleOcrJobResult
@@ -81,11 +81,22 @@ class DesktopApplicationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             index = root / "evidence.sqlite"
-            build_evidence_index(_chunk_package(root), index, "2026-01-01T00:00:00Z")
+            package = _chunk_package(root)
+            build_evidence_index(package, index, "2026-01-01T00:00:00Z")
+            manifest = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
+            first = manifest["chunks"][0]
+            graph = _candidate_graph(
+                root / "candidate.sqlite",
+                first["chunk_id"],
+                (package / first["chunk_path"]).read_text(encoding="utf-8"),
+                node_name="alpha",
+            )
             server = make_server(
                 index,
                 "127.0.0.1",
                 0,
+                chunk_package=package,
+                knowledge_graph=graph,
                 report_transport=FakeTransport(_model()),
                 ocr_client=_FakeOcrClient(),
             )
@@ -144,6 +155,9 @@ class DesktopApplicationTests(unittest.TestCase):
                 self.assertEqual(generated["report"]["summary"], _model()["summary"])
                 self.assertEqual(generated["metrics"][0]["computed_flag"], "high")
                 self.assertEqual(generated["evidence"][0]["source_pdf_page_number"], 21)
+                self.assertTrue(generated["channels"]["graph"]["enabled"])
+                self.assertGreaterEqual(generated["channels"]["graph"]["evidence_count"], 1)
+                self.assertIn("graph", generated["evidence"][0])
                 self.assertNotIn("private", generated["markdown"])
                 with self.assertRaises(HTTPError) as unknown:
                     opener.open(Request(base + "/api/report-analysis", data=b'{"unknown":true}', method="POST"), timeout=3)
@@ -183,11 +197,19 @@ class DesktopApplicationTests(unittest.TestCase):
                 self.assertIn("Cleaned 字符区间（左闭右开）", javascript)
                 self.assertIn("Cleaned Markdown 页内行", javascript)
                 self.assertIn("上游来源 Markdown 行范围", javascript)
+                self.assertIn("命中图节点", javascript)
+                self.assertIn("图路径", javascript)
+                self.assertIn("分析依据", javascript)
+                self.assertIn("正在合并书内检索与图谱证据", javascript)
+                self.assertIn("图谱辅助召回", javascript)
+                self.assertIn("候选推理路径", javascript)
+                self.assertIn("缺词诊断", javascript)
                 self.assertIn("evidenceDrawer(item)", javascript)
                 self.assertIn("/source.pdf#page=", javascript)
                 self.assertNotIn("drawer('书内证据',JSON.stringify", javascript)
                 self.assertIn("grid-template-columns:380px minmax(0,1fr)", css)
                 self.assertIn(".evidence-quote", css)
+                self.assertIn(".analysis-basis", css)
             finally:
                 server.shutdown()
                 server.server_close()
