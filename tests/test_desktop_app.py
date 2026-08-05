@@ -9,7 +9,8 @@ from urllib.request import ProxyHandler, Request, build_opener
 
 from medical_kg_sourceprep.rules.analysis import AnalysisRule
 from medical_kg_sourceprep.rules.composite_rules import AtomicPredicate, CandidateStatus, ReviewRecord, TextAnchor
-from medical_kg_sourceprep.api.qa import MAX_BODY_BYTES, build_evidence_index, make_server
+from medical_kg_sourceprep.api.qa import MAX_BODY_BYTES, make_server
+from medical_kg_sourceprep.evidence.index import build_evidence_index
 from tests.test_qa import _candidate_graph, _chunk_package
 from tests.test_report_pipeline import FakeTransport, _model, _report
 from tests.test_paddleocr_report import _vl_record

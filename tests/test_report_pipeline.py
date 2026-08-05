@@ -17,7 +17,7 @@ from medical_kg_sourceprep.report.report_pipeline import (
 )
 from medical_kg_sourceprep.graph.graph_retrieval import GraphReasoningResult
 from medical_kg_sourceprep.report.report_model import AbnormalFlag, Observation, ReferenceInterval
-from medical_kg_sourceprep.api.qa import build_evidence_index
+from medical_kg_sourceprep.evidence.index import build_evidence_index
 from tests.test_qa import _candidate_graph, _chunk_package
 
 

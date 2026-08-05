@@ -27,7 +27,7 @@ from ..graph.graph_retrieval import (
     graph_reasoning_paths,
 )
 from .lab_terminology import canonicalize_laboratory_term
-from ..api.qa import ProvenanceContext, QaError, query_index, query_index_with_graph
+from ..evidence.index import ProvenanceContext, QaError, query_index, query_index_with_graph
 from .report_model import AbnormalFlag, EvaluationResult, Observation, evaluate_observation
 
 
