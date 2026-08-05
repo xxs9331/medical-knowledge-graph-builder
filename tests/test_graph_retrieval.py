@@ -106,6 +106,57 @@ def reasoning_graph_db(path: Path, quote: str, *, invalid_subject: bool = False)
     return path
 
 
+def final_reasoning_graph_db(path: Path, quote: str) -> Path:
+    evidence = json.dumps([{
+        "chunk_id": "evidence",
+        "chunk_sha256": hashlib.sha256(quote.encode()).hexdigest(),
+        "exact_quote": quote,
+    }])
+    empty = "[]"
+    with sqlite3.connect(path) as connection:
+        connection.executescript("""
+            CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE nodes (node_id TEXT PRIMARY KEY, node_type TEXT NOT NULL, name TEXT NOT NULL,
+                properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL, origins_json TEXT NOT NULL);
+            CREATE TABLE edges (triple_id TEXT PRIMARY KEY, subject_id TEXT NOT NULL,
+                predicate TEXT NOT NULL, object_id TEXT NOT NULL, layer TEXT NOT NULL,
+                properties_json TEXT NOT NULL, evidence_json TEXT NOT NULL, origins_json TEXT NOT NULL);
+        """)
+        connection.executemany("INSERT INTO metadata VALUES (?, ?)", (
+            ("schema_version", "chapter-final-knowledge-graph/v0.1"),
+            ("status", "final"),
+        ))
+        rule_properties = json.dumps({
+            "rule_id": "anemia-index-rule",
+            "rule_type": "classification",
+            "applicability": {"required_inputs": ["MCV", "MCH"]},
+            "cases": [{
+                "condition_ast": {"all": [
+                    {"input": "MCV", "op": "LT", "value": 80, "unit": "fL"},
+                    {"input": "MCH", "op": "LT", "value": 23, "unit": "pg"},
+                ]},
+                "result": "小细胞低色素性模式",
+            }],
+        }, ensure_ascii=False)
+        nodes = [
+            ("mcv", "TestItem", "平均红细胞容积", json.dumps({"aliases": ["MCV"]}), empty, empty),
+            ("mch", "TestItem", "平均红细胞血红蛋白含量", json.dumps({"aliases": ["MCH"]}), empty, empty),
+            ("rule", "Rule", "贫血红细胞指数形态分类", rule_properties, evidence, empty),
+            ("result", "MedicalConcept", "贫血红细胞指数形态", "{}", empty, empty),
+            ("claim", "Claim", "MCV降低见于贫血", "{}", evidence, empty),
+        ]
+        connection.executemany("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?)", nodes)
+        edges = [
+            ("s1", "rule", "CONSUMES", "mcv", "rule", json.dumps({"input_terms": ["MCV"]}), evidence, empty),
+            ("s2", "rule", "CONSUMES", "mch", "rule", json.dumps({"input_terms": ["MCH"]}), evidence, empty),
+            ("c1", "rule", "PRODUCES", "result", "rule", "{}", evidence, empty),
+            ("cs1", "claim", "CLAIM_HAS_SUBJECT", "mcv", "semantic", "{}", evidence, empty),
+            ("cc1", "claim", "CLAIM_HAS_CONCLUSION", "result", "semantic", "{}", evidence, empty),
+        ]
+        connection.executemany("INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?)", edges)
+    return path
+
+
 class GraphRetrievalTests(unittest.TestCase):
     def test_path_projects_only_to_hash_bound_evidence_chunk(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -204,6 +255,29 @@ class GraphRetrievalTests(unittest.TestCase):
             self.assertEqual(hit.path_triples[0]["object_name"], "平均红细胞容积")
             self.assertEqual(hit.path_triples[0]["traversal_direction"], "reverse")
 
+    def test_final_graph_retrieval_and_reasoning_use_rule_not_claim_nodes(self) -> None:
+        observations = (
+            {"metric_id": "mcv", "terms": ["MCV"], "value": "70", "unit": "fL", "computed_flag": "low"},
+            {"metric_id": "mch", "terms": ["MCH"], "value": "20", "unit": "pg", "computed_flag": "low"},
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            quote = "MCV和MCH用于贫血形态分类"
+            evidence = evidence_db(root / "evidence.sqlite", (("evidence", quote),))
+            graph = final_reasoning_graph_db(root / "final.sqlite", quote)
+            hit = graph_retrieve(graph, evidence, "MCV", top_k=10)[0]
+            result = graph_reasoning_paths(graph, evidence, observations)
+
+        self.assertEqual(hit.graph_status, "final")
+        self.assertEqual(result.rejections, ())
+        self.assertEqual(len(result.paths), 1)
+        path = result.paths[0]
+        self.assertEqual(path["rule_id"], "anemia-index-rule")
+        self.assertEqual(path["graph_status"], "final")
+        self.assertTrue(path["approved_execution"])
+        self.assertEqual(path["diagnostic_use"], "allowed")
+        self.assertEqual(path["status"], "final-case-match")
+
     def test_multi_metric_reasoning_rejects_subject_endpoint_mismatch(self) -> None:
         observations = (
             {"metric_id": "mcv", "terms": ["平均红细胞体积", "MCV"], "computed_flag": "low"},
@@ -224,3 +298,238 @@ class GraphRetrievalTests(unittest.TestCase):
             invalid = graph_reasoning_paths(invalid_graph, evidence, observations)
             self.assertEqual(invalid.paths, ())
             self.assertEqual(invalid.rejections[0]["reason"], "subject_endpoint_mismatch")
+
+    def test_candidate_reasoning_evaluates_numeric_case_but_preserves_precondition(self) -> None:
+        observations = (
+            {"metric_id": "mcv", "terms": ["MCV"], "value": "70", "unit": "fL", "computed_flag": "low"},
+            {"metric_id": "mch", "terms": ["MCH"], "value": "20", "unit": "pg", "computed_flag": "low"},
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            quote = "MCV和MCH用于贫血形态分类"
+            evidence = evidence_db(root / "evidence.sqlite", (("evidence", quote),))
+            graph = reasoning_graph_db(root / "candidate.sqlite", quote)
+            with sqlite3.connect(graph) as connection:
+                properties = {
+                    "rule_id": "anemia-index-rule",
+                    "rule_type": "classification",
+                    "applicability": {
+                        "required_inputs": ["MCV", "MCH"],
+                        "preconditions": [{"context": "贫血状态", "op": "EQ", "value": "已确认"}],
+                    },
+                    "cases": [{
+                        "condition_ast": {"all": [
+                            {"input": "MCV", "op": "LT", "value": 80, "unit": "fL"},
+                            {"input": "MCH", "op": "LT", "value": 23, "unit": "pg"},
+                        ]},
+                        "result": "小细胞低色素性模式",
+                    }],
+                }
+                connection.execute(
+                    "UPDATE nodes SET properties_json=? WHERE node_id='rule'",
+                    (json.dumps(properties, ensure_ascii=False),),
+                )
+
+            result = graph_reasoning_paths(graph, evidence, observations)
+
+        self.assertEqual(len(result.paths), 1)
+        path = result.paths[0]
+        self.assertEqual(path["status"], "candidate-case-match-precondition-unverified")
+        self.assertFalse(path["approved_execution"])
+        self.assertEqual(path["diagnostic_use"], "forbidden")
+        self.assertFalse(path["preconditions_verified"])
+        evaluation = path["candidate_evaluation"]
+        self.assertEqual(evaluation["matched_case_index"], 0)
+        self.assertEqual(evaluation["candidate_result"], "小细胞低色素性模式")
+        self.assertEqual([item["actual_value"] for item in evaluation["condition_trace"]], ["70", "20"])
+        self.assertTrue(all(item["status"] == "pass" for item in evaluation["condition_trace"]))
+
+    def test_candidate_reasoning_rejects_case_on_unit_mismatch(self) -> None:
+        observations = (
+            {"metric_id": "mcv", "terms": ["MCV"], "value": "70", "unit": "pg", "computed_flag": "low"},
+            {"metric_id": "mch", "terms": ["MCH"], "value": "20", "unit": "pg", "computed_flag": "low"},
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            quote = "MCV和MCH用于贫血形态分类"
+            evidence = evidence_db(root / "evidence.sqlite", (("evidence", quote),))
+            graph = reasoning_graph_db(root / "candidate.sqlite", quote)
+            with sqlite3.connect(graph) as connection:
+                properties = {
+                    "rule_id": "anemia-index-rule",
+                    "rule_type": "classification",
+                    "applicability": {"required_inputs": ["MCV", "MCH"]},
+                    "cases": [{
+                        "condition_ast": {"all": [
+                            {"input": "MCV", "op": "LT", "value": 80, "unit": "fL"},
+                            {"input": "MCH", "op": "LT", "value": 23, "unit": "pg"},
+                        ]},
+                        "result": "小细胞低色素性模式",
+                    }],
+                }
+                connection.execute(
+                    "UPDATE nodes SET properties_json=? WHERE node_id='rule'",
+                    (json.dumps(properties, ensure_ascii=False),),
+                )
+
+            result = graph_reasoning_paths(graph, evidence, observations)
+
+        self.assertEqual(result.paths[0]["status"], "candidate-unit-mismatch")
+        self.assertIsNone(result.paths[0]["candidate_evaluation"]["matched_case_index"])
+
+    def test_candidate_reasoning_resolves_distinct_mcv_and_rdw_state_roles(self) -> None:
+        observations = (
+            {"metric_id": "mcv", "terms": ["MCV"], "value": "70", "unit": "fL", "computed_flag": "low"},
+            {"metric_id": "rdw", "terms": ["RDW-CV"], "value": "16", "unit": "%", "computed_flag": "high"},
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            quote = "MCV减小且RDW增大为小细胞不均一性贫血"
+            evidence = evidence_db(root / "evidence.sqlite", (("evidence", quote),))
+            graph = reasoning_graph_db(root / "candidate.sqlite", quote)
+            with sqlite3.connect(graph) as connection:
+                connection.execute(
+                    "INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    ("rdw", "TestItem", "红细胞体积分布宽度变异系数", "candidate",
+                     json.dumps({"aliases": ["RDW-CV"]}), "[]", "[]"),
+                )
+                properties = {
+                    "rule_id": "anemia-rdw-state-rule",
+                    "rule_type": "classification",
+                    "applicability": {
+                        "required_inputs": ["MCV", "RDW-CV"],
+                        "preconditions": [{"context": "贫血状态", "op": "EQ", "value": "已确认"}],
+                    },
+                    "cases": [{
+                        "condition_ast": {"all": [
+                            {"input": "MCV状态", "op": "EQ", "value": "低"},
+                            {"input": "RDW状态", "op": "EQ", "value": "高"},
+                        ]},
+                        "result": "小细胞不均一性贫血",
+                    }],
+                }
+                connection.execute(
+                    "UPDATE nodes SET properties_json=? WHERE node_id='rule'",
+                    (json.dumps(properties, ensure_ascii=False),),
+                )
+                connection.execute(
+                    "UPDATE edges SET properties_json=? WHERE triple_id='s1'",
+                    (json.dumps({"input_terms": ["MCV", "MCV状态"], "input_roles": ["MCV状态"]}, ensure_ascii=False),),
+                )
+                connection.execute(
+                    "UPDATE edges SET object_id='rdw', properties_json=? WHERE triple_id='s2'",
+                    (json.dumps({"input_terms": ["RDW-CV", "RDW状态"], "input_roles": ["RDW状态"]}, ensure_ascii=False),),
+                )
+
+            result = graph_reasoning_paths(graph, evidence, observations)
+
+        self.assertEqual(len(result.paths), 1)
+        path = result.paths[0]
+        self.assertEqual(path["status"], "candidate-case-match-precondition-unverified")
+        evaluation = path["candidate_evaluation"]
+        self.assertEqual(evaluation["candidate_result"], "小细胞不均一性贫血")
+        self.assertEqual([item["actual_value"] for item in evaluation["condition_trace"]], ["低", "高"])
+        self.assertEqual([item["actual_unit"] for item in evaluation["condition_trace"]], [None, None])
+        self.assertTrue(all(item["status"] == "pass" for item in evaluation["condition_trace"]))
+
+    def test_candidate_reasoning_derives_anemia_precondition_from_hgb_and_sex(self) -> None:
+        observations = (
+            {"metric_id": "hgb", "terms": ["血红蛋白", "HGB"], "value": "100", "unit": "g/L", "computed_flag": "low"},
+            {"metric_id": "mcv", "terms": ["MCV"], "value": "70", "unit": "fL", "computed_flag": "low"},
+            {"metric_id": "mch", "terms": ["MCH"], "value": "20", "unit": "pg", "computed_flag": "low"},
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            quote = "血红蛋白分级及红细胞形态分类"
+            evidence = evidence_db(root / "evidence.sqlite", (("evidence", quote),))
+            graph = reasoning_graph_db(root / "candidate.sqlite", quote)
+            with sqlite3.connect(graph) as connection:
+                connection.execute("UPDATE nodes SET properties_json=? WHERE node_id='hgb'",
+                                   (json.dumps({"aliases": ["Hb"]}, ensure_ascii=False),))
+                consumer = {
+                    "rule_id": "morphology-rule",
+                    "rule_type": "classification",
+                    "applicability": {
+                        "required_inputs": ["MCV", "MCH"],
+                        "preconditions": [{"context": "贫血状态", "op": "EQ", "value": "已确认"}],
+                    },
+                    "cases": [{
+                        "condition_ast": {"all": [
+                            {"input": "MCV", "op": "LT", "value": 80, "unit": "fL"},
+                            {"input": "MCH", "op": "LT", "value": 23, "unit": "pg"},
+                        ]},
+                        "result": "小细胞低色素性贫血",
+                    }],
+                }
+                connection.execute("UPDATE nodes SET properties_json=? WHERE node_id='rule'",
+                                   (json.dumps(consumer, ensure_ascii=False),))
+                connection.executemany("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?)", [
+                    ("sex", "Population", "性别", "candidate", "{}", "[]", "[]"),
+                    ("severity", "InterpretationRule", "血红蛋白贫血程度分级", "candidate",
+                     json.dumps({
+                         "rule_id": "severity-rule",
+                         "rule_type": "classification",
+                         "applicability": {"required_inputs": ["HGB", "性别"]},
+                         "cases": [{
+                             "condition_ast": {"all": [
+                                 {"input": "性别", "op": "EQ", "value": "女"},
+                                 {"input": "HGB", "op": "BETWEEN", "lower": 90, "upper": 110,
+                                  "unit": "g/L", "bounds": "source_tilde"},
+                             ]},
+                             "result": "轻度贫血",
+                         }],
+                     }, ensure_ascii=False), json.dumps([{
+                         "chunk_id": "evidence",
+                         "chunk_sha256": hashlib.sha256(quote.encode()).hexdigest(),
+                         "exact_quote": quote,
+                     }]), "[]"),
+                    ("severity-result", "MedicalConcept", "贫血程度", "candidate", "{}", "[]", "[]"),
+                ])
+                edge_evidence = json.dumps([{
+                    "chunk_id": "evidence",
+                    "chunk_sha256": hashlib.sha256(quote.encode()).hexdigest(),
+                    "exact_quote": quote,
+                }])
+                connection.executemany("INSERT INTO edges VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+                    ("sp1", "severity", "RULE_HAS_SUBJECT", "hgb", "rule", "candidate",
+                     json.dumps({"input_roles": ["血红蛋白"], "input_terms": ["HGB", "血红蛋白"]}), edge_evidence, "[]"),
+                    ("sp2", "severity", "RULE_APPLIES_TO_POPULATION", "sex", "rule", "candidate",
+                     json.dumps({"input_roles": ["性别"], "input_terms": ["性别"]}), edge_evidence, "[]"),
+                    ("sp3", "severity", "RULE_HAS_CONCLUSION", "severity-result", "rule", "candidate", "{}", edge_evidence, "[]"),
+                    ("dep", "severity", "RULE_SATISFIES_PRECONDITION", "rule", "rule", "candidate",
+                     json.dumps({
+                         "satisfies": {"context": "贫血状态", "op": "EQ", "value": "已确认"},
+                         "producer_results": ["轻度贫血"],
+                     }, ensure_ascii=False), edge_evidence, "[]"),
+                ])
+
+            result = graph_reasoning_paths(
+                graph,
+                evidence,
+                observations,
+                context_facts={"性别": {"metric_id": "metadata:patient_sex", "value": "女", "unit": None}},
+            )
+            normal_hgb = (
+                {**observations[0], "value": "130", "computed_flag": "normal"},
+                *observations[1:],
+            )
+            failed = graph_reasoning_paths(
+                graph,
+                evidence,
+                normal_hgb,
+                context_facts={"性别": {"metric_id": "metadata:patient_sex", "value": "女", "unit": None}},
+            )
+
+        paths = {path["rule_id"]: path for path in result.paths}
+        self.assertEqual(paths["severity-rule"]["candidate_evaluation"]["candidate_result"], "轻度贫血")
+        morphology = paths["morphology-rule"]
+        self.assertEqual(morphology["status"], "candidate-case-match-precondition-derived")
+        self.assertTrue(morphology["preconditions_verified"])
+        self.assertEqual(morphology["precondition_evaluations"][0]["source_rule_id"], "severity-rule")
+        failed_paths = {path["rule_id"]: path for path in failed.paths}
+        self.assertEqual(failed_paths["morphology-rule"]["status"], "candidate-precondition-failed")
+        self.assertFalse(failed_paths["morphology-rule"]["preconditions_verified"])
+        self.assertEqual(
+            failed_paths["morphology-rule"]["precondition_evaluations"][0]["actual_value"],
+            "未满足",
+        )
