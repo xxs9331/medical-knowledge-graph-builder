@@ -4,9 +4,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk
-from medical_kg_sourceprep.semantic_contract import build_v02_prompt
-from medical_kg_sourceprep.semantic_v04 import (
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.semantic_contract import build_v02_prompt
+from medical_kg_sourceprep.extraction.semantic_v04 import (
     augment_catalog, audit_superseded_v02_relations, baseline_model_relations, build_base_catalog,
     recover_structural_relations, validate_endpoints, validate_rules,
 )

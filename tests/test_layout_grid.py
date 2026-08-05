@@ -1,6 +1,6 @@
 import unittest
 
-from medical_kg_sourceprep.layout_grid import LayoutBlock, table_grids
+from medical_kg_sourceprep.report.layout_grid import LayoutBlock, table_grids
 
 
 class LayoutGridTests(unittest.TestCase):

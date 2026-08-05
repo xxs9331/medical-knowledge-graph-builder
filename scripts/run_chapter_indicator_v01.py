@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 from typing import Any, Callable
 
-from medical_kg_sourceprep.indicator_catalog import (
+from medical_kg_sourceprep.rules.indicator_catalog import (
     CATALOG_VERSION,
     LABEL_STUDIO_CONFIG,
     LABEL_STUDIO_VERSION,
@@ -26,7 +26,7 @@ from medical_kg_sourceprep.indicator_catalog import (
     load_index_entries,
     validate_indicator_response,
 )
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 from run_chapter_semantic_v02 import MODEL, _post
 
 ROOT = Path(__file__).resolve().parents[1]

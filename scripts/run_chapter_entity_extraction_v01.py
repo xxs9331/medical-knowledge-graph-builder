@@ -8,8 +8,8 @@ import json
 from pathlib import Path
 import sys
 
-from medical_kg_sourceprep.entity_extraction import PROMPT_VERSION, build_entity_prompt, merge_entities, validate_page_result
-from medical_kg_sourceprep.llm_extraction import atomic_write_json
+from medical_kg_sourceprep.extraction.entity_extraction import PROMPT_VERSION, build_entity_prompt, merge_entities, validate_page_result
+from medical_kg_sourceprep.extraction.llm_extraction import atomic_write_json
 from run_chapter_semantic_v02 import MODEL, _post
 
 

@@ -7,14 +7,14 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import ProxyHandler, Request, build_opener
 
-from medical_kg_sourceprep.analysis import AnalysisRule
-from medical_kg_sourceprep.composite_rules import AtomicPredicate, CandidateStatus, ReviewRecord, TextAnchor
-from medical_kg_sourceprep.qa import MAX_BODY_BYTES, build_evidence_index, make_server
+from medical_kg_sourceprep.rules.analysis import AnalysisRule
+from medical_kg_sourceprep.rules.composite_rules import AtomicPredicate, CandidateStatus, ReviewRecord, TextAnchor
+from medical_kg_sourceprep.api.qa import MAX_BODY_BYTES, build_evidence_index, make_server
 from tests.test_qa import _candidate_graph, _chunk_package
 from tests.test_report_pipeline import FakeTransport, _model, _report
 from tests.test_paddleocr_report import _vl_record
-from medical_kg_sourceprep.paddleocr_report import PaddleOcrJobResult
-from medical_kg_sourceprep.desktop_app import parse_report_payload
+from medical_kg_sourceprep.report.paddleocr_report import PaddleOcrJobResult
+from medical_kg_sourceprep.report.desktop_app import parse_report_payload
 
 
 class _FakeOcrClient:
@@ -37,7 +37,7 @@ class _FakeOcrClient:
 
 class DesktopApplicationTests(unittest.TestCase):
     def test_reading_view_lists_all_report_input_metrics(self) -> None:
-        from medical_kg_sourceprep.desktop_app import javascript
+        from medical_kg_sourceprep.report.desktop_app import javascript
 
         self.assertIn("报告输入指标", javascript())
 

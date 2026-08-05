@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from .llm_extraction import EvidenceChunk, atomic_write_json
-from .semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
+from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
 
 CONTRACT_VERSION = "semantic-candidates/v0.3"
 RELATION_PROMPT_VERSION = "semantic-candidates-relation-prompt/v0.3.1"

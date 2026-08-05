@@ -12,7 +12,7 @@ import hashlib
 from typing import Any, Mapping, Sequence
 
 from .llm_extraction import EvidenceChunk
-from .semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SUBJECT_LOGICS
+from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SUBJECT_LOGICS
 
 CONTRACT_VERSION = "semantic-candidates/v0.2"
 PROMPT_VERSION = "semantic-candidates-prompt/v0.2.2"

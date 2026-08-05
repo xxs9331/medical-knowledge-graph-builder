@@ -16,10 +16,10 @@ import time
 from typing import Any, Mapping, Sequence
 
 from .llm_extraction import EvidenceChunk, atomic_write_json
-from .book_sources import build_book_manifest_from_packages
-from .knowledge_graph import KnowledgeGraphBuilder, PageText
-from .semantic_graph import SemanticGraphBuilder
-from .semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS, SemanticRecord
+from ..provenance.book_sources import build_book_manifest_from_packages
+from ..graph.knowledge_graph import KnowledgeGraphBuilder, PageText
+from ..graph.semantic_graph import SemanticGraphBuilder
+from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS, SemanticRecord
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,7 +75,7 @@ def _resolve_chapter_provider(
         )
     if provider == "opencode-go":
         key = __import__(
-            "medical_kg_sourceprep.llm_extraction", fromlist=["load_opencode_key"]
+            "medical_kg_sourceprep.extraction.llm_extraction", fromlist=["load_opencode_key"]
         ).load_opencode_key(env=environment)
         return ChapterExtractionProvider(
             provider="opencode-go",
@@ -476,7 +476,7 @@ def run_chapter(
     source = json.loads(source_manifest.read_text(encoding="utf-8"))
     if chunk_manifest.get("page_count") != 24 or chunk_manifest.get("chunk_count") != 44:
         raise RuntimeError("chapter source coverage is not 24 pages and 44 chunks")
-    _, chunks_tuple = __import__("medical_kg_sourceprep.llm_extraction", fromlist=["load_chunk_manifest"]).load_chunk_manifest(chunks_manifest)
+    _, chunks_tuple = __import__("medical_kg_sourceprep.extraction.llm_extraction", fromlist=["load_chunk_manifest"]).load_chunk_manifest(chunks_manifest)
     chunks_by_id = {chunk.chunk_id: chunk for chunk in chunks_tuple}
     output_dir.mkdir(parents=True, exist_ok=True)
     checkpoint = output_dir / "checkpoint.json"

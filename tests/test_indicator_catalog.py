@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from medical_kg_sourceprep.indicator_catalog import (
+from medical_kg_sourceprep.rules.indicator_catalog import (
     IndicatorContractError,
     LABEL_STUDIO_CONFIG,
     aggregate_indicators,
@@ -18,7 +18,7 @@ from medical_kg_sourceprep.indicator_catalog import (
     merge_catalog_indicators,
     validate_indicator_response,
 )
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
 
 
 def chunk(text: str) -> EvidenceChunk:

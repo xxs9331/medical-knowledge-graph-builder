@@ -8,7 +8,7 @@ import json
 import re
 from typing import Any, Mapping, Sequence
 
-from .llm_extraction import EvidenceChunk
+from ..extraction.llm_extraction import EvidenceChunk
 
 
 SCHEMA_VERSION = "indicator-rule-functions/v0.1"

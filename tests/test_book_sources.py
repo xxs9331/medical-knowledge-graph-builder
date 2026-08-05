@@ -1,7 +1,7 @@
 import hashlib
 import unittest
 
-from medical_kg_sourceprep.book_sources import (
+from medical_kg_sourceprep.provenance.book_sources import (
     ANCHOR_SCHEMA_VERSION,
     UNAVAILABLE,
     SourceProvenanceError,

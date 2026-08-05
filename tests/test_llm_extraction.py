@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 from urllib.error import HTTPError
 
-from medical_kg_sourceprep.llm_extraction import (
+from medical_kg_sourceprep.extraction.llm_extraction import (
     EvidenceChunk,
     ExtractionError,
     OpenCodeGoClient,
@@ -130,7 +130,7 @@ class LlmExtractionTests(unittest.TestCase):
         self.assertIn("conditions/conclusion={text,source_ref}", prompt)
         self.assertIn("AT_LEAST only", prompt)
         self.assertNotIn("return a schema error", prompt)
-        self.assertLess(len(prompt), len(json.dumps(__import__("medical_kg_sourceprep.llm_extraction", fromlist=["OUTPUT_SCHEMA"]).OUTPUT_SCHEMA)))
+        self.assertLess(len(prompt), len(json.dumps(__import__("medical_kg_sourceprep.extraction.llm_extraction", fromlist=["OUTPUT_SCHEMA"]).OUTPUT_SCHEMA)))
 
     def test_partial_validation_keeps_valid_candidate_and_rejects_bad_quote(self):
         source = chunk("a", "valid marker broken")
@@ -222,12 +222,12 @@ class LlmExtractionTests(unittest.TestCase):
             def read(self): return b'{"model":"deepseek-v4-flash","usage":{"prompt_tokens":2,"completion_tokens":3,"total_tokens":5,"completion_tokens_details":{"reasoning_tokens":3}},"choices":[{"finish_reason":"length","message":{"content":"{}","reasoning_content":"do-not-persist"}}]}'
         cases = [lambda req, timeout: HTTPError("u", 429, "secret-key", {}, None), lambda req, timeout: TimeoutError("secret-key")]
         for opener in cases:
-            with patch("medical_kg_sourceprep.llm_extraction.time.sleep"):
+            with patch("medical_kg_sourceprep.extraction.llm_extraction.time.sleep"):
                 with self.assertRaises(ExtractionError) as caught:
                     OpenCodeGoClient(api_key="secret-key", opener=opener).complete("x")
             self.assertNotIn("secret-key", str(caught.exception))
 
-        with patch("medical_kg_sourceprep.llm_extraction.time.sleep"):
+        with patch("medical_kg_sourceprep.extraction.llm_extraction.time.sleep"):
             client = OpenCodeGoClient(api_key="secret-key", opener=lambda req, timeout: Response())
             with self.assertRaisesRegex(ExtractionError, "length"):
                 client.complete("x")

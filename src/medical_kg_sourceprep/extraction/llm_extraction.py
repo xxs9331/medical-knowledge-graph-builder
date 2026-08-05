@@ -21,7 +21,8 @@ import subprocess
 from typing import Any, Callable, Mapping, Sequence
 from urllib import error, request
 
-from .semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
+from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
+from ..provenance.package_validation import ChunkPackageError, validate_chunk_package
 
 PROVIDER = "opencode-go"
 MODEL_ID = "opencode-go/deepseek-v4-flash"
@@ -219,56 +220,24 @@ def build_prompt(window: ExtractionWindow) -> str:
 
 
 def load_chunk_manifest(manifest_path: Path) -> tuple[dict[str, Any], tuple[EvidenceChunk, ...]]:
-    """Load a real chunk package and reject malformed or escaping paths."""
-    root = manifest_path.parent.resolve()
+    """Load a provenance-validated chunk package and materialize EvidenceChunks."""
     try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ExtractionError("invalid chunk manifest") from exc
-    if not isinstance(manifest, Mapping) or not isinstance(manifest.get("pages"), list) or not isinstance(manifest.get("chunks"), list):
-        raise ExtractionError("incomplete chunk manifest")
-    manifest_required = {"schema_version", "source_manifest_sha256", "document_id", "chapter_id", "page_count", "chunk_count", "pages", "chunks"}
-    if not manifest_required <= set(manifest) or not all(isinstance(manifest.get(key), str) and manifest[key] for key in ("document_id", "chapter_id")):
-        raise ExtractionError("incomplete chunk manifest")
-    if manifest.get("page_count") != len(manifest["pages"]) or manifest.get("chunk_count") != len(manifest["chunks"]):
-        raise ExtractionError("manifest counts mismatch")
-    source_hash = manifest.get("source_manifest_sha256")
-    if not isinstance(source_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", source_hash):
-        raise ExtractionError("manifest source hash invalid")
-    pages = {p.get("page_id"): p for p in manifest["pages"] if isinstance(p, Mapping)}
-    if len(pages) != len(manifest["pages"]):
-        raise ExtractionError("duplicate or invalid page")
-    for index, page in enumerate(manifest["pages"]):
-        if not {"page_id", "chapter_page_index", "printed_page_number", "source_pdf_page_number", "review_status", "cleaned_sha256"} <= set(page):
-            raise ExtractionError("incomplete page record")
-        if page["chapter_page_index"] != index or not re.fullmatch(r"[0-9a-f]{64}", str(page["cleaned_sha256"])):
-            raise ExtractionError("invalid page record")
-    loaded: list[EvidenceChunk] = []
-    seen_chunks: set[str] = set()
-    for item in manifest["chunks"]:
-        required = {"chunk_id", "page_id", "chunk_path", "chunk_sha256", "cleaned_char_start", "cleaned_char_end"}
-        if not isinstance(item, Mapping) or not required <= set(item) or item["page_id"] not in pages or item["chunk_id"] in seen_chunks:
-            raise ExtractionError("invalid chunk manifest record")
-        seen_chunks.add(item["chunk_id"])
-        if item.get("document_id") != manifest["document_id"] or item.get("chapter_id") != manifest["chapter_id"]:
-            raise ExtractionError("chunk provenance mismatch")
-        relative = Path(item["chunk_path"])
-        target = (root / relative).resolve()
-        if relative.is_absolute() or ".." in relative.parts or root not in target.parents:
-            raise ExtractionError("chunk path escapes manifest root")
-        try:
-            text = target.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError) as exc:
-            raise ExtractionError("chunk file unavailable") from exc
-        if hashlib.sha256(text.encode()).hexdigest() != item["chunk_sha256"]:
-            raise ExtractionError("chunk hash mismatch")
-        page = pages[item["page_id"]]
-        loaded.append(EvidenceChunk.from_mapping({**item, "text": text,
-            "chapter_id": item.get("chapter_id", manifest.get("chapter_id", "")),
-            "printed_page_number": page.get("printed_page_number"),
-            "source_pdf_page_number": page.get("source_pdf_page_number"),
-            "chapter_page_index": page.get("chapter_page_index")}))
+        _manifest_bytes, manifest, records = validate_chunk_package(manifest_path, strict=False)
+    except ChunkPackageError as error:
+        raise ExtractionError(str(error)) from error
+    pages = {page["page_id"]: page for page in manifest["pages"]}
+    loaded = [
+        EvidenceChunk.from_mapping({
+            **record,
+            "chapter_id": record.get("chapter_id", manifest.get("chapter_id", "")),
+            "printed_page_number": pages[record["page_id"]].get("printed_page_number"),
+            "source_pdf_page_number": pages[record["page_id"]].get("source_pdf_page_number"),
+            "chapter_page_index": pages[record["page_id"]].get("chapter_page_index"),
+        })
+        for record in records
+    ]
     return dict(manifest), tuple(loaded)
+
 
 
 def _error_summary(exc: BaseException) -> str:

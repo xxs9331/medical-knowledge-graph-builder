@@ -1,8 +1,8 @@
 import hashlib
 import unittest
 
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk
-from medical_kg_sourceprep.semantic_contract import ContractError, build_v02_prompt, validate_v02
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.semantic_contract import ContractError, build_v02_prompt, validate_v02
 
 
 def ref(chunk, quote):

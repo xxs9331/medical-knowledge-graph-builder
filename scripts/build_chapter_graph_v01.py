@@ -13,7 +13,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from medical_kg_sourceprep.chapter_graph_build import (
+from medical_kg_sourceprep.graph.chapter_graph_build import (
     ChapterGraphBuilder,
     build_entity_evidence,
     build_final_graph,

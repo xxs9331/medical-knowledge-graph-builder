@@ -11,7 +11,7 @@ from urllib.error import HTTPError
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.request import ProxyHandler, Request, build_opener
 
-from medical_kg_sourceprep.qa import QaError, build_evidence_index, make_server, query_index
+from medical_kg_sourceprep.api.qa import QaError, build_evidence_index, make_server, query_index
 
 
 def _sha256(value: bytes) -> str:

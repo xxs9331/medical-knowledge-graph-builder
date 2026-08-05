@@ -21,13 +21,13 @@ from urllib import error as urlerror
 from urllib import request
 
 from .desktop_app import DesktopAppError, parse_report_payload
-from .graph_retrieval import (
+from ..graph.graph_retrieval import (
     GraphRetrievalError,
     graph_query_diagnostic,
     graph_reasoning_paths,
 )
 from .lab_terminology import canonicalize_laboratory_term
-from .qa import ProvenanceContext, QaError, query_index, query_index_with_graph
+from ..api.qa import ProvenanceContext, QaError, query_index, query_index_with_graph
 from .report_model import AbnormalFlag, EvaluationResult, Observation, evaluate_observation
 
 

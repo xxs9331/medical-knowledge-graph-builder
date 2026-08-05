@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import base64
 import binascii
-import hashlib
 import json
 import math
 import os
@@ -22,18 +21,23 @@ from typing import Any
 from urllib.error import URLError
 from urllib.request import Request, ProxyHandler, build_opener
 
-from .analysis import AnalysisRule, analyze_report, result_to_dict
-from .desktop_app import DesktopAppError, css as desktop_css, html as desktop_html
-from .desktop_app import javascript as desktop_javascript
-from .desktop_app import parse_report_payload
-from .graph_retrieval import GraphRetrievalError, graph_query_diagnostic, graph_retrieve
-from .paddleocr_report import (
+from ..rules.analysis import AnalysisRule, analyze_report, result_to_dict
+from ..provenance.package_validation import (
+    CHUNK_SCHEMA_VERSION,
+    ChunkPackageError,
+    sha256_bytes,
+    validate_chunk_package,
+)
+from ..report.desktop_app import DesktopAppError, css as desktop_css, html as desktop_html
+from ..report.desktop_app import javascript as desktop_javascript
+from ..report.desktop_app import parse_report_payload
+from ..graph.graph_retrieval import GraphRetrievalError, graph_query_diagnostic, graph_retrieve
+from ..report.paddleocr_report import (
     PaddleOcrJobsClient,
     PaddleOcrReportError,
     image_report_job,
 )
 
-CHUNK_SCHEMA_VERSION = "evidence-chunk-package/v0.1"
 INDEX_SCHEMA_VERSION = "evidence-index/v0.1"
 MAX_BODY_BYTES = 256 * 1024
 MAX_OCR_BODY_BYTES = 14 * 1024 * 1024
@@ -51,150 +55,12 @@ class ProvenanceContext:
     chunks: dict[str, dict[str, Any]]
 
 
-def _sha256(value: bytes) -> str:
-    return hashlib.sha256(value).hexdigest()
-
-
-def _read_json(path: Path, label: str) -> tuple[bytes, dict[str, Any]]:
-    try:
-        raw = path.read_bytes()
-        text = raw.decode("utf-8")
-        value = json.loads(text)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise QaError(f"{label} must be readable UTF-8 JSON") from error
-    if not isinstance(value, dict):
-        raise QaError(f"{label} must be an object")
-    return raw, value
-
-
-def _safe_child(root: Path, value: object) -> Path:
-    if not isinstance(value, str) or not value:
-        raise QaError("chunk_path must be a non-empty relative path")
-    path = Path(value)
-    if path.is_absolute() or ".." in path.parts:
-        raise QaError("chunk_path must be a safe relative path")
-    result = (root / path).resolve()
-    if root not in result.parents:
-        raise QaError("chunk_path escapes chunk package")
-    return result
-
-
-def _integer(value: object, label: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int):
-        raise QaError(f"{label} must be an integer")
-    return value
-
-
 def _validate_package(package: Path) -> tuple[bytes, dict[str, Any], list[dict[str, Any]]]:
-    root = package.resolve()
-    if not root.is_dir():
-        raise QaError("chunk package must be an existing directory")
-    manifest_bytes, manifest = _read_json(root / "manifest.json", "chunk manifest")
-    required = {"schema_version", "source_manifest_sha256", "document_id", "chapter_id", "page_count", "chunk_count", "pages", "chunks"}
-    if not required <= set(manifest) or manifest["schema_version"] != CHUNK_SCHEMA_VERSION:
-        raise QaError("unsupported or incomplete chunk manifest")
-    if not all(isinstance(manifest[key], str) and manifest[key] for key in ("document_id", "chapter_id", "source_manifest_sha256")):
-        raise QaError("chunk manifest identifiers are invalid")
-    if not re.fullmatch(r"[0-9a-f]{64}", manifest["source_manifest_sha256"]):
-        raise QaError("source manifest hash must be SHA-256")
-    pages = manifest["pages"]
-    chunks = manifest["chunks"]
-    if not isinstance(pages, list) or not isinstance(chunks, list):
-        raise QaError("chunk manifest pages and chunks must be lists")
-    if _integer(manifest["page_count"], "page_count") != len(pages) or _integer(manifest["chunk_count"], "chunk_count") != len(chunks):
-        raise QaError("chunk manifest counts do not match records")
-    page_records: dict[str, dict[str, Any]] = {}
-    for expected_index, page in enumerate(pages):
-        if (
-            not isinstance(page, dict)
-            or not isinstance(page.get("page_id"), str)
-            or not page["page_id"]
-        ):
-            raise QaError("page record is invalid")
-        if page["page_id"] in page_records or _integer(page.get("chapter_page_index"), "chapter_page_index") != expected_index:
-            raise QaError("page IDs must be unique and page indexes contiguous")
-        page_records[page["page_id"]] = page
-        for name in ("printed_page_number", "source_pdf_page_number"):
-            _integer(page.get(name), name)
-        if not isinstance(page.get("review_status"), str) or not page["review_status"]:
-            raise QaError("page review status is invalid")
-        if not isinstance(page.get("cleaned_sha256"), str) or not re.fullmatch(
-            r"[0-9a-f]{64}", page["cleaned_sha256"]
-        ):
-            raise QaError("page cleaned hash must be SHA-256")
-    seen: set[str] = set()
-    validated: list[dict[str, Any]] = []
-    for chunk in chunks:
-        if not isinstance(chunk, dict):
-            raise QaError("chunk record is invalid")
-        chunk_id = chunk.get("chunk_id")
-        if not isinstance(chunk_id, str) or not chunk_id or chunk_id in seen:
-            raise QaError("chunk IDs must be non-empty and unique")
-        seen.add(chunk_id)
-        page = page_records.get(chunk.get("page_id"))
-        if page is None or chunk.get("document_id") != manifest["document_id"]:
-            raise QaError("chunk provenance does not bind to manifest")
-        if chunk.get("chapter_id") != manifest["chapter_id"]:
-            raise QaError("chunk chapter does not bind to manifest")
-        if any(
-            chunk.get(field) != page.get(field)
-            for field in (
-                "chapter_page_index",
-                "printed_page_number",
-                "source_pdf_page_number",
-                "review_status",
-            )
-        ):
-            raise QaError("chunk page mapping does not bind to manifest")
-        if chunk.get("source_cleaned_sha256") != page.get("cleaned_sha256"):
-            raise QaError("chunk source hash does not bind to manifest")
-        if chunk.get("source_cleaned_path") != page.get("cleaned_path"):
-            raise QaError("chunk source path does not bind to manifest")
-        if chunk.get("source_page") != page:
-            raise QaError("chunk source page does not bind to manifest")
-        path = _safe_child(root, chunk.get("chunk_path"))
-        try:
-            content = path.read_bytes()
-            text = content.decode("utf-8")
-        except (OSError, UnicodeDecodeError) as error:
-            raise QaError("chunk file must be readable UTF-8") from error
-        expected_hash = chunk.get("chunk_sha256")
-        if (
-            not isinstance(expected_hash, str)
-            or not re.fullmatch(r"[0-9a-f]{64}", expected_hash)
-            or _sha256(content) != expected_hash
-        ):
-            raise QaError("chunk file hash mismatch")
-        if "\r" in text:
-            raise QaError("chunk files must use LF line endings")
-        start = _integer(chunk.get("cleaned_char_start"), "cleaned_char_start")
-        end = _integer(chunk.get("cleaned_char_end"), "cleaned_char_end")
-        if start < 0 or end <= start or end - start != len(text):
-            raise QaError("chunk character offsets are invalid")
-        if "char_count" in chunk and _integer(chunk["char_count"], "char_count") != len(text):
-            raise QaError("chunk character count is invalid")
-        record = dict(chunk)
-        record["text"] = text
-        validated.append(record)
+    try:
+        return validate_chunk_package(package)
+    except ChunkPackageError as error:
+        raise QaError(str(error)) from error
 
-    chunks_by_page: dict[str, list[dict[str, Any]]] = {
-        page_id: [] for page_id in page_records
-    }
-    for chunk in validated:
-        chunks_by_page[chunk["page_id"]].append(chunk)
-    for page_id, page in page_records.items():
-        offset = 0
-        page_parts: list[str] = []
-        for chunk in sorted(
-            chunks_by_page[page_id], key=lambda item: item["cleaned_char_start"]
-        ):
-            if chunk["cleaned_char_start"] != offset:
-                raise QaError("chunk offsets are not contiguous within a page")
-            page_parts.append(chunk["text"])
-            offset = chunk["cleaned_char_end"]
-        if _sha256("".join(page_parts).encode("utf-8")) != page["cleaned_sha256"]:
-            raise QaError("chunk reconstruction does not match cleaned page hash")
-    return manifest_bytes, manifest, validated
 
 
 def build_evidence_index(package: Path, output: Path, generation_timestamp: str | None = None) -> dict[str, Any]:
@@ -220,7 +86,7 @@ def build_evidence_index(package: Path, output: Path, generation_timestamp: str 
             """)
             metadata = {
                 "schema_version": INDEX_SCHEMA_VERSION,
-                "chunk_manifest_sha256": _sha256(manifest_bytes),
+                "chunk_manifest_sha256": sha256_bytes(manifest_bytes),
                 "source_manifest_sha256": manifest["source_manifest_sha256"],
                 "generation_timestamp": generation_timestamp or "unspecified",
                 "answer_mode": "extractive",
@@ -242,7 +108,7 @@ def build_evidence_index(package: Path, output: Path, generation_timestamp: str 
     except Exception:
         temporary.unlink(missing_ok=True)
         raise
-    return {"schema_version": INDEX_SCHEMA_VERSION, "document_count": 1, "page_count": len(manifest["pages"]), "chunk_count": len(chunks), "edge_count": len(manifest["pages"]) + len(chunks) + max(0, len(chunks) - 1), "chunk_manifest_sha256": _sha256(manifest_bytes)}
+    return {"schema_version": INDEX_SCHEMA_VERSION, "document_count": 1, "page_count": len(manifest["pages"]), "chunk_count": len(chunks), "edge_count": len(manifest["pages"]) + len(chunks) + max(0, len(chunks) - 1), "chunk_manifest_sha256": sha256_bytes(manifest_bytes)}
 
 
 def _terms(query: str) -> list[str]:
@@ -419,7 +285,7 @@ def query_index_with_graph(
 
 def _load_provenance(index: Path, package: Path) -> ProvenanceContext:
     manifest_bytes, manifest, chunks = _validate_package(package)
-    if _index_meta(index).get("chunk_manifest_sha256") != _sha256(manifest_bytes):
+    if _index_meta(index).get("chunk_manifest_sha256") != sha256_bytes(manifest_bytes):
         raise QaError("chunk package manifest hash does not bind to index")
     pages = {page["page_id"]: page for page in manifest["pages"]}
     for page in pages.values():
@@ -490,7 +356,7 @@ def _location(row: dict[str, Any], provenance: ProvenanceContext | None) -> dict
     ):
         if row[field] != expected[field]:
             raise QaError("index location does not match validated chunk package")
-    if row["text"] != expected["exact_quote"] or _sha256(row["text"].encode("utf-8")) != row["chunk_sha256"]:
+    if row["text"] != expected["exact_quote"] or sha256_bytes(row["text"].encode("utf-8")) != row["chunk_sha256"]:
         raise QaError("index text does not match validated chunk package")
     return {**expected, "location_status": "verified"}
 
@@ -650,7 +516,7 @@ class _QaHandler(BaseHTTPRequestHandler):
                     "job": {**job.summary(), "validation_model": "PP-OCRv6"},
                 }
             elif self.path == "/api/report-generation":
-                from .report_pipeline import ReportPipelineError, analyze_report_document
+                from ..report.report_pipeline import ReportPipelineError, analyze_report_document
 
                 try:
                     result = analyze_report_document(

@@ -1,6 +1,6 @@
 import unittest
 
-from medical_kg_sourceprep.entity_ontology import build_ontology_candidate
+from medical_kg_sourceprep.extraction.entity_ontology import build_ontology_candidate
 
 
 class EntityOntologyTests(unittest.TestCase):

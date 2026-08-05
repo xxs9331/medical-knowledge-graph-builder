@@ -1,5 +1,5 @@
 """Page-aware source preparation for downstream consumers."""
 
-from .prepare import PreparationError, prepare_source
+from .provenance.prepare import PreparationError, prepare_source
 
 __all__ = ["PreparationError", "prepare_source"]

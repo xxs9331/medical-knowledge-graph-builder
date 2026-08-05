@@ -8,8 +8,8 @@ import json
 from pathlib import Path
 import sys
 
-from medical_kg_sourceprep.entity_ontology import build_ontology_candidate
-from medical_kg_sourceprep.llm_extraction import atomic_write_json
+from medical_kg_sourceprep.extraction.entity_ontology import build_ontology_candidate
+from medical_kg_sourceprep.extraction.llm_extraction import atomic_write_json
 
 
 ROOT = Path(__file__).resolve().parents[1]

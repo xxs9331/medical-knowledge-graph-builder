@@ -9,11 +9,11 @@ description = "Provenance-first source preparation for downstream medical knowle
 requires-python = ">=3.11"
 
 [project.scripts]
-prepare-chunks = "medical_kg_sourceprep.chunks:main"
-prepare-source = "medical_kg_sourceprep.cli:main"
-medical-kg-qa = "medical_kg_sourceprep.qa:main"
-medical-report = "medical_kg_sourceprep.report_pipeline:main"
-medical-report-ocr = "medical_kg_sourceprep.paddleocr_report:main"
+prepare-chunks = "medical_kg_sourceprep.provenance.chunks:main"
+prepare-source = "medical_kg_sourceprep.cli.source:main"
+medical-kg-qa = "medical_kg_sourceprep.api.qa:main"
+medical-report = "medical_kg_sourceprep.report.report_pipeline:main"
+medical-report-ocr = "medical_kg_sourceprep.report.paddleocr_report:main"
 
 [tool.ruff]
 line-length = 100

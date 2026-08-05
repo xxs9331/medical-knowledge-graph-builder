@@ -12,7 +12,7 @@ import sqlite3
 from typing import Any, Mapping, Sequence
 
 from .llm_extraction import EvidenceChunk
-from .semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
+from ..graph.semantic_graph import ENTITY_TYPES, SEMANTIC_RELATIONS, SEMANTIC_TYPES, SUBJECT_LOGICS
 
 CONTRACT_VERSION = "semantic-candidates/v0.4"
 CATALOG_VERSION = "entity-catalog/v0.4"

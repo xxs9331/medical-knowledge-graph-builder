@@ -17,11 +17,12 @@ import tempfile
 from typing import Any, Mapping, Sequence
 import unicodedata
 
-from .book_sources import (
+from ..provenance.book_sources import (
     SourceProvenanceError,
     create_text_anchor,
     validate_book_manifest,
 )
+from ..provenance.package_validation import ChunkPackageError, sha256_bytes, validate_chunk_layout
 
 
 GRAPH_SCHEMA_VERSION = "knowledge-graph/v0.2"
@@ -71,16 +72,6 @@ class GraphBuildResult:
     edge_count: int
     rule_count: int
     candidate_rule_count: int
-
-
-def _sha256(value: str) -> str:
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()
-
-
-def _require_identifier(value: object, label: str) -> str:
-    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9:._-]*", value):
-        raise GraphBuildError(f"{label} must be a stable identifier")
-    return value
 
 
 def _line_at(text: str, offset: int) -> int:
@@ -235,7 +226,7 @@ class KnowledgeGraphBuilder:
             if page.page_id not in expected:
                 raise GraphBuildError("page text references an unknown manifest page")
             record = expected[page.page_id]
-            if _sha256(page.raw_text) != record["raw_sha256"] or _sha256(page.cleaned_text) != record["cleaned_sha256"]:
+            if sha256_bytes(page.raw_text.encode("utf-8")) != record["raw_sha256"] or sha256_bytes(page.cleaned_text.encode("utf-8")) != record["cleaned_sha256"]:
                 raise GraphBuildError("page text hash drift")
             supplied[page.page_id] = page
         if set(supplied) != set(expected):
@@ -244,31 +235,13 @@ class KnowledgeGraphBuilder:
         return supplied
 
     def _validate_chunks(self, manifest: Mapping[str, Any], pages: Mapping[str, PageText]) -> None:
-        identifiers: set[str] = set()
-        by_page: dict[str, list[Mapping[str, Any]]] = {page_id: [] for page_id in pages}
-        for chunk in manifest["chunks"]:
-            chunk_id = _require_identifier(chunk.get("chunk_id"), "chunk_id")
-            if chunk_id in identifiers:
-                raise GraphBuildError("duplicate chunk_id")
-            identifiers.add(chunk_id)
-            page_id = chunk.get("page_id")
-            if page_id not in pages:
-                raise GraphBuildError("chunk references an unknown page")
-            by_page[page_id].append(chunk)
-        for page_id, chunks in by_page.items():
-            chunks.sort(key=lambda item: item["cleaned_char_start"])
-            cursor = 0
-            text = pages[page_id].cleaned_text
-            for chunk in chunks:
-                start, end = chunk["cleaned_char_start"], chunk["cleaned_char_end"]
-                if not isinstance(start, int) or not isinstance(end, int) or start != cursor or end <= start:
-                    raise GraphBuildError("page chunks cannot reassemble text")
-                part = text[start:end]
-                if end > len(text) or _sha256(part) != chunk["chunk_sha256"]:
-                    raise GraphBuildError("chunk hash drift")
-                cursor = end
-            if cursor != len(text):
-                raise GraphBuildError("page chunks cannot reassemble text")
+        try:
+            validate_chunk_layout(
+                manifest,
+                {page_id: page.cleaned_text for page_id, page in pages.items()},
+            )
+        except ChunkPackageError as error:
+            raise GraphBuildError(str(error)) from error
 
     @staticmethod
     def _create_schema(connection: sqlite3.Connection) -> None:

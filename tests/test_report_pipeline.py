@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from medical_kg_sourceprep.report_pipeline import (
+from medical_kg_sourceprep.report.report_pipeline import (
     ReportPipelineError,
     analyze_report,
     analyze_report_document,
@@ -15,9 +15,9 @@ from medical_kg_sourceprep.report_pipeline import (
     _retrieval_queries,
     validate_model_result,
 )
-from medical_kg_sourceprep.graph_retrieval import GraphReasoningResult
-from medical_kg_sourceprep.report_model import AbnormalFlag, Observation, ReferenceInterval
-from medical_kg_sourceprep.qa import build_evidence_index
+from medical_kg_sourceprep.graph.graph_retrieval import GraphReasoningResult
+from medical_kg_sourceprep.report.report_model import AbnormalFlag, Observation, ReferenceInterval
+from medical_kg_sourceprep.api.qa import build_evidence_index
 from tests.test_qa import _candidate_graph, _chunk_package
 
 
@@ -115,7 +115,7 @@ class ReportPipelineTests(unittest.TestCase):
                 "reference_interval": {"lower": "0", "upper": "31"},
             }],
         }
-        with patch("medical_kg_sourceprep.report_pipeline.query_index", return_value=[]) as query:
+        with patch("medical_kg_sourceprep.report.report_pipeline.query_index", return_value=[]) as query:
             metrics = collect_metrics(report, Path("unused.sqlite"))
         self.assertEqual(len(metrics), 1)
         self.assertEqual(
@@ -138,11 +138,11 @@ class ReportPipelineTests(unittest.TestCase):
         diagnostic = {"status": "matched", "matches": []}
         with (
             patch(
-                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                "medical_kg_sourceprep.report.report_pipeline.graph_query_diagnostic",
                 return_value=diagnostic,
             ),
             patch(
-                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                "medical_kg_sourceprep.report.report_pipeline.query_index_with_graph",
                 return_value=([], {}),
             ),
         ):
@@ -158,7 +158,7 @@ class ReportPipelineTests(unittest.TestCase):
             ["default_unit_applied"],
         )
         with patch(
-            "medical_kg_sourceprep.report_pipeline.graph_reasoning_paths",
+            "medical_kg_sourceprep.report.report_pipeline.graph_reasoning_paths",
             return_value=GraphReasoningResult(),
         ) as graph_paths:
             expanded, paths, rejections = _reasoning_context(
@@ -192,11 +192,11 @@ class ReportPipelineTests(unittest.TestCase):
         }
         with (
             patch(
-                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                "medical_kg_sourceprep.report.report_pipeline.graph_query_diagnostic",
                 return_value=diagnostic,
             ) as graph_diagnostic,
             patch(
-                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                "medical_kg_sourceprep.report.report_pipeline.query_index_with_graph",
                 return_value=([], {}),
             ) as graph_query,
         ):
@@ -246,11 +246,11 @@ class ReportPipelineTests(unittest.TestCase):
         }
         with (
             patch(
-                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                "medical_kg_sourceprep.report.report_pipeline.graph_query_diagnostic",
                 return_value=diagnostic,
             ) as graph_diagnostic,
             patch(
-                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                "medical_kg_sourceprep.report.report_pipeline.query_index_with_graph",
                 return_value=([], {}),
             ) as graph_query,
         ):
@@ -301,11 +301,11 @@ class ReportPipelineTests(unittest.TestCase):
         }
         with (
             patch(
-                "medical_kg_sourceprep.report_pipeline.graph_query_diagnostic",
+                "medical_kg_sourceprep.report.report_pipeline.graph_query_diagnostic",
                 return_value={"status": "matched", "matches": []},
             ),
             patch(
-                "medical_kg_sourceprep.report_pipeline.query_index_with_graph",
+                "medical_kg_sourceprep.report.report_pipeline.query_index_with_graph",
                 return_value=([lexical_noise, graph_evidence], {}),
             ),
         ):
@@ -416,7 +416,7 @@ class ReportPipelineTests(unittest.TestCase):
             report = _report()
             report["metadata"]["patient_sex"] = "女"
             with patch(
-                "medical_kg_sourceprep.report_pipeline.graph_reasoning_paths",
+                "medical_kg_sourceprep.report.report_pipeline.graph_reasoning_paths",
                 return_value=GraphReasoningResult((candidate,), ()),
             ) as graph_paths:
                 document = analyze_report_document(
@@ -551,7 +551,7 @@ class ReportPipelineTests(unittest.TestCase):
 
     def test_missing_key_is_rejected_before_transport(self):
         with self.assertRaisesRegex(ReportPipelineError, "DEEPSEEK_API_KEY"):
-            from medical_kg_sourceprep.report_pipeline import DeepSeekTransport
+            from medical_kg_sourceprep.report.report_pipeline import DeepSeekTransport
             DeepSeekTransport(" ")
 
 

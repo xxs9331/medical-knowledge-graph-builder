@@ -13,11 +13,11 @@ import sys
 import time
 from urllib import error as urlerror, request
 
-from medical_kg_sourceprep.book_sources import build_book_manifest_from_packages
-from medical_kg_sourceprep.knowledge_graph import PageText
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
-from medical_kg_sourceprep.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
-from medical_kg_sourceprep.semantic_v04 import (
+from medical_kg_sourceprep.provenance.book_sources import build_book_manifest_from_packages
+from medical_kg_sourceprep.graph.knowledge_graph import PageText
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from medical_kg_sourceprep.graph.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
+from medical_kg_sourceprep.extraction.semantic_v04 import (
     CATALOG_VERSION, CONTRACT_VERSION, ENDPOINT_PROMPT_VERSION, ENDPOINT_VALIDATOR_VERSION,
     RELATION_PROMPT_VERSION, RELATION_VALIDATOR_VERSION, RULE_PROMPT_VERSION,
     RULE_VALIDATOR_VERSION, augment_catalog, audit_superseded_v02_relations,

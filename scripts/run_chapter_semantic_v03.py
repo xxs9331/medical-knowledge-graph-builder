@@ -9,11 +9,11 @@ import os
 from pathlib import Path
 import sys
 
-from medical_kg_sourceprep.book_sources import build_book_manifest_from_packages
-from medical_kg_sourceprep.knowledge_graph import PageText
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
-from medical_kg_sourceprep.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
-from medical_kg_sourceprep.semantic_v03 import (
+from medical_kg_sourceprep.provenance.book_sources import build_book_manifest_from_packages
+from medical_kg_sourceprep.graph.knowledge_graph import PageText
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from medical_kg_sourceprep.graph.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
+from medical_kg_sourceprep.extraction.semantic_v03 import (
     RELATION_PROMPT_VERSION, RULE_PROMPT_VERSION, VALIDATOR_VERSION,
     build_entity_catalog, build_relation_prompt, build_rule_prompt, recover_derived_relations,
     stable_relations, validate_relations, validate_rules,

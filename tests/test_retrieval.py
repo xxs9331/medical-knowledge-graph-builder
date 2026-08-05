@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from medical_kg_sourceprep.retrieval import RetrievalRecord, retrieve, retrieve_hybrid
+from medical_kg_sourceprep.evidence.legacy.retrieval import RetrievalRecord, retrieve, retrieve_hybrid
 
 
 class RetrievalTests(unittest.TestCase):
@@ -87,7 +87,7 @@ class RetrievalTests(unittest.TestCase):
         self.assertGreaterEqual(first[0].score_components["bm25"], 0)
 
     def test_fts_failure_uses_the_standard_library_bm25_fallback(self) -> None:
-        with patch("medical_kg_sourceprep.retrieval._fts_scores", return_value={}):
+        with patch("medical_kg_sourceprep.evidence.legacy.retrieval._fts_scores", return_value={}):
             results = retrieve("Alpha Clearance Index", self.records)
 
         self.assertIn("bm25_fallback", results[0].reasons)

@@ -12,7 +12,7 @@ import hashlib
 import json
 from typing import Any, Mapping
 
-from .book_sources import SourceProvenanceError, validate_book_manifest, validate_text_anchor
+from ..provenance.book_sources import SourceProvenanceError, validate_book_manifest, validate_text_anchor
 
 
 class EvidenceKind(str, Enum):

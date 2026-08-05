@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from medical_kg_sourceprep.chunks import ChunkingError, prepare_chunks
+from medical_kg_sourceprep.provenance.chunks import ChunkingError, prepare_chunks
 
 
 def _sha256(content: bytes) -> str:
@@ -201,7 +201,7 @@ class PrepareChunksTests(unittest.TestCase):
             output = tmp_path / "chunks"
             cleaned = source / "pages/cleaned/0000.md"
 
-            from medical_kg_sourceprep import chunks
+            from medical_kg_sourceprep.provenance import chunks
 
             original_slice_page = chunks._slice_page
 
@@ -209,7 +209,7 @@ class PrepareChunksTests(unittest.TestCase):
                 cleaned.write_text("different\n", encoding="utf-8", newline="\n")
                 return original_slice_page(text, max_chars)
 
-            with patch("medical_kg_sourceprep.chunks._slice_page", side_effect=change_source):
+            with patch("medical_kg_sourceprep.provenance.chunks._slice_page", side_effect=change_source):
                 with self.assertRaisesRegex(ChunkingError, "changed during chunking"):
                     prepare_chunks(source, output, max_chars=8)
             self.assertFalse(output.exists())

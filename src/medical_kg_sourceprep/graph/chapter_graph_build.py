@@ -12,7 +12,7 @@ import sqlite3
 import tempfile
 from typing import Any
 
-from .entity_extraction import _match_key
+from ..extraction.entity_extraction import _match_key
 from .semantic_graph import SEMANTIC_RELATIONS
 
 

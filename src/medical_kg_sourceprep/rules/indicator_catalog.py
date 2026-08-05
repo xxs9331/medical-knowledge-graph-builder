@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 from typing import Any, Mapping, Sequence
 
-from .llm_extraction import EvidenceChunk
+from ..extraction.llm_extraction import EvidenceChunk
 
 SCHEMA_VERSION = "indicator-candidates/v0.1"
 CATALOG_VERSION = "indicator-library/v0.1"

@@ -1,6 +1,6 @@
 import unittest
 
-from medical_kg_sourceprep.entity_extraction import merge_entities, validate_page_result
+from medical_kg_sourceprep.extraction.entity_extraction import merge_entities, validate_page_result
 
 
 class EntityExtractionTest(unittest.TestCase):

@@ -14,7 +14,7 @@ import time
 from typing import Any, Callable
 from urllib import error as urlerror, request
 
-from medical_kg_sourceprep.indicator_rule_functions import (
+from medical_kg_sourceprep.rules.indicator_rule_functions import (
     MAX_RULES_PER_PAGE,
     PROMPT_VERSION,
     SCHEMA_VERSION,
@@ -28,7 +28,7 @@ from medical_kg_sourceprep.indicator_rule_functions import (
     stable_candidates,
     validate_rule_response,
 )
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 
 
 ROOT = Path(__file__).resolve().parents[1]

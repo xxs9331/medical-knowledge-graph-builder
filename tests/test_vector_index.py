@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.vector_index import VectorIndexError, build_vector_index, query_vector_index
+from medical_kg_sourceprep.evidence.vector_index import VectorIndexError, build_vector_index, query_vector_index
 
 
 def evidence_db(path: Path, rows: tuple[tuple[str, str], ...]) -> Path:

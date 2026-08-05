@@ -20,13 +20,13 @@ import time
 from types import SimpleNamespace
 from urllib import error as urlerror, request
 
-from medical_kg_sourceprep.book_sources import build_book_manifest_from_packages
-from medical_kg_sourceprep.knowledge_graph import KnowledgeGraphBuilder, PageText
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
-from medical_kg_sourceprep.semantic_contract import (
+from medical_kg_sourceprep.provenance.book_sources import build_book_manifest_from_packages
+from medical_kg_sourceprep.graph.knowledge_graph import KnowledgeGraphBuilder, PageText
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from medical_kg_sourceprep.extraction.semantic_contract import (
     PROMPT_VERSION, VALIDATOR_VERSION, build_v02_prompt, validate_v02,
 )
-from medical_kg_sourceprep.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
+from medical_kg_sourceprep.graph.semantic_graph import SemanticGraphBuilder, SemanticRecord, SemanticRelation
 
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://api.deepseek.com/chat/completions"

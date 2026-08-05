@@ -6,7 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from .prepare import PreparationError, prepare_source
+from ..provenance.prepare import PreparationError, prepare_source
 
 
 def main(argv: list[str] | None = None) -> None:

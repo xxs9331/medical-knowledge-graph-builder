@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import unittest
 
-from medical_kg_sourceprep.indicator_rule_functions import (
+from medical_kg_sourceprep.rules.indicator_rule_functions import (
     RuleFunctionError,
     audit_candidates,
     build_rule_prompt,
@@ -11,7 +11,7 @@ from medical_kg_sourceprep.indicator_rule_functions import (
     stable_candidates,
     validate_rule_response,
 )
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
 
 
 def chunk(chunk_id: str, text: str, page_index: int, start: int = 0) -> EvidenceChunk:

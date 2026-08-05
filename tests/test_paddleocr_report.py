@@ -3,8 +3,8 @@ from io import BytesIO
 import unittest
 from urllib.error import HTTPError
 
-from medical_kg_sourceprep.desktop_app import parse_report_payload
-from medical_kg_sourceprep.paddleocr_report import (
+from medical_kg_sourceprep.report.desktop_app import parse_report_payload
+from medical_kg_sourceprep.report.paddleocr_report import (
     PaddleOcrClient,
     OcrDocument,
     OcrLine,

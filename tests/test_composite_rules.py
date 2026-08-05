@@ -1,7 +1,7 @@
 import unittest
 from decimal import Decimal
 
-from medical_kg_sourceprep.composite_rules import (
+from medical_kg_sourceprep.rules.composite_rules import (
     AtomicPredicate,
     CandidateStatus,
     DecisionRow,

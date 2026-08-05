@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.cli import main
-from medical_kg_sourceprep.prepare import PreparationError, prepare_source
+from medical_kg_sourceprep.cli.source import main
+from medical_kg_sourceprep.provenance.prepare import PreparationError, prepare_source
 
 
 def _config(input_path: Path, output_path: Path, **overrides: object) -> dict[str, object]:

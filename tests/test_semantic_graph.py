@@ -5,10 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.book_sources import build_book_manifest
-from medical_kg_sourceprep.graph_retrieval import graph_retrieve
-from medical_kg_sourceprep.knowledge_graph import KnowledgeGraphBuilder, PageText
-from medical_kg_sourceprep.semantic_graph import (
+from medical_kg_sourceprep.provenance.book_sources import build_book_manifest
+from medical_kg_sourceprep.graph.graph_retrieval import graph_retrieve
+from medical_kg_sourceprep.graph.knowledge_graph import KnowledgeGraphBuilder, PageText
+from medical_kg_sourceprep.graph.semantic_graph import (
     SEMANTIC_RELATIONS, ReviewRecord, SemanticGraphBuilder, SemanticGraphError, SemanticRecord, SemanticRelation,
 )
 

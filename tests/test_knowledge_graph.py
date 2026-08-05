@@ -5,12 +5,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.book_sources import (
+from medical_kg_sourceprep.provenance.book_sources import (
     build_book_manifest,
     replay_text_anchor,
     validate_text_anchor,
 )
-from medical_kg_sourceprep.knowledge_graph import (
+from medical_kg_sourceprep.graph.knowledge_graph import (
     GraphBuildError,
     KnowledgeGraphBuilder,
     PageText,

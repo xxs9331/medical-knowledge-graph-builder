@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk
-from medical_kg_sourceprep.semantic_v03 import (
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.semantic_v03 import (
     build_entity_catalog, build_relation_prompt, build_rule_prompt, stable_relations,
     validate_relations, validate_rules,
 )

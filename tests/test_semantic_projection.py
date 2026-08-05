@@ -1,8 +1,8 @@
 import hashlib
 import unittest
 
-from medical_kg_sourceprep.llm_extraction import EvidenceChunk
-from medical_kg_sourceprep.semantic_projection import (
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.semantic_projection import (
     LANGEXTRACT_CHAPTER_MAX_OUTPUT_TOKENS,
     LANGEXTRACT_MAX_EXTRACTIONS_PER_PAGE,
     LANGEXTRACT_MAX_RELATIONS_PER_PAGE,

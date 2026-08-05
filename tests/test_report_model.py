@@ -1,7 +1,7 @@
 import unittest
 from decimal import Decimal
 
-from medical_kg_sourceprep.report_model import (
+from medical_kg_sourceprep.report.report_model import (
     AbnormalFlag,
     Observation,
     ReferenceInterval,

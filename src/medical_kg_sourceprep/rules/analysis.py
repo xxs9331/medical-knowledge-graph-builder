@@ -33,7 +33,7 @@ from .evidence_policy import (
     build_report_source,
     validate_citation_bundle,
 )
-from .report_model import AbnormalFlag, EvaluationResult, Observation, evaluate_observation
+from ..report.report_model import AbnormalFlag, EvaluationResult, Observation, evaluate_observation
 
 
 ANALYSIS_SCHEMA_VERSION = "report-analysis/v0.2"

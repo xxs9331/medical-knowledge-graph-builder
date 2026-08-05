@@ -1,19 +1,19 @@
 import unittest
 from decimal import Decimal
 
-from medical_kg_sourceprep.analysis import (
+from medical_kg_sourceprep.rules.analysis import (
     AnalysisRule,
     analyze_report,
     result_to_dict,
 )
-from medical_kg_sourceprep.composite_rules import (
+from medical_kg_sourceprep.rules.composite_rules import (
     AtomicPredicate,
     CandidateStatus,
     ReviewRecord,
     TextAnchor,
     all_of,
 )
-from medical_kg_sourceprep.report_model import AbnormalFlag, Observation, ReferenceInterval
+from medical_kg_sourceprep.report.report_model import AbnormalFlag, Observation, ReferenceInterval
 
 
 def observation(name="synthetic_a", value="12", lower="1", upper="10", flag=AbnormalFlag.HIGH):

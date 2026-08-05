@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from medical_kg_sourceprep.graph_retrieval import (
+from medical_kg_sourceprep.graph.graph_retrieval import (
     GraphRetrievalError,
     graph_query_diagnostic,
     graph_reasoning_paths,

@@ -4,9 +4,9 @@ import unittest
 from copy import deepcopy
 from dataclasses import replace
 
-from medical_kg_sourceprep.book_sources import build_book_manifest, create_text_anchor
+from medical_kg_sourceprep.provenance.book_sources import build_book_manifest, create_text_anchor
 
-from medical_kg_sourceprep.evidence_policy import (
+from medical_kg_sourceprep.rules.evidence_policy import (
     AtomicPredicateRef,
     CitationBundle,
     Claim,
