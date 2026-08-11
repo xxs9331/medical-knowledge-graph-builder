@@ -1,5 +1,7 @@
 import hashlib
+import os
 import unittest
+from unittest.mock import patch
 
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
 from medical_kg_sourceprep.extraction.semantic_projection import (
@@ -10,8 +12,8 @@ from medical_kg_sourceprep.extraction.semantic_projection import (
     _chapter_status,
     _disable_langextract_thinking,
     _enable_strict_schema_when_supported,
-    _langextract_prompt,
     _langextract_output_schema,
+    _langextract_prompt,
     _normalize_exact_duplicates,
     _resolve_chapter_provider,
     _run_with_transient_retry,
@@ -61,7 +63,8 @@ class SemanticProjectionTests(unittest.TestCase):
             message = Message()
 
         class Response:
-            choices = [Choice()]
+            def __init__(self):
+                self.choices = [Choice()]
 
         class Completions:
             def __init__(self):
@@ -265,10 +268,11 @@ class SemanticProjectionTests(unittest.TestCase):
     def test_langextract_sdk_request_uses_chapter_output_budget(self):
         from langextract.providers.openai import OpenAILanguageModel
 
-        model = OpenAILanguageModel(
-            model_id="synthetic", api_key="synthetic", base_url="https://example.invalid/v1",
-            max_output_tokens=LANGEXTRACT_CHAPTER_MAX_OUTPUT_TOKENS,
-        )
+        with patch.dict(os.environ, {}, clear=True):
+            model = OpenAILanguageModel(
+                model_id="synthetic", api_key="synthetic", base_url="https://example.invalid/v1",
+                max_output_tokens=LANGEXTRACT_CHAPTER_MAX_OUTPUT_TOKENS,
+            )
         request = model._build_chat_completions_params("source", model.merge_kwargs({}))
         self.assertEqual(LANGEXTRACT_CHAPTER_MAX_OUTPUT_TOKENS, 32768)
         self.assertEqual(request["max_tokens"], 32768)

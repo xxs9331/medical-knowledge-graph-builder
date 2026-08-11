@@ -7,6 +7,12 @@ name = "medical-knowledge-graph-builder"
 version = "0.1.0"
 description = "Provenance-first source preparation for downstream medical knowledge graph work"
 requires-python = ">=3.11"
+dependencies = [
+    "langextract==1.6.0",
+    "neo4j-graphrag==1.18.0",
+    "openai==2.52.0",
+    "python-dotenv==1.2.2",
+]
 
 [project.scripts]
 prepare-chunks = "medical_kg_sourceprep.provenance.chunks:main"
@@ -14,6 +20,8 @@ prepare-source = "medical_kg_sourceprep.cli.source:main"
 medical-kg-qa = "medical_kg_sourceprep.api.qa:main"
 medical-report = "medical_kg_sourceprep.report.report_pipeline:main"
 medical-report-ocr = "medical_kg_sourceprep.report.paddleocr_report:main"
+medical-kg-graph-builder-smoke = "medical_kg_sourceprep.extraction.neo4j_graph_builder:main"
+medical-kg-graph-builder-candidate-block = "medical_kg_sourceprep.extraction.neo4j_graph_builder:candidate_block_main"
 
 [tool.ruff]
 line-length = 100

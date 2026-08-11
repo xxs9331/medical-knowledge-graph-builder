@@ -1,0 +1,330 @@
+{
+  "schema_id": "medical-report-candidate-graph",
+  "schema_version": "1.1.0",
+  "title": "体检报告解读候选实体关系图 Schema",
+  "status": "draft",
+  "purpose": "约束自动建图阶段可生成的候选实体、普通关系、属性及来源引用；代码端读取后转换为抽取器和本地校验器配置。",
+  "implementation_contract": {
+    "source_document": "体检报告单解读知识图谱抽取规则.md",
+    "source_sections": [
+      "2. 实体抽取",
+      "3. 关系抽取",
+      "4. 规则抽取"
+    ],
+    "staging_store": "隔离的暂存 Neo4j 数据库",
+    "formal_graph_write_allowed": false,
+    "tool_note": "本文件不是 Neo4j LLM Graph Builder 的专有配置。调用端必须将其转换为工具配置，并在写入前执行本地校验。"
+  },
+  "candidate_record": {
+    "entity_id_generation": "forbidden",
+    "publication_status_generation": "forbidden",
+    "evidence_node_generation": "forbidden",
+    "common_required_fields": [
+      "candidate_key",
+      "entity_type",
+      "mention",
+      "canonical_name_candidate",
+      "source_ref"
+    ],
+    "common_optional_fields": [
+      "qualifier_candidates"
+    ],
+    "source_ref": {
+      "required_fields": [
+        "chunk_id",
+        "chunk_sha256",
+        "exact_quote",
+        "char_start",
+        "char_end"
+      ],
+      "validation": [
+        "chunk_id 必须属于本次来源包",
+        "chunk_sha256 必须与当前文本块一致",
+        "mention 和 exact_quote 必须能按字符位置在来源块中逐字回放",
+        "mention 必须位于 exact_quote 覆盖的范围内"
+      ]
+    }
+  },
+  "node_types": [
+    {
+      "id": "EC-01",
+      "name": "LabPanel",
+      "label": "检验组合",
+      "description": "由多个检查指标组成且具有明确业务含义的检验集合。",
+      "required_fields": [],
+      "forbidden_fields": [
+        "bound_indicator_candidate_key"
+      ],
+      "examples": [
+        "血常规",
+        "铁代谢检查",
+        "凝血功能检查"
+      ]
+    },
+    {
+      "id": "EC-02",
+      "name": "LabIndicator",
+      "label": "检查指标",
+      "description": "报告中可观察、可测量或可计算的具体指标。",
+      "required_fields": [],
+      "forbidden_fields": [
+        "bound_indicator_candidate_key"
+      ],
+      "examples": [
+        "HGB",
+        "MCV",
+        "血清铁",
+        "INR"
+      ]
+    },
+    {
+      "id": "EC-03",
+      "name": "IndicatorState",
+      "label": "指标状态",
+      "description": "只描述一个明确检查指标的高、低、正常、阳性、阴性或单指标趋势。",
+      "required_fields": [
+        "bound_indicator_candidate_key"
+      ],
+      "field_constraints": {
+        "bound_indicator_candidate_key": "必须引用同一候选批次中的唯一 LabIndicator 候选；最终由 RC-02 HAS_STATE 绑定。"
+      },
+      "examples": [
+        "MCV 正常",
+        "血清铁降低",
+        "D-二聚体阳性",
+        "MPV 持续下降"
+      ]
+    },
+    {
+      "id": "EC-04",
+      "name": "ClinicalContext",
+      "label": "临床背景",
+      "description": "可能影响检验解释或需要医生结合考虑的可复用生理、临床、既往操作及治疗背景；也可表示联合规则输出的独立医学结论。",
+      "required_fields": [],
+      "forbidden_fields": [
+        "bound_indicator_candidate_key"
+      ],
+      "examples": [
+        "妊娠",
+        "外科手术",
+        "炎症",
+        "慢性失血",
+        "贫血"
+      ]
+    },
+    {
+      "id": "EC-05",
+      "name": "Disease",
+      "label": "疾病",
+      "description": "原文明示的疾病、疾病诊断名称或疾病分类。",
+      "required_fields": [],
+      "forbidden_fields": [
+        "bound_indicator_candidate_key"
+      ],
+      "examples": [
+        "缺铁性贫血",
+        "G6PD 缺乏症",
+        "肺栓塞"
+      ]
+    },
+    {
+      "id": "RC-10",
+      "name": "RuleDefinition",
+      "label": "规则定义（候选）",
+      "description": "原文明示的联合条件、公式、阈值、参考区间或时序规则。候选节点只表达规则名称、原文与输入输出结构，不是可执行的正式 RuleDefinition。",
+      "required_fields": [],
+      "optional_fields": [
+        "rule_stage_candidate"
+      ],
+      "field_constraints": {
+        "rule_stage_candidate": "仅允许 PREPROCESS、GRAPH_COMPOSITE 或 UNKNOWN；UNKNOWN 不得被自动补全为可执行逻辑。"
+      },
+      "examples": [
+        "血清铁与 TIBC 联合判断",
+        "HGB 参考区间",
+        "PTR 计算公式"
+      ]
+    }
+  ],
+  "relationship_types": [
+    {
+      "id": "RC-01",
+      "type": "HAS_METRIC",
+      "label": "包含指标",
+      "allowed_endpoints": [
+        {
+          "source": "LabPanel",
+          "target": "LabIndicator"
+        }
+      ],
+      "generation": "来源结构明确时确定性生成，否则生成候选。",
+      "direction_rule": "检验组合 -> 检查指标"
+    },
+    {
+      "id": "RC-02",
+      "type": "HAS_STATE",
+      "label": "具有状态",
+      "allowed_endpoints": [
+        {
+          "source": "LabIndicator",
+          "target": "IndicatorState"
+        }
+      ],
+      "generation": "根据已校验的 bound_indicator_candidate_key 确定性生成。",
+      "direction_rule": "检查指标 -> 指标状态"
+    },
+    {
+      "id": "RC-03",
+      "type": "RULE_INPUT",
+      "label": "作为规则输入",
+      "allowed_endpoints": [
+        {
+          "source": [
+            "LabIndicator",
+            "IndicatorState",
+            "ClinicalContext"
+          ],
+          "target": "RuleDefinition"
+        }
+      ],
+      "generation": "规则结构候选；一个规则可有多个输入边，禁止降级为输入到输出的普通二元关系。",
+      "direction_rule": "规则输入 -> 规则定义（候选）"
+    },
+    {
+      "id": "RC-04",
+      "type": "CAUSES",
+      "label": "导致",
+      "allowed_endpoints": [
+        {
+          "source": [
+            "ClinicalContext",
+            "Disease"
+          ],
+          "target": [
+            "IndicatorState",
+            "ClinicalContext",
+            "Disease"
+          ]
+        }
+      ],
+      "generation": "医学语义候选。",
+      "direction_rule": "原因 -> 结果"
+    },
+    {
+      "id": "RC-05",
+      "type": "INDICATES",
+      "label": "提示",
+      "allowed_endpoints": [
+        {
+          "source": [
+            "LabIndicator",
+            "IndicatorState",
+            "ClinicalContext"
+          ],
+          "target": [
+            "ClinicalContext",
+            "Disease"
+          ]
+        }
+      ],
+      "generation": "医学语义候选。",
+      "direction_rule": "观察结果 -> 被提示对象；不等于确诊"
+    },
+    {
+      "id": "RC-06",
+      "type": "ASSOCIATED_WITH",
+      "label": "相关",
+      "allowed_endpoints": [
+        {
+          "source": [
+            "LabIndicator",
+            "IndicatorState",
+            "ClinicalContext",
+            "Disease"
+          ],
+          "target": [
+            "LabIndicator",
+            "IndicatorState",
+            "ClinicalContext",
+            "Disease"
+          ]
+        }
+      ],
+      "generation": "医学语义候选。",
+      "direction_rule": "不自动生成反向边，也不传播因果"
+    },
+    {
+      "id": "RC-07",
+      "type": "IS_A",
+      "label": "属于",
+      "allowed_endpoints": [
+        {
+          "source": "IndicatorState",
+          "target": "IndicatorState"
+        },
+        {
+          "source": "ClinicalContext",
+          "target": "ClinicalContext"
+        },
+        {
+          "source": "Disease",
+          "target": "Disease"
+        }
+      ],
+      "generation": "严格上位分类候选。",
+      "direction_rule": "下位概念 -> 上位概念"
+    },
+    {
+      "id": "RC-08",
+      "type": "RULE_OUTPUT",
+      "label": "产生规则结果",
+      "allowed_endpoints": [
+        {
+          "source": "RuleDefinition",
+          "target": [
+            "LabIndicator",
+            "IndicatorState",
+            "ClinicalContext",
+            "Disease"
+          ]
+        }
+      ],
+      "generation": "规则结构候选；仅表示原文规则声明的输出，不表示当前受检者已经命中。",
+      "direction_rule": "规则定义（候选） -> 规则输出"
+    }
+  ],
+  "relationship_record": {
+    "required_fields": [
+      "relation_type",
+      "source_candidate_key",
+      "target_candidate_key",
+      "source_ref"
+    ],
+    "endpoint_rule": "业务实体端点只能引用已冻结实体目录；RC-03 和 RC-08 可引用同一候选规则作用域内的 RuleDefinition，但不得凭关系补造业务实体或规则节点。",
+    "source_ref_rule": "每条关系必须保留独立、可逐字回放的 source_ref。"
+  },
+  "excluded_from_automatic_candidate_graph": {
+    "node_or_artifact_types": [
+      "Claim",
+      "Evidence"
+    ],
+    "relationship_types": [
+      "RC-09 SUPPORTED_BY"
+    ],
+    "content_types": [
+      "运行时状态",
+      "患者个人信息与报告实例值"
+    ],
+    "handling": "RuleDefinition 及 RC-03、RC-08 可作为候选图结构抽取；逻辑门、比较符、阈值、单位、时间窗口、公式执行器、Claim、Evidence 和 RC-09 仍由后续独立的规则解析、确定性编译和证据投影模块处理。"
+  },
+  "hold_conditions": [
+    "来源引用无法逐字回放，或来源哈希、位置不一致",
+    "实体类型或规范化名称无法唯一确定",
+    "IndicatorState 未绑定唯一 LabIndicator",
+    "关系端点不在冻结实体目录，或端点类型不合法",
+    "多个输入被绕开 RuleDefinition 而拆成可独立触发的普通二元关系",
+    "RuleDefinition 的输入、输出或原文范围无法唯一确定",
+    "语义超出本 Schema，或把运行时数据、Claim、Evidence 混入候选图"
+  ],
+  "out_of_scope": "与体检报告解读无关且不参与指标判定、规则输入输出、病因召回或结果解释的 Mention，仅保留原文与来源引用，不生成业务实体或关系。"
+}
