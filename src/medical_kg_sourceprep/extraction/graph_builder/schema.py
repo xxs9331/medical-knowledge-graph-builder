@@ -172,6 +172,8 @@ async def _extract_graph(
         create_lexical_graph=False,
         on_error=OnError.RAISE,
         max_concurrency=1,
+        # DeepSeek 普通接口只支持 JSON Object，不支持 GraphRAG 在此模式发送的 JSON Schema。
+        # 具体字段仍由提示词中的 GraphSchema 和后续本地校验约束。
         use_structured_output=False,
     )
     text_chunk = TextChunk(text=input_text, index=0, uid=chunk.chunk_id)
