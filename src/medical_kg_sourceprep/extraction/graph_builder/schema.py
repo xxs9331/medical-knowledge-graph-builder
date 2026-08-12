@@ -99,6 +99,7 @@ def build_graphrag_schema(
                     {"name": "rule_expression", "type": "STRING"},
                     {"name": "rule_name", "type": "STRING"},
                     {"name": "rule_evidence_json", "type": "STRING"},
+                    {"name": "table_state_evidence_json", "type": "STRING"},
                 ],
                 "additional_properties": False,
             }

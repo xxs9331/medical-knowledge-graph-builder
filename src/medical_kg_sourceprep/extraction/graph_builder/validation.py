@@ -12,11 +12,7 @@ from neo4j_graphrag.experimental.components.types import Neo4jGraph
 
 from .contract import (
     CANDIDATE_RUN_VERSION,
-    JOINT_CONDITION_MARKERS,
     MODEL_RELATION_TYPES,
-    RELATION_CUES,
-    RULE_CONTENT_MARKERS,
-    RULE_EVIDENCE_ROLES,
     RULE_EXPRESSION_PATTERN,
     TRIAL_NODE_TYPES,
     GraphBuilderConfigurationError,
@@ -214,6 +210,73 @@ def _candidate_key(entity_type: str, mention: str, source_ref: Mapping[str, Any]
     return f"candidate:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
 
 
+def _table_state_candidate_key(
+    *, chunk: EvidenceChunk, mention: str, evidence_refs: Sequence[Mapping[str, Any]]
+) -> str:
+    """Identify a model-only table state by its raw header and row anchors."""
+    raw = json.dumps(
+        {
+            "version": CANDIDATE_RUN_VERSION,
+            "entity_type": "IndicatorState",
+            "chunk_id": chunk.chunk_id,
+            "mention": mention,
+            "evidence_positions": [
+                {"role": ref["role"], "char_start": ref["char_start"], "char_end": ref["char_end"]}
+                for ref in evidence_refs
+            ],
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return f"candidate:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
+
+
+def _parse_table_state_evidence(
+    chunk: EvidenceChunk, *, value: Any
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Replay raw table anchors without interpreting their medical semantics."""
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as error:
+            raise GraphBuilderConfigurationError("table_state_evidence_json_invalid") from error
+    if not isinstance(value, Mapping):
+        raise GraphBuilderConfigurationError("table_state_evidence_missing")
+    refs = []
+    for role, key in (("table_header", "header_exact_quote"), ("table_row", "row_exact_quote")):
+        quote = value.get(key)
+        if not isinstance(quote, str) or not quote:
+            raise GraphBuilderConfigurationError("table_state_evidence_quote_missing")
+        try:
+            start, end = _replay_source_span(
+                chunk,
+                quote,
+                exact_quote_occurrence_index=value.get(f"{role}_occurrence_index"),
+                source_char_start=value.get(f"{role}_char_start"),
+                source_char_end=value.get(f"{role}_char_end"),
+            )
+        except GraphBuilderConfigurationError as error:
+            raise GraphBuilderConfigurationError(f"table_state_evidence_{error}") from error
+        refs.append({
+            "role": role,
+            "chunk_id": chunk.chunk_id,
+            "chunk_sha256": chunk.chunk_sha256,
+            "exact_quote": quote,
+            "char_start": start,
+            "char_end": end,
+        })
+    # Keep the row as the primary locator; the companion header remains in table_state_evidence_refs.
+    row = refs[1]
+    return {
+        "chunk_id": chunk.chunk_id,
+        "chunk_sha256": chunk.chunk_sha256,
+        "exact_quote": row["exact_quote"],
+        "char_start": row["char_start"],
+        "char_end": row["char_end"],
+    }, refs
+
+
 def _rule_evidence_ref(
     chunk: EvidenceChunk,
     *,
@@ -223,8 +286,8 @@ def _rule_evidence_ref(
     source_char_start: Any = None,
     source_char_end: Any = None,
 ) -> dict[str, Any]:
-    """Replay one model-selected rule evidence span without interpreting it."""
-    if role not in RULE_EVIDENCE_ROLES:
+    """Replay one model-selected rule evidence span without interpreting its role."""
+    if not isinstance(role, str) or not role.strip():
         raise GraphBuilderConfigurationError("rule_evidence_role_invalid")
     if not isinstance(exact_quote, str) or not exact_quote:
         raise GraphBuilderConfigurationError("rule_evidence_quote_missing")
@@ -282,14 +345,12 @@ def _parse_rule_evidence(chunk: EvidenceChunk, value: Any) -> list[dict[str, Any
     if not isinstance(value, list) or not value:
         raise GraphBuilderConfigurationError("rule_evidence_missing")
     refs: list[dict[str, Any]] = []
-    roles: set[str] = set()
     for item in value:
         if not isinstance(item, Mapping):
             raise GraphBuilderConfigurationError("rule_evidence_item_invalid")
         role = item.get("role")
-        if not isinstance(role, str) or role in roles:
+        if not isinstance(role, str) or not role.strip():
             raise GraphBuilderConfigurationError("rule_evidence_role_invalid")
-        roles.add(role)
         refs.append(_rule_evidence_ref(
             chunk,
             role=role,
@@ -298,11 +359,6 @@ def _parse_rule_evidence(chunk: EvidenceChunk, value: Any) -> list[dict[str, Any
             source_char_start=item.get("source_char_start"),
             source_char_end=item.get("source_char_end"),
         ))
-    has_table_evidence = bool({"table_header", "table_row"} & roles)
-    if has_table_evidence and not {"table_header", "table_row"} <= roles:
-        raise GraphBuilderConfigurationError("rule_evidence_table_anchors_missing")
-    if not has_table_evidence and not ({"condition_sentence", "formula"} & roles):
-        raise GraphBuilderConfigurationError("rule_evidence_semantic_anchor_missing")
     return refs
 
 
@@ -391,20 +447,32 @@ def normalize_candidate_nodes(
                 raise GraphBuilderConfigurationError("mention_missing")
             if not isinstance(canonical, str) or not canonical:
                 raise GraphBuilderConfigurationError("canonical_name_missing")
-            if any(marker in mention or marker in canonical for marker in RULE_CONTENT_MARKERS):
-                raise GraphBuilderConfigurationError("rule_content_not_enabled_for_trial")
-            source_ref = _source_ref(
-                chunk,
-                mention,
-                properties.get("exact_quote"),
-                exact_quote_occurrence_index=properties.get("exact_quote_occurrence_index"),
-                mention_occurrence_index=properties.get("mention_occurrence_index"),
-                source_char_start=properties.get("source_char_start"),
-                source_char_end=properties.get("source_char_end"),
-            )
-            if canonical not in source_ref["exact_quote"]:
-                raise GraphBuilderConfigurationError("canonical_name_not_in_exact_quote")
-            candidate_key = _candidate_key(entity_type, mention, source_ref)
+            table_state_evidence = properties.get("table_state_evidence_json")
+            if table_state_evidence is not None:
+                if entity_type != "IndicatorState":
+                    raise GraphBuilderConfigurationError("table_state_evidence_requires_indicator_state")
+                if properties.get("exact_quote") not in (None, ""):
+                    raise GraphBuilderConfigurationError("table_state_evidence_uses_exact_quote")
+                source_ref, table_state_evidence_refs = _parse_table_state_evidence(
+                    chunk, value=table_state_evidence
+                )
+                candidate_key = _table_state_candidate_key(
+                    chunk=chunk, mention=mention, evidence_refs=table_state_evidence_refs
+                )
+            else:
+                source_ref = _source_ref(
+                    chunk,
+                    mention,
+                    properties.get("exact_quote"),
+                    exact_quote_occurrence_index=properties.get("exact_quote_occurrence_index"),
+                    mention_occurrence_index=properties.get("mention_occurrence_index"),
+                    source_char_start=properties.get("source_char_start"),
+                    source_char_end=properties.get("source_char_end"),
+                )
+                if canonical not in source_ref["exact_quote"]:
+                    raise GraphBuilderConfigurationError("canonical_name_not_in_exact_quote")
+                table_state_evidence_refs = []
+                candidate_key = _candidate_key(entity_type, mention, source_ref)
             if candidate_key in seen_keys:
                 raise GraphBuilderConfigurationError("duplicate_candidate")
             seen_keys.add(candidate_key)
@@ -418,6 +486,8 @@ def normalize_candidate_nodes(
                 "review_status": "PENDING",
                 "publication_status": "HOLD",
             }
+            if table_state_evidence_refs:
+                record["table_state_evidence_refs"] = table_state_evidence_refs
             if entity_type == "IndicatorState":
                 binding = properties.get("bound_indicator_mention")
                 if not isinstance(binding, str) or not binding:
@@ -622,7 +692,7 @@ def normalize_candidate_relationships(
                 raise GraphBuilderConfigurationError("relation_quote_lacks_endpoint")
             if relation_type not in {"HAS_METRIC", "RULE_INPUT", "RULE_OUTPUT"}:
                 cue = properties.get("relation_cue")
-                if not isinstance(cue, str) or cue not in RELATION_CUES[relation_type]:
+                if not isinstance(cue, str) or not cue.strip():
                     raise GraphBuilderConfigurationError("relation_cue_invalid")
                 if cue not in source_ref["exact_quote"]:
                     raise GraphBuilderConfigurationError("relation_cue_not_in_exact_quote")
@@ -642,9 +712,7 @@ def normalize_candidate_relationships(
                     if item["entity_type"] == "IndicatorState"
                     and item["mention"] in source_ref["exact_quote"]
                 }
-                if len(quote_states) >= 2 or any(
-                    marker in between_source_and_cue for marker in JOINT_CONDITION_MARKERS
-                ):
+                if len(quote_states) >= 2:
                     raise GraphBuilderConfigurationError("relation_may_be_joint_condition")
             else:
                 cue = None

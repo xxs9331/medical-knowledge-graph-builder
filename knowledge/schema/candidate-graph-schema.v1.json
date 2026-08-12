@@ -28,6 +28,7 @@
     ],
     "common_optional_fields": [
       "qualifier_candidates",
+      "table_state_evidence_refs",
       "warnings"
     ],
     "lifecycle": {
@@ -53,8 +54,9 @@
       "validation": [
         "chunk_id 必须属于本次来源包",
         "chunk_sha256 必须与当前文本块一致",
-        "业务实体的 mention 和 exact_quote 必须能按字符位置在来源块中逐字回放",
-        "mention 必须位于 exact_quote 覆盖的范围内"
+        "普通业务实体的 mention 和 exact_quote 必须能按字符位置在来源块中逐字回放",
+        "普通业务实体的 mention 必须位于 exact_quote 覆盖的范围内",
+        "表格派生 IndicatorState 可使用模型根据原始表格语义给出的非连续 mention；此时 source_ref 定位原始表格行，且 table_state_evidence_refs 必须同时逐字回放表头和表格行。本地不解释箭头或单元格语义。"
       ]
     }
   },
@@ -99,7 +101,8 @@
         "bound_indicator_candidate_key"
       ],
       "field_constraints": {
-        "bound_indicator_candidate_key": "必须引用同一候选批次中的唯一 LabIndicator 候选；最终由 RC-02 HAS_STATE 绑定。"
+        "bound_indicator_candidate_key": "必须引用同一候选批次中的唯一 LabIndicator 候选；最终由 RC-02 HAS_STATE 绑定。",
+        "table_state_evidence_refs": "仅适用于模型从原始 HTML/Markdown 表格语义解析出的派生状态。固定包含 table_header 与 table_row 两条可逐字回放原文锚点；模型判断其含义，本地只验证锚点和冻结绑定。"
       },
       "examples": [
         "MCV 正常",
@@ -157,7 +160,7 @@
         "rule_candidate_key": "必须与 candidate_key 相同；调用端用版本、chunk、规则阶段、规范化 rule_expression 和带角色证据位置生成。",
         "rule_expression": "采用 r = A(a, b, c...) 形态；r 为已抽取输出实体，多个输出写作有序列表 [r1, r2]。A 为诊断或计算规则名，不表示可执行逻辑。",
         "rule_name": "模型给出的诊断或计算规则名；缺失时调用端从规则表达式函数名生成来源型回退名，并将候选标为 PARTIAL/REVIEW_REQUIRED。",
-        "rule_evidence_refs": "每项包含 role 与可逐字回放来源位置；role 仅允许 condition_sentence、table_header、table_row、formula。表格规则必须同时有 table_header 与 table_row；调用端不得解释单元格医学语义。",
+        "rule_evidence_refs": "每项包含非空 role 与可逐字回放来源位置；role 是模型选择的来源定位标签，不是封闭枚举。候选准入阶段不据此判断表格、公式或其他原文格式的语义充分性。",
         "rule_evidence_json": "规则专用模型阶段的必填输入字段；它是带 role、exact_quote 和可选 occurrence_index 或字符位置的 JSON 数组字符串，调用端回放后只持久化 rule_evidence_refs。",
         "rule_stage_candidate": "仅允许 PREPROCESS、GRAPH_COMPOSITE 或 UNKNOWN；UNKNOWN 不得被自动补全为可执行逻辑。"
       },
