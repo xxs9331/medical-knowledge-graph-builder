@@ -14,6 +14,26 @@ from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
 
 
 class Neo4jGraphBuilderTests(unittest.TestCase):
+    def test_ordinary_relation_schema_omits_unused_node_and_relation_properties(self):
+        schema = graph_builder.load_candidate_graph_schema()
+        graph_schema = graph_builder.build_graphrag_schema(
+            schema,
+            relation_types=sorted(graph_builder.ORDINARY_RELATION_TYPES),
+            node_types=sorted(graph_builder.BUSINESS_NODE_TYPES),
+            node_property_names=("mention",),
+            relationship_property_names=("exact_quote", "exact_quote_occurrence_index", "relation_cue"),
+        )
+
+        self.assertTrue(all(
+            [property_definition.name for property_definition in node.properties] == ["mention"]
+            for node in graph_schema.node_types
+        ))
+        for relationship in graph_schema.relationship_types:
+            self.assertEqual(
+                [property_definition.name for property_definition in relationship.properties],
+                ["exact_quote", "exact_quote_occurrence_index", "relation_cue"],
+            )
+
     def test_missing_deepseek_key_fails_without_loading_local_environment(self):
         with self.assertRaisesRegex(graph_builder.GraphBuilderConfigurationError, "DEEPSEEK_API_KEY"):
             graph_builder.load_deepseek_api_key(env={})
@@ -97,7 +117,13 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                         }],
                         "edges": [{
                             "type": "RULE_INPUT",
-                            "properties": {"exact_quote": None, "relation_cue": None},
+                            "exact_quote": "转铁蛋白减少。",
+                            "exact_quote_occurrence_index": 0,
+                            "source_char_start": 12,
+                            "source_char_end": 20,
+                            "relation_cue": None,
+                            "rule_evidence_role": "condition_sentence",
+                            "properties": {},
                         }],
                     }),
                     usage=SimpleNamespace(request_tokens=100, response_tokens=20, total_tokens=120),
@@ -116,7 +142,16 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         })
         self.assertEqual(result.usage.total_tokens, 120)
         relationship = payload["relationships"][0]
-        self.assertEqual(relationship["properties"], {})
+        self.assertNotIn("exact_quote_occurrence_index", relationship)
+        self.assertNotIn("source_char_start", relationship)
+        self.assertNotIn("source_char_end", relationship)
+        self.assertEqual(relationship["properties"], {
+            "exact_quote": "转铁蛋白减少。",
+            "exact_quote_occurrence_index": 0,
+            "source_char_start": 12,
+            "source_char_end": 20,
+            "rule_evidence_role": "condition_sentence",
+        })
 
     def test_model_table_state_uses_raw_dual_anchors_without_local_semantic_parser(self):
         header = "<tr><th>血清铁</th><th>TIBC</th><th>结论</th></tr>"
@@ -593,7 +628,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(relations[0]["extraction_status"], "VALID")
         self.assertEqual(holds, [])
 
-    def test_joint_serum_iron_and_tibc_direct_edge_enters_hold(self):
+    def test_joint_serum_iron_and_tibc_direct_edge_remains_locally_valid(self):
         text = "血清铁降低且TIBC增高时，提示缺铁性贫血。"
         chunk = EvidenceChunk("synthetic:joint", text, hashlib.sha256(text.encode()).hexdigest())
         source_ref = graph_builder._source_ref(chunk, "血清铁降低", text)
@@ -620,9 +655,36 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         )
         relation = next(item for item in relations if item["relation_type"] == "INDICATES")
         self.assertEqual([item["relation_type"] for item in relations], ["INDICATES"])
-        self.assertEqual(relation["extraction_status"], "PARTIAL")
-        self.assertIn("RELATION_MAY_BE_JOINT_CONDITION", relation["warnings"])
-        self.assertEqual([item["reason_code"] for item in holds], ["relation_may_be_joint_condition"])
+        self.assertEqual(relation["extraction_status"], "VALID")
+        self.assertEqual(relation["review_status"], "PENDING")
+        self.assertEqual(holds, [])
+
+    def test_relation_direction_is_deferred_to_semantic_judge(self):
+        text = "甲由乙导致。"
+        chunk = EvidenceChunk("synthetic:direction", text, hashlib.sha256(text.encode()).hexdigest())
+        nodes = []
+        for mention in ("甲", "乙"):
+            ref = graph_builder._source_ref(chunk, mention, text)
+            nodes.append({
+                "candidate_key": graph_builder._candidate_key("ClinicalContext", mention, ref),
+                "entity_type": "ClinicalContext",
+                "mention": mention,
+                "canonical_name_candidate": mention,
+                "source_ref": ref,
+            })
+        graph = Neo4jGraph(relationships=[Neo4jRelationship(
+            start_node_id=f"{chunk.chunk_id}:{nodes[0]['candidate_key']}",
+            end_node_id=f"{chunk.chunk_id}:{nodes[1]['candidate_key']}",
+            type="CAUSES",
+            properties={"exact_quote": text, "relation_cue": "导致"},
+        )])
+
+        result = graph_builder.normalize_candidate_relationships(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=nodes
+        )
+
+        self.assertEqual(result.accepted[0]["extraction_status"], "VALID")
+        self.assertEqual(result.review_items, [])
 
     def test_model_has_state_requires_replayable_indicator_to_state_endpoints(self):
         text = "血清铁降低。"

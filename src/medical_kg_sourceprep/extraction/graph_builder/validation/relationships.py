@@ -183,22 +183,9 @@ def normalize_candidate_relationships(
                     raise GraphBuilderConfigurationError("relation_cue_invalid")
                 if cue not in source_ref["exact_quote"]:
                     raise GraphBuilderConfigurationError("relation_cue_not_in_exact_quote")
-                source_start = source_ref["exact_quote"].find(source["mention"])
-                target_start = source_ref["exact_quote"].find(target["mention"])
-                cue_start = source_ref["exact_quote"].find(cue)
-                if relation_type in {"CAUSES", "INDICATES", "IS_A"} and not (
-                    source_start < cue_start < target_start
-                ):
-                    warnings.append("RELATION_DIRECTION_UNCERTAIN")
-                    reasons.append("relation_direction_not_verbatim")
-                quote_states = {
-                    item["candidate_key"]
-                    for item in node_by_key.values()
-                    if item["entity_type"] == "IndicatorState" and item["mention"] in source_ref["exact_quote"]
-                }
-                if len(quote_states) >= 2:
-                    warnings.append("RELATION_MAY_BE_JOINT_CONDITION")
-                    reasons.append("relation_may_be_joint_condition")
+                # cue 的词序和引语中多个状态共现只能提供语义线索，无法可靠判断
+                # 关系方向、直接性或联合条件。本地准入不再据此降级；这些问题留给
+                # 后续 LLM Judge 评分。此处只确定 cue 能逐字回放。
             else:
                 cue = None
             candidate_key = _relation_key(relation_type, source_key, target_key, source_ref)
