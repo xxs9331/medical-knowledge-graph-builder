@@ -1,4 +1,12 @@
-"""业务实体和 RuleDefinition 候选节点的本地接纳逻辑。"""
+"""业务实体和 RuleDefinition 候选节点的本地接纳逻辑。
+
+模型的职责是提出候选类型、名称和抽取理由；本模块不判断医学含义是否正确，而是
+用确定性规则补齐或复验来源位置、生成稳定候选键、去除重复，并把每条记录分流为：
+
+- ``accepted``：可回放的候选记录，可能是完整的 ``VALID``，也可能是待复核的 ``PARTIAL``；
+- ``review_items``：说明被拒绝或需要进一步复核的机器可读审查记录；
+- ``judge_drafts``：无法本地接纳、但保留了足够身份信息以供后续 Judge 处理的最小草稿。
+"""
 
 from __future__ import annotations
 
@@ -7,29 +15,62 @@ from typing import Any
 
 from neo4j_graphrag.experimental.components.types import Neo4jGraph
 
-from ..contract import TRIAL_NODE_TYPES, GraphBuilderConfigurationError
-from ...llm_extraction import EvidenceChunk
-from .provenance import (
-    _candidate_key,
-    _normalize_rule_expression,
-    _parse_rule_evidence,
-    _parse_table_state_evidence,
-    _rule_candidate_key,
-    _source_ref,
-    _source_refs_for_mention,
-    _table_state_candidate_key,
-)
-from .result import CandidateNormalization
-from .review import (
-    _hold,
-    _judge_draft,
-    _mark_partial,
-    _node_judge_draft,
-    _node_summary,
-    _relationship_judge_draft,
-    _relationship_summary,
-    _review_item,
-)
+if __package__ in {None, ""}:
+    # 允许直接执行本文件观察底部演示；正常作为包导入时仍使用相对导入。
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+    from medical_kg_sourceprep.extraction.graph_builder.contract import (
+        TRIAL_NODE_TYPES,
+        GraphBuilderConfigurationError,
+    )
+    from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
+    from medical_kg_sourceprep.extraction.graph_builder.validation.provenance import (
+        _candidate_key,
+        _normalize_rule_expression,
+        _parse_rule_evidence,
+        _parse_table_state_evidence,
+        _rule_candidate_key,
+        _source_ref,
+        _source_refs_for_mention,
+        _table_state_candidate_key,
+    )
+    from medical_kg_sourceprep.extraction.graph_builder.validation.result import CandidateNormalization
+    from medical_kg_sourceprep.extraction.graph_builder.validation.review import (
+        _hold,
+        _judge_draft,
+        _mark_partial,
+        _node_judge_draft,
+        _node_summary,
+        _relationship_judge_draft,
+        _relationship_summary,
+        _review_item,
+    )
+else:
+    from ..contract import TRIAL_NODE_TYPES, GraphBuilderConfigurationError
+    from ...llm_extraction import EvidenceChunk
+    from .provenance import (
+        _candidate_key,
+        _normalize_rule_expression,
+        _parse_rule_evidence,
+        _parse_table_state_evidence,
+        _rule_candidate_key,
+        _source_ref,
+        _source_refs_for_mention,
+        _table_state_candidate_key,
+    )
+    from .result import CandidateNormalization
+    from .review import (
+        _hold,
+        _judge_draft,
+        _mark_partial,
+        _node_judge_draft,
+        _node_summary,
+        _relationship_judge_draft,
+        _relationship_summary,
+        _review_item,
+    )
 
 
 def normalize_candidate_nodes(
@@ -40,18 +81,25 @@ def normalize_candidate_nodes(
     allowed_node_types: Sequence[str] = TRIAL_NODE_TYPES,
     derive_entity_provenance: bool = False,
 ) -> CandidateNormalization:
-    """接纳节点或将其分流为图内 PARTIAL、Judge 草稿、重复审计项。
+    """校验一个模型节点列表，并返回候选、审查项和 Judge 草稿。
+
+    参数 ``graph`` 是模型返回的 ``Neo4jGraph``，本函数只读取其中的节点；若实体
+    阶段错误返回了关系，也会作为阶段错位记录写入审查项。``allowed_node_types``
+    让同一个函数可复用在实体阶段和仅允许 ``RuleDefinition`` 的规则阶段。
 
     ``derive_entity_provenance`` 仅用于轻量实体发现：模型只输出类型、mention 和
     extraction_reason，代码据逐字出现回填普通实体来源。它不能为表格箭头等非连续
     语义状态编造锚点，因此这类记录仍进入 Judge 队列。
     """
-    del schema  # Schema 已在加载时验证；当前阶段只使用允许节点类型这个切片。
+    # Schema 的整体结构已在进入本函数前加载并验证；这里仅需要调用阶段给出的类型白名单。
+    del schema
     accepted: list[dict[str, Any]] = []
-    pending_states: list[tuple[int, dict[str, Any], str]] = []
+    # RuleDefinition 的身份要依赖规则表达式和证据位置，故也在第一轮后统一生成。
     pending_rules: list[tuple[int, str, str, str, list[dict[str, Any]], tuple[str, ...], Any]] = []
+    # holds 是历史名称；其中放的是 review queue 项，既包含 REJECTED 也包含 REVIEW_REQUIRED。
     holds: list[dict[str, Any]] = []
     judge_drafts: list[dict[str, Any]] = []
+    # 同一次模型响应中，相同候选键只保留首条，后续重复项只记审查记录。
     seen_keys: set[str] = set()
 
     # 第一轮只验证每个模型节点自身；跨节点绑定在后续统一处理。
@@ -60,15 +108,18 @@ def normalize_candidate_nodes(
         try:
             entity_type = node.label
             properties = node.properties
+            # label 不在当前阶段允许范围内，说明模型把其他阶段的内容混进来了。
             if entity_type not in allowed_node_types:
                 raise GraphBuilderConfigurationError("entity_type_not_enabled_for_trial")
             if entity_type == "RuleDefinition":
+                # RuleDefinition 不是业务实体，不能带 mention / exact_quote 这一套实体字段。
                 if any(properties.get(field) not in (None, "") for field in (
                     "mention", "canonical_name_candidate", "exact_quote"
                 )):
                     raise GraphBuilderConfigurationError("rule_definition_uses_business_fields")
                 raw_rule_stage = properties.get("rule_stage_candidate")
                 rule_warnings: list[str] = []
+                # 阶段值未知时仍保留规则候选，但标记为 UNKNOWN，后续会降为 PARTIAL。
                 if raw_rule_stage in {"PREPROCESS", "GRAPH_COMPOSITE", "UNKNOWN"}:
                     rule_stage = raw_rule_stage
                 else:
@@ -78,9 +129,11 @@ def normalize_candidate_nodes(
                     properties.get("rule_expression")
                 )
                 rule_name = properties.get("rule_name")
+                # 缺少规则名不会妨碍来源回放，用表达式中的规则名生成可读兜底名称。
                 if not isinstance(rule_name, str) or not rule_name.strip():
                     rule_name = f"来源规则:{expression_name}"
                     rule_warnings.append("RULE_NAME_FALLBACK")
+                # 此处会逐字定位每个规则证据；无法定位会抛出异常并进入下方分流。
                 evidence_refs = _parse_rule_evidence(chunk, properties.get("rule_evidence_json"))
                 pending_rules.append((
                     index,
@@ -94,15 +147,19 @@ def normalize_candidate_nodes(
                 continue
 
             mention = properties.get("mention")
+            # 业务实体至少必须有名称；没有名称既不能检索原文，也不能形成 Judge 的最小身份。
             if not isinstance(mention, str) or not mention:
                 raise GraphBuilderConfigurationError("mention_missing")
             canonical = properties.get("canonical_name_candidate")
             if derive_entity_provenance:
+                # 轻量阶段不要求模型做规范化，先以原文 mention 作为候选规范名。
                 canonical = mention
             elif not isinstance(canonical, str) or not canonical:
                 raise GraphBuilderConfigurationError("canonical_name_missing")
             table_state_evidence = properties.get("table_state_evidence_json")
             if table_state_evidence is not None:
+                # 这是表格箭头等“原文没有连续状态词”的特殊通道：必须依赖模型提供的
+                # 表头和行双锚点回放，不允许同时伪造普通实体 exact_quote。
                 if entity_type != "IndicatorState":
                     raise GraphBuilderConfigurationError("table_state_evidence_requires_indicator_state")
                 if properties.get("exact_quote") not in (None, ""):
@@ -115,11 +172,14 @@ def normalize_candidate_nodes(
                 )
                 source_refs = [source_ref]
             elif derive_entity_provenance:
+                # 代码查找 mention 的每一次逐字出现：第一处为主锚点，所有位置都保留在
+                # source_refs，防止后续关系或规则误把“首次出现”当作唯一证据。
                 source_refs = _source_refs_for_mention(chunk, mention)
                 source_ref = source_refs[0]
                 table_state_evidence_refs = []
                 candidate_key = _candidate_key(entity_type, mention, source_ref)
             else:
+                # 旧的完整提示词模式由模型提供 exact_quote 和位置，代码只接受可逐字回放的值。
                 source_ref = _source_ref(
                     chunk,
                     mention,
@@ -137,6 +197,7 @@ def normalize_candidate_nodes(
             if candidate_key in seen_keys:
                 raise GraphBuilderConfigurationError("duplicate_candidate")
             seen_keys.add(candidate_key)
+            # 到此为止已具备类型、名称、来源和稳定身份；所有候选仍是 HOLD，尚未发布。
             record = {
                 "candidate_key": candidate_key,
                 "entity_type": entity_type,
@@ -149,27 +210,19 @@ def normalize_candidate_nodes(
             }
             extraction_reason = properties.get("extraction_reason")
             if isinstance(extraction_reason, str) and extraction_reason.strip():
+                # 理由来自模型，保留给后续语义评测或人工追溯，不作为硬校验判断依据。
                 record["extraction_reason"] = extraction_reason.strip()
             if len(source_refs) > 1:
+                # source_ref 是稳定的主锚点；source_refs 保存同名词其余逐字出现位置。
                 record["source_refs"] = source_refs
             if table_state_evidence_refs:
                 record["table_state_evidence_refs"] = table_state_evidence_refs
-            if entity_type == "IndicatorState":
-                binding = properties.get("bound_indicator_mention")
-                if derive_entity_provenance:
-                    pending_states.append((index, record, binding if isinstance(binding, str) else ""))
-                elif not isinstance(binding, str) or not binding:
-                    _mark_partial(record, "STATE_INDICATOR_UNRESOLVED")
-                    accepted.append(record)
-                    holds.append(_review_item(
-                        "entity", index, "REVIEW_REQUIRED", "state_indicator_binding_missing",
-                        {"mention": record["mention"]}, warnings=("STATE_INDICATOR_UNRESOLVED",),
-                    ))
-                else:
-                    pending_states.append((index, record, binding))
-            else:
-                accepted.append(record)
+            # IndicatorState 在此阶段和其他业务实体一样只校验自身。它属于哪个
+            # LabIndicator 是 HAS_STATE 图边的语义，应由后续关系阶段统一抽取和校验。
+            accepted.append(record)
         except GraphBuilderConfigurationError as error:
+            # 失败时先判断这条模型输出是否仍含最小身份信息；有则可交给 Judge，
+            # 没有则只能记录 REJECTED，不能保留不完整的自由文本。
             draft = _node_judge_draft(node)
             if draft is None or str(error) in {"duplicate_candidate"}:
                 holds.append(_hold("entity", index, str(error), summary))
@@ -179,33 +232,7 @@ def normalize_candidate_nodes(
                     "entity", index, "REVIEW_REQUIRED", str(error), summary,
                 ))
 
-    # IndicatorState 只能绑定到同一次响应中唯一的 LabIndicator；无法唯一绑定时保留为 PARTIAL。
-    indicators = [item for item in accepted if item["entity_type"] == "LabIndicator"]
-    for index, record, binding in pending_states:
-        matches = [item for item in indicators if item["mention"] == binding]
-        if not matches and derive_entity_provenance:
-            # 轻量提示词不要求模型填 bound_indicator_mention。这里只做名称包含关系的确定性
-            # 对齐，不裁决“该状态是否医学上合理”；多个同长度候选仍保留为 PARTIAL。
-            contained = [item for item in indicators if item["mention"] in record["mention"]]
-            if contained:
-                max_length = max(len(item["mention"]) for item in contained)
-                matches = [item for item in contained if len(item["mention"]) == max_length]
-        if len(matches) != 1:
-            _mark_partial(record, "STATE_INDICATOR_UNRESOLVED")
-            accepted.append(record)
-            holds.append(_review_item(
-                "entity",
-                index,
-                "REVIEW_REQUIRED",
-                "state_indicator_binding_not_unique",
-                {"mention": record["mention"], "bound_indicator_mention": binding},
-                warnings=("STATE_INDICATOR_UNRESOLVED",),
-            ))
-            continue
-        record["bound_indicator_candidate_key"] = matches[0]["candidate_key"]
-        accepted.append(record)
-
-    # 规则节点与业务实体不同：规则身份由表达式与证据位置共同决定。
+    # 第二轮：规则节点与业务实体不同，规则身份由表达式与证据位置共同决定。
     for index, rule_stage, expression, rule_name, evidence_refs, rule_warnings, raw_rule_stage in pending_rules:
         candidate_key = _rule_candidate_key(
             chunk=chunk,
@@ -214,6 +241,7 @@ def normalize_candidate_nodes(
             rule_evidence_refs=evidence_refs,
         )
         if candidate_key in seen_keys:
+            # 同一规则表达式和同一组证据位置重复出现，只保留首次候选。
             holds.append(_hold(
                 "entity", index, "duplicate_rule_identity",
                 {"rule_candidate_key": candidate_key, "rule_expression": expression},
@@ -234,6 +262,7 @@ def normalize_candidate_nodes(
             "_model_node_index": index,
         }
         if rule_stage == "UNKNOWN" or rule_warnings:
+            # 规则文本和证据仍可回放，所以不拒绝；只是禁止它传播到后续冻结目录。
             warnings = tuple(sorted(set((*rule_warnings, "RULE_STAGE_UNKNOWN" if rule_stage == "UNKNOWN" else ""))))
             warnings = tuple(warning for warning in warnings if warning)
             _mark_partial(record, *warnings)
@@ -251,7 +280,8 @@ def normalize_candidate_nodes(
             ))
         accepted.append(record)
 
-    # 阶段错位关系不自动搬运，但最小关系草稿可由未来 Judge 重路由。
+    # 最后处理阶段错位：实体阶段原则上只允许节点。关系不能偷偷带入关系阶段，
+    # 但具有类型和两个端点的最小草稿可由未来 Judge 决定是否应重新路由。
     for index, relationship in enumerate(graph.relationships):
         draft = _relationship_judge_draft(relationship)
         if draft is None:
@@ -268,7 +298,13 @@ def normalize_candidate_nodes(
 
 
 def _catalog_for_prompt(nodes: Sequence[Mapping[str, Any]]) -> str:
-    """把已接纳节点裁剪为后续模型阶段唯一可引用的冻结目录。"""
+    """把 ``VALID`` 节点裁剪为后续阶段唯一可引用的冻结目录 JSON。
+
+    后续规则和关系模型只能引用这里的 ``candidate_key``，不能重新造实体或引用
+    ``PARTIAL`` 节点。目录刻意不带 ``source_ref``：后续阶段的关系、规则必须提供
+    自己的原文证据，而不是借用实体首次出现的位置。表格派生状态仅公开一个布尔
+    标记，提示 HAS_STATE 可复用该状态已验证的表格双锚点，不泄露完整坐标。
+    """
     import json
 
     catalog = []
@@ -276,17 +312,75 @@ def _catalog_for_prompt(nodes: Sequence[Mapping[str, Any]]) -> str:
         # PARTIAL 仍供审计与 Judge 使用，但不能成为后续模型阶段的冻结端点。
         if item.get("extraction_status") != "VALID":
             continue
+        # 目录只给模型解析端点所需的最小字段，避免把本地审查状态或全部原文重复塞回提示词。
         entry = {"candidate_key": item["candidate_key"], "entity_type": item["entity_type"]}
         if item["entity_type"] == "RuleDefinition":
+            # 规则边阶段只需知道规则表达式、可读名称和允许使用的证据角色。
             entry.update({
                 "rule_expression": item["rule_expression"],
                 "rule_name": item["rule_name"],
                 "rule_evidence_roles": [ref["role"] for ref in item["rule_evidence_refs"]],
             })
         else:
+            # 关系阶段需用业务实体名称与 candidate_key 对齐端点。
             entry.update({
                 "mention": item["mention"],
                 "canonical_name_candidate": item["canonical_name_candidate"],
+                **({"has_table_state_evidence": True} if item.get("table_state_evidence_refs") else {}),
             })
         catalog.append(entry)
     return json.dumps({"frozen_candidate_catalog": catalog}, ensure_ascii=False, sort_keys=True)
+
+
+if __name__ == "__main__":
+    # 此处演示“模型已提取实体后”的二次处理：不调用模型，也不写入运行工件。
+    # 可自行在末尾添加 print(graph.nodes)、print(result) 或 print(frozen_catalog_json) 查看中间结果。
+    from medical_kg_sourceprep.extraction.graph_builder.contract import (
+        BUSINESS_NODE_TYPES,
+        DEFAULT_CHUNK_MANIFEST,
+        DEFAULT_SCHEMA_PATH,
+    )
+    from medical_kg_sourceprep.extraction.graph_builder.schema import load_candidate_graph_schema
+    from medical_kg_sourceprep.extraction.llm_extraction import load_chunk_manifest
+
+    chunk_id = "clinical-hematology:chapter-01:0012:0000"
+    _manifest, chunks = load_chunk_manifest(DEFAULT_CHUNK_MANIFEST)
+    chunk = next(item for item in chunks if item.chunk_id == chunk_id)
+    schema = load_candidate_graph_schema(DEFAULT_SCHEMA_PATH)
+
+    # 这些是该真实 chunk 的实体阶段模型输出。故意保留重复实体和表格语义状态，
+    # 以便观察本地处理如何去重，以及无法逐字定位的状态如何进入 Judge 草稿。
+    raw_nodes = [
+        ("ClinicalContext", "严重的肝病", "原文明示的疾病背景，影响检验结果解释。"),
+        ("ClinicalContext", "营养不良", "原文明示的临床背景，影响检验结果解释。"),
+        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
+        ("IndicatorState", "转铁蛋白合成减少", "原文明示该指标的减少状态。"),
+        ("ClinicalContext", "肾病综合征", "原文明示的疾病背景，影响检验结果解释。"),
+        ("ClinicalContext", "大量蛋白质从尿液丢失", "原文明示的病理机制背景。"),
+        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
+        ("IndicatorState", "转铁蛋白减少", "原文明示该指标的减少状态。"),
+        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
+        ("LabIndicator", "血清铁", "原文明示的检验指标。"),
+        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
+        ("LabIndicator", "亚铁嗪显色法", "原文明示的检验方法，作为检验指标背景。"),
+        ("IndicatorState", "血清铁降低", "表格箭头表示血清铁降低。"),
+    ]
+    graph = Neo4jGraph(nodes=[
+        {
+            "id": f"demo-node-{index}",
+            "label": label,
+            "properties": {"mention": mention, "extraction_reason": extraction_reason},
+        }
+        for index, (label, mention, extraction_reason) in enumerate(raw_nodes)
+    ])
+
+    # result 包含三类输出：accepted、review_items、judge_drafts。
+    result = normalize_candidate_nodes(
+        graph,
+        chunk=chunk,
+        schema=schema,
+        allowed_node_types=BUSINESS_NODE_TYPES,
+        derive_entity_provenance=True,
+    )
+    # 只有 result.accepted 中的 VALID 节点会写入这个后续规则/关系阶段使用的冻结目录。
+    frozen_catalog_json = _catalog_for_prompt(result.accepted)

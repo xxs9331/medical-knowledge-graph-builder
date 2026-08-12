@@ -230,71 +230,57 @@ def _relationship_summary(relationship: Any) -> dict[str, Any]:
 
 
 if __name__ == "__main__":
-    # 此处只用于手动观察本模块的输入和输出；不调用模型，也不读写文件。
-    from types import SimpleNamespace
+    # 这是“模型已返回节点之后”的本地硬校验演示：不调用模型，也不写入工件。
+    # 直接执行本文件即可观察每条真实候选如何被分流。
+    import json
 
-    node = SimpleNamespace(
-        # 模型临时 ID 只在本次响应中有意义，不能成为 Judge 队列里的稳定身份。
-        id="node-17",
-        label="UnknownType",
-        properties={
-            "mention": "血清铁降低",
-            "canonical_name_candidate": "血清铁降低",
-            "exact_quote": "血清铁降低提示缺铁性贫血。",
-            # 同一句引语多次出现时，用下标标明本候选引用的是第几次出现。
-            "exact_quote_occurrence_index": 0,
-            # 以下是模型可能擅自输出的自评分和解释，均不属于 Schema 证据。
-            "model_confidence": 0.94,
-            "model_explanation": "根据医学知识推断该状态与缺铁性贫血有关。",
-        },
-    )
-    relationship = SimpleNamespace(
-        type="INDICATES",
-        start_node_id="candidate:serum-iron-low",
-        end_node_id="candidate:iron-deficiency-anemia",
-        properties={
-            "exact_quote": "血清铁降低提示缺铁性贫血。",
-            "relation_cue": "提示",
-            "exact_quote_occurrence_index": 0,
-        },
-    )
-    partial_record = {
-        "candidate_key": "candidate:state",
-        "entity_type": "IndicatorState",
-        "mention": "血清铁降低",
-        "extraction_status": "VALID",
-        "review_status": "PENDING",
-        "publication_status": "HOLD",
-    }
-    print("模型原始节点（包含不受合同约束的字段）\n", node)
-    node_draft = _node_judge_draft(node)
-    print("送入 Judge 的节点草稿（仅保留身份和证据字段）\n", node_draft)
-    relationship_draft = _relationship_judge_draft(relationship)
-    assert node_draft is not None and relationship_draft is not None
+    from neo4j_graphrag.experimental.components.types import Neo4jGraph
 
-    examples = {
-        "输入节点": {"label": node.label, "properties": node.properties},
-        "节点摘要": _node_summary(node),
-        "节点 Judge 草稿": _judge_draft("entity", 0, "entity_type_not_enabled_for_trial", node_draft),
-        "输入关系": {
-            "type": relationship.type,
-            "start_node_id": relationship.start_node_id,
-            "end_node_id": relationship.end_node_id,
-            "properties": relationship.properties,
-        },
-        "关系摘要": _relationship_summary(relationship),
-        "关系 Judge 草稿": _judge_draft(
-            "relation", 1, "relation_endpoint_not_from_frozen_catalog", relationship_draft,
-        ),
-        "PARTIAL 前": dict(partial_record),
-    }
-    _mark_partial(partial_record, "RULE_INPUTS_INCOMPLETE", "OUTPUT_ENTITY_UNRESOLVED")
-    examples["PARTIAL 后"] = partial_record
-    examples["REJECTED 审查项"] = _hold(
-        "rule", 2, "rule_expression_missing", {"label": "RuleDefinition", "rule_expression": ""},
+    from medical_kg_sourceprep.extraction.graph_builder.contract import (
+        BUSINESS_NODE_TYPES,
+        DEFAULT_CHUNK_MANIFEST,
+        DEFAULT_SCHEMA_PATH,
     )
-    examples["REVIEW_REQUIRED 审查项"] = _review_item(
-        "relation", 3, "REVIEW_REQUIRED", "relation_may_be_joint_condition",
-        _relationship_summary(relationship), warnings=("RELATION_MAY_BE_JOINT_CONDITION",),
+    from medical_kg_sourceprep.extraction.graph_builder.schema import load_candidate_graph_schema
+    from medical_kg_sourceprep.extraction.graph_builder.validation.nodes import normalize_candidate_nodes
+    from medical_kg_sourceprep.extraction.llm_extraction import load_chunk_manifest
+
+    chunk_id = "clinical-hematology:chapter-01:0012:0000"
+    _manifest, chunks = load_chunk_manifest(DEFAULT_CHUNK_MANIFEST)
+    chunk = next(item for item in chunks if item.chunk_id == chunk_id)
+    schema = load_candidate_graph_schema(DEFAULT_SCHEMA_PATH)
+
+    # 前 12 条来自刚才这个 chunk 的真实模型输出。最后一条模拟表格箭头的语义状态：
+    # “血清铁降低”不作为连续原文出现，因而代码无法为它伪造来源位置。
+    raw_nodes = [
+        ("ClinicalContext", "严重的肝病", "原文明示的疾病背景，影响检验结果解释。"),
+        ("ClinicalContext", "营养不良", "原文明示的临床背景，影响检验结果解释。"),
+        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
+        ("IndicatorState", "转铁蛋白合成减少", "原文明示该指标的减少状态。"),
+        ("ClinicalContext", "肾病综合征", "原文明示的疾病背景，影响检验结果解释。"),
+        ("ClinicalContext", "大量蛋白质从尿液丢失", "原文明示的病理机制背景。"),
+        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
+        ("IndicatorState", "转铁蛋白减少", "原文明示该指标的减少状态。"),
+        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
+        ("LabIndicator", "血清铁", "原文明示的检验指标。"),
+        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
+        ("LabIndicator", "亚铁嗪显色法", "原文明示的检验方法，作为检验指标背景。"),
+        ("IndicatorState", "血清铁降低", "表格箭头表示血清铁降低。"),
+    ]
+    graph = Neo4jGraph(nodes=[
+        {
+            "id": f"demo-node-{index}",
+            "label": label,
+            "properties": {"mention": mention, "extraction_reason": extraction_reason},
+        }
+        for index, (label, mention, extraction_reason) in enumerate(raw_nodes)
+    ])
+
+    result = normalize_candidate_nodes(
+        graph,
+        chunk=chunk,
+        schema=schema,
+        allowed_node_types=BUSINESS_NODE_TYPES,
+        derive_entity_provenance=True,
     )
-    # print(json.dumps(examples, ensure_ascii=False, indent=2, sort_keys=True))
+    print(result)

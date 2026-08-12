@@ -155,7 +155,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(holds, [])
         states = [node for node in nodes if node["entity_type"] == "IndicatorState"]
         self.assertEqual({node["mention"] for node in states}, {"血清铁降低", "TIBC升高"})
-        self.assertTrue(all(node["bound_indicator_candidate_key"] for node in states))
+        self.assertTrue(all("bound_indicator_candidate_key" not in node for node in states))
         self.assertTrue(all(
             [ref["role"] for ref in node["table_state_evidence_refs"]] == ["table_header", "table_row"]
             for node in states
@@ -196,9 +196,11 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             hashlib.sha256(text.encode()).hexdigest(),
         )
         indicator_ref = graph_builder._source_ref(chunk, "血清铁", "血清铁降低。")
+        state_ref = graph_builder._source_ref(chunk, "血清铁降低", "血清铁降低。")
         context_ref = graph_builder._source_ref(chunk, "生长发育需要量多", "生长发育需要量多导致缺铁性贫血。")
         disease_ref = graph_builder._source_ref(chunk, "缺铁性贫血", "生长发育需要量多导致缺铁性贫血。")
         indicator_key = graph_builder._candidate_key("LabIndicator", "血清铁", indicator_ref)
+        state_key = graph_builder._candidate_key("IndicatorState", "血清铁降低", state_ref)
         context_key = graph_builder._candidate_key("ClinicalContext", "生长发育需要量多", context_ref)
         disease_key = graph_builder._candidate_key("Disease", "缺铁性贫血", disease_ref)
 
@@ -226,10 +228,16 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                     ], "relationships": []}, ensure_ascii=False))
                 if self.calls == 2:
                     return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
-                return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [{
-                    "type": "CAUSES", "start_node_id": context_key, "end_node_id": disease_key,
-                    "exact_quote": "生长发育需要量多导致缺铁性贫血。", "relation_cue": "导致"
-                }]}, ensure_ascii=False))
+                return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [
+                    {
+                        "type": "HAS_STATE", "start_node_id": indicator_key, "end_node_id": state_key,
+                        "exact_quote": "血清铁降低。"
+                    },
+                    {
+                        "type": "CAUSES", "start_node_id": context_key, "end_node_id": disease_key,
+                        "exact_quote": "生长发育需要量多导致缺铁性贫血。", "relation_cue": "导致"
+                    },
+                ]}, ensure_ascii=False))
 
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "candidate"
@@ -325,13 +333,12 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(queue["status"], "candidate-only")
         self.assertEqual(queue["publication_status"], "HOLD")
         state = next(item for item in graph["nodes"] if item["entity_type"] == "IndicatorState")
-        self.assertEqual(state["extraction_status"], "PARTIAL")
-        self.assertEqual(state["review_status"], "REVIEW_REQUIRED")
-        self.assertEqual(queue["counts"], {"review_required": 3, "rejected": 1})
+        self.assertEqual(state["extraction_status"], "VALID")
+        self.assertEqual(state["review_status"], "PENDING")
+        self.assertEqual(queue["counts"], {"review_required": 2, "rejected": 1})
         self.assertEqual({item["reason_code"] for item in queue["items"]}, {
             "entity_type_not_enabled_for_trial",
             "rule_definition_uses_business_fields",
-            "state_indicator_binding_not_unique",
             "relation_endpoint_not_from_frozen_catalog",
         })
         self.assertEqual(judge_queue["counts"], {"pending": 2})
@@ -409,7 +416,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertNotIn("mention", rule)
         self.assertEqual(summary["hold_count"], 0)
         self.assertEqual({item["relation_type"] for item in summary["relationships"]},
-                         {"HAS_STATE", "RULE_INPUT", "RULE_OUTPUT"})
+                         {"RULE_INPUT", "RULE_OUTPUT"})
         self.assertTrue(all(item["extraction_status"] == "VALID" for item in graph["nodes"]))
         self.assertTrue(all(item["extraction_status"] == "VALID" for item in graph["relationships"]))
 
@@ -599,7 +606,6 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                 "mention": mention,
                 "canonical_name_candidate": mention,
                 "source_ref": ref,
-                **({"bound_indicator_candidate_key": f"indicator:{mention}"} if entity_type == "IndicatorState" else {}),
             })
         state_key = nodes[0]["candidate_key"]
         disease_key = nodes[2]["candidate_key"]
@@ -613,10 +619,93 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=nodes
         )
         relation = next(item for item in relations if item["relation_type"] == "INDICATES")
-        self.assertEqual([item["relation_type"] for item in relations], ["HAS_STATE", "HAS_STATE", "INDICATES"])
+        self.assertEqual([item["relation_type"] for item in relations], ["INDICATES"])
         self.assertEqual(relation["extraction_status"], "PARTIAL")
         self.assertIn("RELATION_MAY_BE_JOINT_CONDITION", relation["warnings"])
         self.assertEqual([item["reason_code"] for item in holds], ["relation_may_be_joint_condition"])
+
+    def test_model_has_state_requires_replayable_indicator_to_state_endpoints(self):
+        text = "血清铁降低。"
+        chunk = EvidenceChunk("synthetic:has-state", text, hashlib.sha256(text.encode()).hexdigest())
+        indicator_ref = graph_builder._source_ref(chunk, "血清铁", text)
+        state_ref = graph_builder._source_ref(chunk, "血清铁降低", text)
+        indicator = {
+            "candidate_key": graph_builder._candidate_key("LabIndicator", "血清铁", indicator_ref),
+            "entity_type": "LabIndicator", "mention": "血清铁", "canonical_name_candidate": "血清铁",
+            "source_ref": indicator_ref,
+        }
+        state = {
+            "candidate_key": graph_builder._candidate_key("IndicatorState", "血清铁降低", state_ref),
+            "entity_type": "IndicatorState", "mention": "血清铁降低",
+            "canonical_name_candidate": "血清铁降低", "source_ref": state_ref,
+        }
+        graph = Neo4jGraph(relationships=[
+            Neo4jRelationship(
+                start_node_id=f"{chunk.chunk_id}:{indicator['candidate_key']}",
+                end_node_id=f"{chunk.chunk_id}:{state['candidate_key']}",
+                type="HAS_STATE", properties={"exact_quote": text},
+            ),
+            Neo4jRelationship(
+                start_node_id=f"{chunk.chunk_id}:{state['candidate_key']}",
+                end_node_id=f"{chunk.chunk_id}:{indicator['candidate_key']}",
+                type="HAS_STATE", properties={"exact_quote": text},
+            ),
+        ])
+
+        result = graph_builder.normalize_candidate_relationships(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=[indicator, state]
+        )
+
+        valid = next(item for item in result.accepted if item["source_candidate_key"] == indicator["candidate_key"])
+        partial = next(item for item in result.accepted if item["source_candidate_key"] == state["candidate_key"])
+        self.assertEqual(valid["relation_type"], "HAS_STATE")
+        self.assertEqual(valid["extraction_status"], "VALID")
+        self.assertNotIn("relation_cue", valid)
+        self.assertEqual(partial["extraction_status"], "PARTIAL")
+        self.assertIn("RELATION_ENDPOINT_TYPE_INVALID", partial["warnings"])
+
+    def test_model_has_state_can_reuse_replayed_table_state_anchors(self):
+        header = "<tr><th>血清铁</th></tr>"
+        row = "<tr><td>↓</td></tr>"
+        text = f"<table>{header}{row}</table>"
+        chunk = EvidenceChunk("synthetic:table-has-state", text, hashlib.sha256(text.encode()).hexdigest())
+        indicator_ref = graph_builder._source_ref(chunk, "血清铁", header)
+        state_ref = {
+            "chunk_id": chunk.chunk_id,
+            "chunk_sha256": chunk.chunk_sha256,
+            "exact_quote": row,
+            "char_start": text.index(row),
+            "char_end": text.index(row) + len(row),
+        }
+        header_ref = {**indicator_ref, "role": "table_header"}
+        row_ref = {**state_ref, "role": "table_row"}
+        indicator = {
+            "candidate_key": graph_builder._candidate_key("LabIndicator", "血清铁", indicator_ref),
+            "entity_type": "LabIndicator", "mention": "血清铁", "canonical_name_candidate": "血清铁",
+            "source_ref": indicator_ref,
+        }
+        state = {
+            "candidate_key": graph_builder._candidate_key("IndicatorState", "血清铁降低", state_ref),
+            "entity_type": "IndicatorState", "mention": "血清铁降低",
+            "canonical_name_candidate": "血清铁降低", "source_ref": state_ref,
+            "table_state_evidence_refs": [header_ref, row_ref],
+        }
+        graph = Neo4jGraph(relationships=[Neo4jRelationship(
+            start_node_id=f"{chunk.chunk_id}:{indicator['candidate_key']}",
+            end_node_id=f"{chunk.chunk_id}:{state['candidate_key']}",
+            type="HAS_STATE", properties={},
+        )])
+
+        result = graph_builder.normalize_candidate_relationships(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=[indicator, state]
+        )
+
+        self.assertEqual(result.review_items, [])
+        relation = result.accepted[0]
+        self.assertEqual(relation["relation_type"], "HAS_STATE")
+        self.assertEqual(relation["source_ref"]["exact_quote"], row)
+        self.assertEqual([item["role"] for item in relation["table_state_evidence_refs"]],
+                         ["table_header", "table_row"])
 
     def test_relation_endpoint_type_mismatch_is_retained_as_partial(self):
         text = "血清铁提示缺铁性贫血。"
@@ -659,7 +748,6 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             "mention": "血清铁降低",
             "canonical_name_candidate": "血清铁降低",
             "source_ref": source_ref,
-            "bound_indicator_candidate_key": "candidate:indicator",
         }
         target = {
             "candidate_key": graph_builder._candidate_key("ClinicalContext", "铁储备不足", target_ref),

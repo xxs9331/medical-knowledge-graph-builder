@@ -69,9 +69,11 @@ TRIAL_RELATION_TYPES = frozenset(
         "RULE_OUTPUT",
     }
 )
-# HAS_STATE 由本地验证后的 IndicatorState 绑定确定性生成，不能由模型直接声称。
-MODEL_RELATION_TYPES = TRIAL_RELATION_TYPES - {"HAS_STATE"}
-# 普通关系阶段不允许产生规则输入/输出边，避免把联合规则错误降级为简单直连关系。
+# 所有关系类型都由关系阶段模型提出；本地只验证端点、来源和固定图结构，
+# 不再由节点名称包含关系自动生成 HAS_STATE。
+MODEL_RELATION_TYPES = TRIAL_RELATION_TYPES
+# 普通关系阶段不允许产生规则输入/输出边，避免把联合规则错误降级为简单直连关系；
+# HAS_STATE 与 HAS_METRIC 都在本阶段统一抽取。
 ORDINARY_RELATION_TYPES = MODEL_RELATION_TYPES - {"RULE_INPUT", "RULE_OUTPUT"}
 # 规则边阶段只允许业务实体 -> RuleDefinition -> 业务实体这两种边。
 RULE_EDGE_TYPES = frozenset({"RULE_INPUT", "RULE_OUTPUT"})
@@ -378,9 +380,11 @@ Input text:
 # - 只返回一个 Neo4jGraph JSON 对象，只在输入原文和冻结业务实体目录明确支持时抽取普通候选关系；
 #   目录具有唯一权威性，模型不能创建节点、candidate_key 或不存在的端点。
 # - nodes 数组必须为空。每条关系的 start_node_id/end_node_id 必须精确等于冻结目录中的 candidate_key。
-# - 只允许 HAS_METRIC、CAUSES、INDICATES、ASSOCIATED_WITH、IS_A；RULE_INPUT/RULE_OUTPUT 留给
-#   第四阶段，HAS_STATE 由本地根据已绑定 IndicatorState 确定性生成。
-# - 每条普通关系必须给包含两个端点的连续逐字 exact_quote；重复引语需 occurrence index 或字符位置。
+# - 只允许 HAS_METRIC、HAS_STATE、CAUSES、INDICATES、ASSOCIATED_WITH、IS_A；RULE_INPUT/RULE_OUTPUT
+#   留给第四阶段。HAS_STATE 必须从 LabIndicator 指向 IndicatorState，含义由模型依据原文判断。
+# - 每条普通关系通常必须给包含两个端点的连续逐字 exact_quote；重复引语需 occurrence index 或字符位置。
+#   唯一例外是指向表格派生 IndicatorState 的 HAS_STATE：目录标记 has_table_state_evidence=true 时可不填
+#   exact_quote，本地会复用该状态已经回放的表头和表格行，且仍会验证源指标出现于其中。
 # - CAUSES、INDICATES、ASSOCIATED_WITH、IS_A 还必须给出原文中的 relation_cue。标题、例子、列表、
 #   连词、参考范围、阈值、公式、时间规则和联合条件不能在这里转成直接关系，也不能跨句/传递推断。
 # - 单个指标状态不能只凭 ASSOCIATED_WITH 直接建立关系。明确因果句只能从源到目标输出 CAUSES；
@@ -398,16 +402,21 @@ Schema:
 Rules for this relation phase:
 - Output an empty nodes array. Each relationship start_node_id and end_node_id
   must exactly equal a candidate_key in the frozen catalog.
-- Allowed relationship types are HAS_METRIC, CAUSES, INDICATES,
-  ASSOCIATED_WITH, and IS_A. Do not output RULE_INPUT, RULE_OUTPUT, or
-  HAS_STATE: a later rules-edge phase handles the first two, and local
-  validation creates HAS_STATE deterministically from a bound IndicatorState.
+- Allowed relationship types are HAS_METRIC, HAS_STATE, CAUSES, INDICATES,
+  ASSOCIATED_WITH, and IS_A. Do not output RULE_INPUT or RULE_OUTPUT; a later
+  rules-edge phase handles those. HAS_STATE must point from a LabIndicator to
+  an IndicatorState when the input text explicitly supports that association.
 - Ordinary relationship properties must contain exact_quote. It must be one
   uniquely replayable, contiguous, verbatim quotation containing both endpoint
   mentions. When a quote repeats, include exact_quote_occurrence_index or
-  source_char_start/source_char_end.
-- CAUSES, INDICATES, ASSOCIATED_WITH, and IS_A must also contain relation_cue,
-  a verbatim cue in exact_quote. Do not turn headings, examples, lists,
+  source_char_start/source_char_end. The only exception is HAS_STATE whose
+  target has has_table_state_evidence=true: omit exact_quote rather than
+  inventing a derived state phrase from a table arrow; local validation reuses
+  that target's already replayed table header and row anchors.
+- CAUSES, INDICATES, ASSOCIATED_WITH, and IS_A must also contain relation_cue.
+  HAS_METRIC and HAS_STATE do not require a cue, but still require an
+  exact_quote containing both endpoints. Do not turn
+  headings, examples, lists,
   conjunctions, reference ranges, thresholds, formulas, time rules, or joint
   conditions into a direct ordinary relation. Do not infer transitive or
   cross-sentence edges.

@@ -36,31 +36,6 @@ def _has_allowed_endpoints(
     return (source["entity_type"], target["entity_type"]) in _relation_endpoint_pairs(schema, relation_type)
 
 
-def deterministic_state_relations(nodes: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
-    """仅对已本地绑定的状态生成 HAS_STATE，不让模型自行猜测该边。"""
-    relations = []
-    for node in nodes:
-        if node["entity_type"] != "IndicatorState" or "bound_indicator_candidate_key" not in node:
-            continue
-        source_ref = node["source_ref"]
-        relations.append(
-            {
-                "candidate_key": _relation_key(
-                    "HAS_STATE", node["bound_indicator_candidate_key"], node["candidate_key"], source_ref
-                ),
-                "relation_type": "HAS_STATE",
-                "source_candidate_key": node["bound_indicator_candidate_key"],
-                "target_candidate_key": node["candidate_key"],
-                "source_ref": source_ref,
-                "generation": "deterministic_state_binding",
-                "extraction_status": "VALID",
-                "review_status": "PENDING",
-                "publication_status": "HOLD",
-            }
-        )
-    return relations
-
-
 def _rule_relation_source_ref(
     relationship: Any, relation_type: str, source: Mapping[str, Any], target: Mapping[str, Any]
 ) -> Mapping[str, Any] | None:
@@ -79,6 +54,36 @@ def _rule_relation_source_ref(
     raise GraphBuilderConfigurationError("rule_relation_evidence_role_unknown")
 
 
+def _has_state_source_refs(
+    relationship: Any,
+    *,
+    source: Mapping[str, Any],
+    target: Mapping[str, Any],
+) -> tuple[Mapping[str, Any], list[Mapping[str, Any]] | None]:
+    """为 HAS_STATE 选择普通引语或表格派生状态已验证过的双锚点。
+
+    普通状态词如“血清铁降低”可直接出现在关系引语中；表格箭头派生状态则没有
+    连续的状态词，不能要求模型伪造 exact_quote。后者复用目标状态节点已回放的
+    table_header/table_row，并要求源指标名称至少出现在其中一个锚点内。
+    """
+    properties = relationship.properties
+    exact_quote = properties.get("exact_quote")
+    table_refs = target.get("table_state_evidence_refs")
+    if exact_quote not in (None, "") or not isinstance(table_refs, list):
+        return None, None
+    if target.get("entity_type") != "IndicatorState":
+        return None, None
+    if not all(isinstance(ref, Mapping) for ref in table_refs):
+        raise GraphBuilderConfigurationError("has_state_table_evidence_invalid")
+    quotes = [ref.get("exact_quote") for ref in table_refs]
+    if not any(isinstance(quote, str) and source["mention"] in quote for quote in quotes):
+        raise GraphBuilderConfigurationError("has_state_table_evidence_lacks_indicator")
+    source_ref = target.get("source_ref")
+    if not isinstance(source_ref, Mapping):
+        raise GraphBuilderConfigurationError("has_state_table_evidence_missing")
+    return source_ref, list(table_refs)
+
+
 def normalize_candidate_relationships(
     graph: Neo4jGraph,
     *,
@@ -86,16 +91,19 @@ def normalize_candidate_relationships(
     schema: Mapping[str, Any],
     nodes: Sequence[Mapping[str, Any]],
     allowed_relation_types: Sequence[str] = MODEL_RELATION_TYPES,
-    include_deterministic_state: bool = True,
     validate_rule_structures: bool = True,
     return_invalid_rule_keys: bool = False,
 ) -> CandidateNormalization:
-    """接纳可回放关系，并将无法入图的最小关系分流给 Judge。"""
+    """接纳模型提出的可回放关系，并将无法入图的最小关系分流给 Judge。
+
+    包括 ``HAS_STATE`` 在内的所有边均由关系阶段模型输出。本地只验证关系类型、
+    冻结端点组合和原文证据，不再根据状态名称自动推断指标归属。
+    """
     node_by_key = {item["candidate_key"]: item for item in nodes}
-    relations = deterministic_state_relations(nodes) if include_deterministic_state else []
+    relations: list[dict[str, Any]] = []
     holds: list[dict[str, Any]] = []
     judge_drafts: list[dict[str, Any]] = []
-    seen_keys = {item["candidate_key"] for item in relations}
+    seen_keys: set[str] = set()
     model_relations: list[tuple[int, dict[str, Any]]] = []
 
     # 关系阶段不允许新增节点，关系必须引用先前冻结的 candidate_key。
@@ -134,15 +142,32 @@ def normalize_candidate_relationships(
 
             properties = relationship.properties
             rule_source_ref = _rule_relation_source_ref(relationship, relation_type, source, target)
-            source_ref = rule_source_ref if rule_source_ref is not None else _source_ref(
-                chunk,
-                source["mention"],
-                properties.get("exact_quote"),
-                exact_quote_occurrence_index=properties.get("exact_quote_occurrence_index"),
-                source_char_start=properties.get("source_char_start"),
-                source_char_end=properties.get("source_char_end"),
-            )
-            if rule_source_ref is None and target["mention"] not in source_ref["exact_quote"]:
+            table_state_source_ref: list[Mapping[str, Any]] | None = None
+            if rule_source_ref is not None:
+                source_ref = rule_source_ref
+            elif relation_type == "HAS_STATE":
+                source_ref, table_state_source_ref = _has_state_source_refs(
+                    relationship, source=source, target=target
+                )
+                if source_ref is None:
+                    source_ref = _source_ref(
+                        chunk,
+                        source["mention"],
+                        properties.get("exact_quote"),
+                        exact_quote_occurrence_index=properties.get("exact_quote_occurrence_index"),
+                        source_char_start=properties.get("source_char_start"),
+                        source_char_end=properties.get("source_char_end"),
+                    )
+            else:
+                source_ref = _source_ref(
+                    chunk,
+                    source["mention"],
+                    properties.get("exact_quote"),
+                    exact_quote_occurrence_index=properties.get("exact_quote_occurrence_index"),
+                    source_char_start=properties.get("source_char_start"),
+                    source_char_end=properties.get("source_char_end"),
+                )
+            if rule_source_ref is None and table_state_source_ref is None and target["mention"] not in source_ref["exact_quote"]:
                 raise GraphBuilderConfigurationError("relation_quote_lacks_endpoint")
 
             warnings: list[str] = []
@@ -153,7 +178,7 @@ def normalize_candidate_relationships(
                 for endpoint in (source, target):
                     if endpoint.get("entity_type") == "RuleDefinition":
                         _mark_partial(endpoint, "RULE_ENDPOINT_TYPE_INVALID")
-            if relation_type not in {"HAS_METRIC", "RULE_INPUT", "RULE_OUTPUT"}:
+            if relation_type not in {"HAS_METRIC", "HAS_STATE", "RULE_INPUT", "RULE_OUTPUT"}:
                 cue = properties.get("relation_cue")
                 if not isinstance(cue, str) or not cue.strip():
                     raise GraphBuilderConfigurationError("relation_cue_invalid")
@@ -194,6 +219,9 @@ def normalize_candidate_relationships(
             }
             if cue is not None:
                 record["relation_cue"] = cue
+            if table_state_source_ref is not None:
+                # 关系自身保留同一组双锚点，避免只有状态节点知道表头和表格行的对应范围。
+                record["table_state_evidence_refs"] = table_state_source_ref
             if warnings:
                 _mark_partial(record, *warnings)
                 holds.append(_review_item(

@@ -158,7 +158,6 @@ async def run_candidate_graph(
             schema=schema,
             nodes=frozen_nodes,
             allowed_relation_types=sorted(ORDINARY_RELATION_TYPES),
-            include_deterministic_state=True,
             validate_rule_structures=False,
         )
         ordinary_result.review_items.append(_model_phase_failure_hold(
@@ -168,7 +167,7 @@ async def run_candidate_graph(
     else:
         ordinary_result = normalize_candidate_relationships(
             ordinary_relation_graph or Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
-            allowed_relation_types=sorted(ORDINARY_RELATION_TYPES), include_deterministic_state=True,
+            allowed_relation_types=sorted(ORDINARY_RELATION_TYPES),
             validate_rule_structures=False,
         )
     ordinary_relationships, ordinary_holds = ordinary_result
@@ -186,7 +185,6 @@ async def run_candidate_graph(
                 schema=schema,
                 nodes=frozen_nodes,
                 allowed_relation_types=sorted(RULE_EDGE_TYPES),
-                include_deterministic_state=False,
                 validate_rule_structures=True,
                 return_invalid_rule_keys=True,
             )
@@ -197,7 +195,7 @@ async def run_candidate_graph(
         else:
             rule_result = normalize_candidate_relationships(
                 rule_edge_graph or Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
-                allowed_relation_types=sorted(RULE_EDGE_TYPES), include_deterministic_state=False,
+                allowed_relation_types=sorted(RULE_EDGE_TYPES),
                 validate_rule_structures=True, return_invalid_rule_keys=True,
             )
         rule_relationships, rule_edge_holds = rule_result

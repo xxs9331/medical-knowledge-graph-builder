@@ -99,12 +99,9 @@
       "name": "IndicatorState",
       "label": "指标状态",
       "description": "只描述一个明确检查指标的高、低、正常、阳性、阴性或单指标趋势。",
-      "required_fields": [
-        "bound_indicator_candidate_key"
-      ],
+      "required_fields": [],
       "field_constraints": {
-        "bound_indicator_candidate_key": "必须引用同一候选批次中的唯一 LabIndicator 候选；最终由 RC-02 HAS_STATE 绑定。",
-        "table_state_evidence_refs": "仅适用于模型从原始 HTML/Markdown 表格语义解析出的派生状态。固定包含 table_header 与 table_row 两条可逐字回放原文锚点；模型判断其含义，本地只验证锚点和冻结绑定。"
+        "table_state_evidence_refs": "仅适用于模型从原始 HTML/Markdown 表格语义解析出的派生状态。固定包含 table_header 与 table_row 两条可逐字回放原文锚点；模型判断其含义，本地只验证锚点。"
       },
       "examples": [
         "MCV 正常",
@@ -197,7 +194,7 @@
           "target": "IndicatorState"
         }
       ],
-      "generation": "根据已校验的 bound_indicator_candidate_key 确定性生成。",
+      "generation": "由关系抽取阶段模型提出；本地校验冻结端点、端点类型和可回放原文证据。",
       "direction_rule": "检查指标 -> 指标状态"
     },
     {
