@@ -131,7 +131,17 @@ class _GraphRagIdCompletingLLM:
                         properties = {}
                         relationship["properties"] = properties
                         changed = True
-                    for field in ("exact_quote", "relation_cue"):
+                    # 模型有时会把 Schema 声明的关系属性放在关系顶层。统一搬回
+                    # properties 后再交给 Neo4jGraph 解析；这里只修正包装位置，
+                    # 字段值是否可回放仍由后续本地关系校验负责。
+                    for field in (
+                        "exact_quote",
+                        "exact_quote_occurrence_index",
+                        "source_char_start",
+                        "source_char_end",
+                        "relation_cue",
+                        "rule_evidence_role",
+                    ):
                         if properties.get(field) is None and field in properties:
                             properties.pop(field)
                             changed = True

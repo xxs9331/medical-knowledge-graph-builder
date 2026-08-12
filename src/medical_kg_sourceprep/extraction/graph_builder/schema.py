@@ -80,6 +80,7 @@ def build_graphrag_schema(
     relation_types: Sequence[str],
     node_types: Sequence[str] = TRIAL_NODE_TYPES,
     node_property_names: Sequence[str] | None = None,
+    relationship_property_names: Sequence[str] | None = None,
 ) -> GraphSchema:
     """Convert the JSON contract into the GraphRAG schema supplied to the model.
 
@@ -124,16 +125,30 @@ def build_graphrag_schema(
                 "additional_properties": False,
             }
         )
+    all_relationship_properties = {
+        "exact_quote": "STRING",
+        "exact_quote_occurrence_index": "INTEGER",
+        "source_char_start": "INTEGER",
+        "source_char_end": "INTEGER",
+        "relation_cue": "STRING",
+        "rule_evidence_role": "STRING",
+    }
+    selected_relationship_properties = (
+        tuple(relationship_property_names)
+        if relationship_property_names is not None
+        else tuple(all_relationship_properties)
+    )
+    unsupported_relationship_properties = (
+        set(selected_relationship_properties) - all_relationship_properties.keys()
+    )
+    if unsupported_relationship_properties:
+        raise GraphBuilderConfigurationError("graph_schema_relationship_property_not_supported")
     relationship_definitions = [
         {
             "label": relation_type,
             "properties": [
-                {"name": "exact_quote", "type": "STRING"},
-                {"name": "exact_quote_occurrence_index", "type": "INTEGER"},
-                {"name": "source_char_start", "type": "INTEGER"},
-                {"name": "source_char_end", "type": "INTEGER"},
-                {"name": "relation_cue", "type": "STRING"},
-                {"name": "rule_evidence_role", "type": "STRING"},
+                {"name": name, "type": all_relationship_properties[name]}
+                for name in selected_relationship_properties
             ],
             "additional_properties": False,
         }
