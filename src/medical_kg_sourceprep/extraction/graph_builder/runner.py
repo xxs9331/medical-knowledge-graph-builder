@@ -186,7 +186,6 @@ async def run_candidate_graph(
                 nodes=frozen_nodes,
                 allowed_relation_types=sorted(RULE_EDGE_TYPES),
                 validate_rule_structures=True,
-                return_invalid_rule_keys=True,
             )
             rule_result.review_items.append(_model_phase_failure_hold(
                 stage="rule", phase="rule_edge_phase", error=rule_edge_error,
@@ -196,7 +195,7 @@ async def run_candidate_graph(
             rule_result = normalize_candidate_relationships(
                 rule_edge_graph or Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
                 allowed_relation_types=sorted(RULE_EDGE_TYPES),
-                validate_rule_structures=True, return_invalid_rule_keys=True,
+                validate_rule_structures=True,
             )
         rule_relationships, rule_edge_holds = rule_result
         invalid_rule_keys = rule_result.invalid_rule_keys

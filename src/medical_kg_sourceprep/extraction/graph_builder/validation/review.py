@@ -230,57 +230,21 @@ def _relationship_summary(relationship: Any) -> dict[str, Any]:
 
 
 if __name__ == "__main__":
-    # 这是“模型已返回节点之后”的本地硬校验演示：不调用模型，也不写入工件。
-    # 直接执行本文件即可观察每条真实候选如何被分流。
-    import json
+    # 本模块只负责将已经识别的问题整理为审查项和 Judge 草稿；不做节点校验。
+    # 可自行 print(node_draft)、print(judge_item)、print(review_item) 查看各函数输出。
+    from types import SimpleNamespace
 
-    from neo4j_graphrag.experimental.components.types import Neo4jGraph
-
-    from medical_kg_sourceprep.extraction.graph_builder.contract import (
-        BUSINESS_NODE_TYPES,
-        DEFAULT_CHUNK_MANIFEST,
-        DEFAULT_SCHEMA_PATH,
+    node = SimpleNamespace(
+        label="UnknownType",
+        properties={
+            "mention": "血清铁降低",
+            "extraction_reason": "原文明示的指标状态。",
+        },
     )
-    from medical_kg_sourceprep.extraction.graph_builder.schema import load_candidate_graph_schema
-    from medical_kg_sourceprep.extraction.graph_builder.validation.nodes import normalize_candidate_nodes
-    from medical_kg_sourceprep.extraction.llm_extraction import load_chunk_manifest
-
-    chunk_id = "clinical-hematology:chapter-01:0012:0000"
-    _manifest, chunks = load_chunk_manifest(DEFAULT_CHUNK_MANIFEST)
-    chunk = next(item for item in chunks if item.chunk_id == chunk_id)
-    schema = load_candidate_graph_schema(DEFAULT_SCHEMA_PATH)
-
-    # 前 12 条来自刚才这个 chunk 的真实模型输出。最后一条模拟表格箭头的语义状态：
-    # “血清铁降低”不作为连续原文出现，因而代码无法为它伪造来源位置。
-    raw_nodes = [
-        ("ClinicalContext", "严重的肝病", "原文明示的疾病背景，影响检验结果解释。"),
-        ("ClinicalContext", "营养不良", "原文明示的临床背景，影响检验结果解释。"),
-        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
-        ("IndicatorState", "转铁蛋白合成减少", "原文明示该指标的减少状态。"),
-        ("ClinicalContext", "肾病综合征", "原文明示的疾病背景，影响检验结果解释。"),
-        ("ClinicalContext", "大量蛋白质从尿液丢失", "原文明示的病理机制背景。"),
-        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
-        ("IndicatorState", "转铁蛋白减少", "原文明示该指标的减少状态。"),
-        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
-        ("LabIndicator", "血清铁", "原文明示的检验指标。"),
-        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
-        ("LabIndicator", "亚铁嗪显色法", "原文明示的检验方法，作为检验指标背景。"),
-        ("IndicatorState", "血清铁降低", "表格箭头表示血清铁降低。"),
-    ]
-    graph = Neo4jGraph(nodes=[
-        {
-            "id": f"demo-node-{index}",
-            "label": label,
-            "properties": {"mention": mention, "extraction_reason": extraction_reason},
-        }
-        for index, (label, mention, extraction_reason) in enumerate(raw_nodes)
-    ])
-
-    result = normalize_candidate_nodes(
-        graph,
-        chunk=chunk,
-        schema=schema,
-        allowed_node_types=BUSINESS_NODE_TYPES,
-        derive_entity_provenance=True,
+    node_draft = _node_judge_draft(node)
+    print(node_draft)
+    assert node_draft is not None
+    judge_item = _judge_draft("entity", 0, "entity_type_not_enabled_for_trial", node_draft)
+    review_item = _review_item(
+        "entity", 0, "REVIEW_REQUIRED", "entity_type_not_enabled_for_trial", _node_summary(node)
     )
-    print(result)

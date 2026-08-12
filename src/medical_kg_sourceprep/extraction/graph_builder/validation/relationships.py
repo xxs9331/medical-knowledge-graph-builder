@@ -92,7 +92,6 @@ def normalize_candidate_relationships(
     nodes: Sequence[Mapping[str, Any]],
     allowed_relation_types: Sequence[str] = MODEL_RELATION_TYPES,
     validate_rule_structures: bool = True,
-    return_invalid_rule_keys: bool = False,
 ) -> CandidateNormalization:
     """接纳模型提出的可回放关系，并将无法入图的最小关系分流给 Judge。
 

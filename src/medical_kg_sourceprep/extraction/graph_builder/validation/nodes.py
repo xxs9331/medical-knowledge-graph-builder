@@ -335,52 +335,50 @@ def _catalog_for_prompt(nodes: Sequence[Mapping[str, Any]]) -> str:
 if __name__ == "__main__":
     # 此处演示“模型已提取实体后”的二次处理：不调用模型，也不写入运行工件。
     # 可自行在末尾添加 print(graph.nodes)、print(result) 或 print(frozen_catalog_json) 查看中间结果。
+    import hashlib
+
     from medical_kg_sourceprep.extraction.graph_builder.contract import (
         BUSINESS_NODE_TYPES,
-        DEFAULT_CHUNK_MANIFEST,
         DEFAULT_SCHEMA_PATH,
     )
     from medical_kg_sourceprep.extraction.graph_builder.schema import load_candidate_graph_schema
-    from medical_kg_sourceprep.extraction.llm_extraction import load_chunk_manifest
+    from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
 
-    chunk_id = "clinical-hematology:chapter-01:0012:0000"
-    _manifest, chunks = load_chunk_manifest(DEFAULT_CHUNK_MANIFEST)
-    chunk = next(item for item in chunks if item.chunk_id == chunk_id)
+    text = "肝硬化使转铁蛋白减少。"
+    chunk = EvidenceChunk("demo:nodes", text, hashlib.sha256(text.encode()).hexdigest())
     schema = load_candidate_graph_schema(DEFAULT_SCHEMA_PATH)
 
-    # 这些是该真实 chunk 的实体阶段模型输出。故意保留重复实体和表格语义状态，
-    # 以便观察本地处理如何去重，以及无法逐字定位的状态如何进入 Judge 草稿。
-    raw_nodes = [
-        ("ClinicalContext", "严重的肝病", "原文明示的疾病背景，影响检验结果解释。"),
-        ("ClinicalContext", "营养不良", "原文明示的临床背景，影响检验结果解释。"),
-        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
-        ("IndicatorState", "转铁蛋白合成减少", "原文明示该指标的减少状态。"),
-        ("ClinicalContext", "肾病综合征", "原文明示的疾病背景，影响检验结果解释。"),
-        ("ClinicalContext", "大量蛋白质从尿液丢失", "原文明示的病理机制背景。"),
-        ("LabIndicator", "转铁蛋白", "原文明示的检验指标。"),
-        ("IndicatorState", "转铁蛋白减少", "原文明示该指标的减少状态。"),
-        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
-        ("LabIndicator", "血清铁", "原文明示的检验指标。"),
-        ("LabIndicator", "总铁结合力", "原文明示的检验指标。"),
-        ("LabIndicator", "亚铁嗪显色法", "原文明示的检验方法，作为检验指标背景。"),
-        ("IndicatorState", "血清铁降低", "表格箭头表示血清铁降低。"),
-    ]
     graph = Neo4jGraph(nodes=[
         {
-            "id": f"demo-node-{index}",
-            "label": label,
-            "properties": {"mention": mention, "extraction_reason": extraction_reason},
-        }
-        for index, (label, mention, extraction_reason) in enumerate(raw_nodes)
+            "id": "indicator",
+            "label": "LabIndicator",
+            "properties": {"mention": "转铁蛋白", "extraction_reason": "原文明示的检验指标。"},
+        },
+        {
+            "id": "state",
+            "label": "IndicatorState",
+            "properties": {"mention": "转铁蛋白减少", "extraction_reason": "原文明示的指标状态。"},
+        },
+        {
+            "id": "duplicate",
+            "label": "LabIndicator",
+            "properties": {"mention": "转铁蛋白", "extraction_reason": "重复模型输出。"},
+        },
     ])
 
-    # result 包含三类输出：accepted、review_items、judge_drafts。
-    result = normalize_candidate_nodes(
+    # 本地校验只负责分流节点，还没有调用关系抽取模型。
+    # normalization.accepted 是本地接纳的候选节点，其中可能同时包含 VALID 和 PARTIAL。
+    normalization = normalize_candidate_nodes(
         graph,
         chunk=chunk,
         schema=schema,
         allowed_node_types=BUSINESS_NODE_TYPES,
         derive_entity_provenance=True,
     )
-    # 只有 result.accepted 中的 VALID 节点会写入这个后续规则/关系阶段使用的冻结目录。
-    frozen_catalog_json = _catalog_for_prompt(result.accepted)
+    accepted_nodes = normalization.accepted
+    # print(accepted_nodes)
+
+    # 这一步才把已接纳节点转换为后续模型的输入。函数会自动排除 PARTIAL，
+    # 最终 JSON 同时供“规则抽取”和“普通关系抽取”引用，并不执行任何抽取。
+    downstream_prompt_catalog_json = _catalog_for_prompt(accepted_nodes)
+    print(downstream_prompt_catalog_json)
