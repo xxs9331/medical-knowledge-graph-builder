@@ -27,7 +27,9 @@
       "source_ref"
     ],
     "common_optional_fields": [
+      "extraction_reason",
       "qualifier_candidates",
+      "source_refs",
       "table_state_evidence_refs",
       "warnings"
     ],
@@ -54,7 +56,7 @@
       "validation": [
         "chunk_id 必须属于本次来源包",
         "chunk_sha256 必须与当前文本块一致",
-        "普通业务实体的 mention 和 exact_quote 必须能按字符位置在来源块中逐字回放",
+        "普通业务实体的 mention 和 exact_quote 必须能按字符位置在来源块中逐字回放；轻量实体发现阶段由代码按 mention 回查原文生成这些字段",
         "普通业务实体的 mention 必须位于 exact_quote 覆盖的范围内",
         "表格派生 IndicatorState 可使用模型根据原始表格语义给出的非连续 mention；此时 source_ref 定位原始表格行，且 table_state_evidence_refs 必须同时逐字回放表头和表格行。本地不解释箭头或单元格语义。"
       ]

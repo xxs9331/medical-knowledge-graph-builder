@@ -31,6 +31,8 @@ from .contract import (
     DEFAULT_OUTPUT_DIR,
     DEFAULT_SCHEMA_PATH,
     DEEPSEEK_MODEL,
+    ENTITY_DISCOVERY_EXAMPLES,
+    ENTITY_DISCOVERY_PROMPT_TEMPLATE,
     NODE_PROMPT_TEMPLATE,
     ORDINARY_RELATION_PROMPT_TEMPLATE,
     RULE_EDGE_PROMPT_TEMPLATE,
@@ -83,8 +85,15 @@ async def run_candidate_graph(
     judge_drafts: list[dict[str, Any]] = []
     entity_response_diagnostics: list[dict[str, Any]] = []
     entity_graph, entity_error, entity_attempts = await extract_with_retry(
-        graph_schema=build_graphrag_schema(schema, relation_types=(), node_types=sorted(BUSINESS_NODE_TYPES)),
-        prompt_template=NODE_PROMPT_TEMPLATE, examples="{}", diagnostics=entity_response_diagnostics,
+        graph_schema=build_graphrag_schema(
+            schema,
+            relation_types=(),
+            node_types=sorted(BUSINESS_NODE_TYPES),
+            node_property_names=("mention", "extraction_reason"),
+        ),
+        prompt_template=ENTITY_DISCOVERY_PROMPT_TEMPLATE,
+        examples=ENTITY_DISCOVERY_EXAMPLES,
+        diagnostics=entity_response_diagnostics,
     )
     if entity_error is not None:
         entity_nodes = []
@@ -107,7 +116,11 @@ async def run_candidate_graph(
             chunk=chunk, nodes=[], relationships=[], holds=entity_holds, output_dir=output_dir, judge_drafts=judge_drafts,
         )
     entity_result = normalize_candidate_nodes(
-        entity_graph or Neo4jGraph(), chunk=chunk, schema=schema, allowed_node_types=BUSINESS_NODE_TYPES
+        entity_graph or Neo4jGraph(),
+        chunk=chunk,
+        schema=schema,
+        allowed_node_types=BUSINESS_NODE_TYPES,
+        derive_entity_provenance=True,
     )
     entity_nodes, entity_holds = entity_result
     judge_drafts.extend(entity_result.judge_drafts)

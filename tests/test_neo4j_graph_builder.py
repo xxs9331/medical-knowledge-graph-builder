@@ -80,20 +80,41 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         asyncio.run(client.aclose())
         self.assertTrue(llm.closed)
 
-    def test_response_adapter_removes_null_optional_relation_properties(self):
+    def test_response_adapter_normalizes_supported_response_shapes(self):
         class FakeLLM:
             async def ainvoke(self, prompt):
-                return SimpleNamespace(content=json.dumps({
-                    "nodes": [],
-                    "edges": [{
-                        "type": "RULE_INPUT",
-                        "properties": {"exact_quote": None, "relation_cue": None},
-                    }],
-                }))
+                return SimpleNamespace(
+                    content=json.dumps({
+                        "nodes": [{
+                            "id": "table-state",
+                            "label": "IndicatorState",
+                            "properties": {
+                                "table_state_evidence_json": {
+                                    "header_exact_quote": "血清铁",
+                                    "row_exact_quote": "↓",
+                                },
+                            },
+                        }],
+                        "edges": [{
+                            "type": "RULE_INPUT",
+                            "properties": {"exact_quote": None, "relation_cue": None},
+                        }],
+                    }),
+                    usage=SimpleNamespace(request_tokens=100, response_tokens=20, total_tokens=120),
+                )
 
-        result = asyncio.run(graph_builder._GraphRagIdCompletingLLM(FakeLLM()).ainvoke("prompt"))
+        adapter = graph_builder._GraphRagIdCompletingLLM(FakeLLM())
+        result = asyncio.run(adapter.ainvoke("prompt"))
         payload = json.loads(result.content)
         self.assertNotIn("edges", payload)
+        self.assertEqual(
+            json.loads(payload["nodes"][0]["properties"]["table_state_evidence_json"]),
+            {"header_exact_quote": "血清铁", "row_exact_quote": "↓"},
+        )
+        self.assertEqual(adapter.last_response_diagnostic["usage"], {
+            "input_tokens": 100, "output_tokens": 20, "total_tokens": 120,
+        })
+        self.assertEqual(result.usage.total_tokens, 120)
         relationship = payload["relationships"][0]
         self.assertEqual(relationship["properties"], {})
 
@@ -462,13 +483,10 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         text = f"{ptr_formula}{inr_formula}"
         chunk = EvidenceChunk("synthetic:formula", text, hashlib.sha256(text.encode()).hexdigest())
         schema = graph_builder.load_candidate_graph_schema()
-        entities = [("LabIndicator", "PT", ptr_formula, 1), ("LabIndicator", "PTR", ptr_formula, None),
-                    ("LabIndicator", "INR", inr_formula, None)]
+        entities = [("LabIndicator", "PT"), ("LabIndicator", "PTR"), ("LabIndicator", "INR")]
         keys = {mention: graph_builder._candidate_key(
-            entity_type, mention, graph_builder._source_ref(
-                chunk, mention, exact_quote, mention_occurrence_index=mention_occurrence_index
-            )
-        ) for entity_type, mention, exact_quote, mention_occurrence_index in entities}
+            entity_type, mention, graph_builder._source_refs_for_mention(chunk, mention)[0]
+        ) for entity_type, mention in entities}
         ptr_expression = "PTR=PTR计算(PT)"
         inr_expression = "INR=国际标准化比值计算(PTR)"
         ptr_ref = graph_builder._rule_evidence_ref(chunk, role="formula", exact_quote=ptr_formula)
@@ -488,10 +506,8 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                 if self.calls == 1:
                     return SimpleNamespace(content=json.dumps({"nodes": [
                         {"label": entity_type, "properties": {
-                            "mention": mention, "canonical_name_candidate": mention, "exact_quote": exact_quote,
-                            **({"mention_occurrence_index": mention_occurrence_index}
-                               if mention_occurrence_index is not None else {}),
-                        }} for entity_type, mention, exact_quote, mention_occurrence_index in entities
+                            "mention": mention, "extraction_reason": "原文明示的检验指标。",
+                        }} for entity_type, mention in entities
                     ], "relationships": []}, ensure_ascii=False))
                 if self.calls == 2:
                     return SimpleNamespace(content=json.dumps({"nodes": [
@@ -1024,6 +1040,68 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(diagnostic["missing_fields"], [])
         self.assertNotIn(raw, json.dumps(diagnostic, ensure_ascii=False))
 
+    def test_response_adapter_moves_declared_top_level_node_fields_into_properties(self):
+        class FakeLLM:
+            async def ainvoke(self, prompt):
+                return SimpleNamespace(content=json.dumps({"nodes": [{
+                    "label": "Disease", "mention": "消化性溃疡出血",
+                    "extraction_reason": "原文明示的疾病性原因。",
+                }], "relationships": []}, ensure_ascii=False))
+
+        result = asyncio.run(graph_builder._GraphRagIdCompletingLLM(FakeLLM()).ainvoke("prompt"))
+        node = json.loads(result.content)["nodes"][0]
+
+        self.assertEqual(node["id"], "transient-node-0")
+        self.assertNotIn("mention", node)
+        self.assertEqual(node["properties"], {
+            "mention": "消化性溃疡出血", "extraction_reason": "原文明示的疾病性原因。",
+        })
+
+    def test_semantic_entity_output_gets_code_derived_provenance(self):
+        text = "肝硬化使转铁蛋白合成减少。\n肝硬化可影响检验结果。"
+        chunk = EvidenceChunk("synthetic:semantic-entity", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[
+            {"id": "disease", "label": "Disease", "properties": {
+                "mention": "肝硬化", "extraction_reason": "原文明示的疾病。",
+            }},
+            {"id": "context", "label": "ClinicalContext", "properties": {
+                "mention": "转铁蛋白合成减少", "extraction_reason": "原文明示的机制背景。",
+            }},
+        ])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph,
+            chunk=chunk,
+            schema=graph_builder.load_candidate_graph_schema(),
+            derive_entity_provenance=True,
+        )
+
+        self.assertEqual(result.review_items, [])
+        disease = next(item for item in result.accepted if item["entity_type"] == "Disease")
+        self.assertEqual(disease["canonical_name_candidate"], "肝硬化")
+        self.assertEqual(disease["source_ref"]["exact_quote"], "肝硬化使转铁蛋白合成减少。")
+        self.assertEqual(len(disease["source_refs"]), 2)
+        self.assertEqual(disease["extraction_reason"], "原文明示的疾病。")
+
+    def test_unanchored_semantic_table_state_enters_judge_queue(self):
+        text = "<table><tr><th>血清铁</th></tr><tr><td>↓</td></tr></table>"
+        chunk = EvidenceChunk("synthetic:semantic-table", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[{"id": "state", "label": "IndicatorState", "properties": {
+            "mention": "血清铁降低", "extraction_reason": "表格箭头表示指标降低。",
+        }}])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph,
+            chunk=chunk,
+            schema=graph_builder.load_candidate_graph_schema(),
+            derive_entity_provenance=True,
+        )
+
+        self.assertEqual(result.accepted, [])
+        self.assertEqual(result.review_items[0]["reason_code"], "semantic_mention_not_in_source")
+        self.assertEqual(result.judge_drafts[0]["candidate_draft"]["properties"]["extraction_reason"],
+                         "表格箭头表示指标降低。")
+
     def test_chunk_without_rules_returns_empty_rule_collection(self):
         text = "血清铁是一个实验室指标。"
         chunk = EvidenceChunk("synthetic:no-rule", text, hashlib.sha256(text.encode()).hexdigest())
@@ -1060,6 +1138,11 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
 
     def test_candidate_prompts_require_rule_evidence_and_explicit_causality(self):
         self.assertIn("complete sentence", graph_builder.NODE_PROMPT_TEMPLATE)
+        self.assertIn("table-row entity", graph_builder.NODE_PROMPT_TEMPLATE)
+        self.assertIn("omit a prose state", graph_builder.NODE_PROMPT_TEMPLATE)
+        self.assertIn("independently referable source phrase", graph_builder.NODE_PROMPT_TEMPLATE)
+        self.assertIn("Enumeration punctuation", graph_builder.NODE_PROMPT_TEMPLATE)
+        self.assertIn("mechanism, treatment factor, physiological stage", graph_builder.NODE_PROMPT_TEMPLATE)
         self.assertIn("causal sentence", graph_builder.RELATION_PROMPT_TEMPLATE)
         self.assertNotIn("rule_evidence_json", graph_builder.NODE_PROMPT_TEMPLATE)
         self.assertIn("rule_evidence_json", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
@@ -1069,3 +1152,13 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertIn("RULE_INPUT", graph_builder.RULE_EDGE_PROMPT_TEMPLATE)
         self.assertNotIn("PTR", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
         self.assertNotIn("ISI", graph_builder.RULE_EDGE_PROMPT_TEMPLATE)
+
+    def test_entity_discovery_uses_diverse_few_shot_examples(self):
+        examples = graph_builder.ENTITY_DISCOVERY_EXAMPLES
+
+        self.assertIn("Example 1", examples)
+        self.assertNotIn("Example 4", examples)
+        self.assertIn("<table>", examples)
+        self.assertIn("严重的肝病", examples)
+        self.assertIn("转铁蛋白合成减少", examples)
+        self.assertIn("extraction_reason", examples)

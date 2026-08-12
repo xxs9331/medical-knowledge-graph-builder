@@ -75,9 +75,43 @@ def _relation_endpoint_pairs(schema: Mapping[str, Any], relation_type: str) -> t
 
 
 def build_graphrag_schema(
-    schema: Mapping[str, Any], *, relation_types: Sequence[str], node_types: Sequence[str] = TRIAL_NODE_TYPES
+    schema: Mapping[str, Any],
+    *,
+    relation_types: Sequence[str],
+    node_types: Sequence[str] = TRIAL_NODE_TYPES,
+    node_property_names: Sequence[str] | None = None,
 ) -> GraphSchema:
-    """Convert the JSON contract into the GraphRAG schema supplied to the model."""
+    """Convert the JSON contract into the GraphRAG schema supplied to the model.
+
+    实体语义发现可传入更小的 ``node_property_names``，避免要求模型生成可由代码
+    确定的来源和身份字段；规则、关系阶段仍使用完整字段集合。
+    """
+    all_node_properties = (
+        "mention", "extraction_reason", "canonical_name_candidate", "exact_quote",
+        "exact_quote_occurrence_index", "mention_occurrence_index", "source_char_start",
+        "source_char_end", "bound_indicator_mention", "rule_stage_candidate",
+        "rule_expression", "rule_name", "rule_evidence_json", "table_state_evidence_json",
+    )
+    property_types = {
+        "mention": "STRING",
+        "extraction_reason": "STRING",
+        "canonical_name_candidate": "STRING",
+        "exact_quote": "STRING",
+        "exact_quote_occurrence_index": "INTEGER",
+        "mention_occurrence_index": "INTEGER",
+        "source_char_start": "INTEGER",
+        "source_char_end": "INTEGER",
+        "bound_indicator_mention": "STRING",
+        "rule_stage_candidate": "STRING",
+        "rule_expression": "STRING",
+        "rule_name": "STRING",
+        "rule_evidence_json": "STRING",
+        "table_state_evidence_json": "STRING",
+    }
+    properties = tuple(node_property_names) if node_property_names is not None else all_node_properties
+    unsupported_properties = set(properties) - property_types.keys()
+    if unsupported_properties:
+        raise GraphBuilderConfigurationError("graph_schema_node_property_not_supported")
     node_definitions = []
     for item in schema["node_types"]:
         if not isinstance(item, Mapping) or item.get("name") not in node_types:
@@ -86,21 +120,7 @@ def build_graphrag_schema(
             {
                 "label": item["name"],
                 "description": item.get("description", ""),
-                "properties": [
-                    {"name": "mention", "type": "STRING"},
-                    {"name": "canonical_name_candidate", "type": "STRING"},
-                    {"name": "exact_quote", "type": "STRING"},
-                    {"name": "exact_quote_occurrence_index", "type": "INTEGER"},
-                    {"name": "mention_occurrence_index", "type": "INTEGER"},
-                    {"name": "source_char_start", "type": "INTEGER"},
-                    {"name": "source_char_end", "type": "INTEGER"},
-                    {"name": "bound_indicator_mention", "type": "STRING"},
-                    {"name": "rule_stage_candidate", "type": "STRING"},
-                    {"name": "rule_expression", "type": "STRING"},
-                    {"name": "rule_name", "type": "STRING"},
-                    {"name": "rule_evidence_json", "type": "STRING"},
-                    {"name": "table_state_evidence_json", "type": "STRING"},
-                ],
+                "properties": [{"name": name, "type": property_types[name]} for name in properties],
                 "additional_properties": False,
             }
         )

@@ -61,6 +61,12 @@ class _GraphRagIdCompletingLLM:
     async def ainvoke(self, *args: Any, **kwargs: Any) -> SimpleNamespace:
         result = await self.delegate.ainvoke(*args, **kwargs)
         self.last_response_diagnostic = _response_shape_diagnostic(getattr(result, "content", None))
+        usage = getattr(result, "usage", None)
+        self.last_response_diagnostic["usage"] = {
+            "input_tokens": getattr(usage, "request_tokens", None),
+            "output_tokens": getattr(usage, "response_tokens", None),
+            "total_tokens": getattr(usage, "total_tokens", None),
+        }
         try:
             payload = json.loads(result.content)
             changed = False
@@ -77,6 +83,31 @@ class _GraphRagIdCompletingLLM:
             for index, node in enumerate(nodes):
                 if isinstance(node, dict) and not isinstance(node.get("id"), str):
                     node["id"] = f"transient-node-{index}"
+                    changed = True
+                if not isinstance(node, dict):
+                    continue
+                properties = node.get("properties")
+                if not isinstance(properties, dict):
+                    properties = {}
+                    node["properties"] = properties
+                    changed = True
+                # 有些模型会忽略 Neo4jGraph 的 properties 包装，直接把业务字段放在节点顶层。
+                # 只搬运 Schema 已声明的属性；未知顶层字段仍保留，使下游结构校验能报告问题。
+                for field in (
+                    "mention", "extraction_reason", "canonical_name_candidate", "exact_quote",
+                    "exact_quote_occurrence_index", "mention_occurrence_index", "source_char_start",
+                    "source_char_end", "bound_indicator_mention", "rule_stage_candidate",
+                    "rule_expression", "rule_name", "rule_evidence_json", "table_state_evidence_json",
+                ):
+                    if field in node and field not in properties:
+                        properties[field] = node.pop(field)
+                        changed = True
+                table_evidence = properties.get("table_state_evidence_json")
+                if isinstance(table_evidence, (dict, list)):
+                    # GraphRAG 的节点属性只能是标量；模型常把该字段当嵌套 JSON 返回。
+                    properties["table_state_evidence_json"] = json.dumps(
+                        table_evidence, ensure_ascii=False, separators=(",", ":")
+                    )
                     changed = True
             relationships = payload.get("relationships")
             if isinstance(relationships, list):
@@ -111,7 +142,7 @@ class _GraphRagIdCompletingLLM:
                             properties.setdefault(field, relationship.pop(field))
                             changed = True
             if changed:
-                return SimpleNamespace(content=json.dumps(payload, ensure_ascii=False))
+                return SimpleNamespace(content=json.dumps(payload, ensure_ascii=False), usage=usage)
         except (AttributeError, TypeError, json.JSONDecodeError):
             pass
         return result

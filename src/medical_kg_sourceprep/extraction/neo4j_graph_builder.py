@@ -45,6 +45,7 @@ from .graph_builder.validation import (
     _rule_candidate_key,
     _rule_evidence_ref,
     _source_ref,
+    _source_refs_for_mention,
     _table_state_candidate_key,
     deterministic_state_relations,
     normalize_candidate_nodes,

@@ -16,6 +16,7 @@ from .provenance import (
     _parse_table_state_evidence,
     _rule_candidate_key,
     _source_ref,
+    _source_refs_for_mention,
     _table_state_candidate_key,
 )
 from .result import CandidateNormalization
@@ -37,8 +38,14 @@ def normalize_candidate_nodes(
     chunk: EvidenceChunk,
     schema: Mapping[str, Any],
     allowed_node_types: Sequence[str] = TRIAL_NODE_TYPES,
+    derive_entity_provenance: bool = False,
 ) -> CandidateNormalization:
-    """接纳节点或将其分流为图内 PARTIAL、Judge 草稿、重复审计项。"""
+    """接纳节点或将其分流为图内 PARTIAL、Judge 草稿、重复审计项。
+
+    ``derive_entity_provenance`` 仅用于轻量实体发现：模型只输出类型、mention 和
+    extraction_reason，代码据逐字出现回填普通实体来源。它不能为表格箭头等非连续
+    语义状态编造锚点，因此这类记录仍进入 Judge 队列。
+    """
     del schema  # Schema 已在加载时验证；当前阶段只使用允许节点类型这个切片。
     accepted: list[dict[str, Any]] = []
     pending_states: list[tuple[int, dict[str, Any], str]] = []
@@ -87,10 +94,12 @@ def normalize_candidate_nodes(
                 continue
 
             mention = properties.get("mention")
-            canonical = properties.get("canonical_name_candidate")
             if not isinstance(mention, str) or not mention:
                 raise GraphBuilderConfigurationError("mention_missing")
-            if not isinstance(canonical, str) or not canonical:
+            canonical = properties.get("canonical_name_candidate")
+            if derive_entity_provenance:
+                canonical = mention
+            elif not isinstance(canonical, str) or not canonical:
                 raise GraphBuilderConfigurationError("canonical_name_missing")
             table_state_evidence = properties.get("table_state_evidence_json")
             if table_state_evidence is not None:
@@ -104,6 +113,12 @@ def normalize_candidate_nodes(
                 candidate_key = _table_state_candidate_key(
                     chunk=chunk, mention=mention, evidence_refs=table_state_evidence_refs
                 )
+                source_refs = [source_ref]
+            elif derive_entity_provenance:
+                source_refs = _source_refs_for_mention(chunk, mention)
+                source_ref = source_refs[0]
+                table_state_evidence_refs = []
+                candidate_key = _candidate_key(entity_type, mention, source_ref)
             else:
                 source_ref = _source_ref(
                     chunk,
@@ -118,6 +133,7 @@ def normalize_candidate_nodes(
                     raise GraphBuilderConfigurationError("canonical_name_not_in_exact_quote")
                 table_state_evidence_refs = []
                 candidate_key = _candidate_key(entity_type, mention, source_ref)
+                source_refs = [source_ref]
             if candidate_key in seen_keys:
                 raise GraphBuilderConfigurationError("duplicate_candidate")
             seen_keys.add(candidate_key)
@@ -131,11 +147,18 @@ def normalize_candidate_nodes(
                 "review_status": "PENDING",
                 "publication_status": "HOLD",
             }
+            extraction_reason = properties.get("extraction_reason")
+            if isinstance(extraction_reason, str) and extraction_reason.strip():
+                record["extraction_reason"] = extraction_reason.strip()
+            if len(source_refs) > 1:
+                record["source_refs"] = source_refs
             if table_state_evidence_refs:
                 record["table_state_evidence_refs"] = table_state_evidence_refs
             if entity_type == "IndicatorState":
                 binding = properties.get("bound_indicator_mention")
-                if not isinstance(binding, str) or not binding:
+                if derive_entity_provenance:
+                    pending_states.append((index, record, binding if isinstance(binding, str) else ""))
+                elif not isinstance(binding, str) or not binding:
                     _mark_partial(record, "STATE_INDICATOR_UNRESOLVED")
                     accepted.append(record)
                     holds.append(_review_item(
@@ -160,6 +183,13 @@ def normalize_candidate_nodes(
     indicators = [item for item in accepted if item["entity_type"] == "LabIndicator"]
     for index, record, binding in pending_states:
         matches = [item for item in indicators if item["mention"] == binding]
+        if not matches and derive_entity_provenance:
+            # 轻量提示词不要求模型填 bound_indicator_mention。这里只做名称包含关系的确定性
+            # 对齐，不裁决“该状态是否医学上合理”；多个同长度候选仍保留为 PARTIAL。
+            contained = [item for item in indicators if item["mention"] in record["mention"]]
+            if contained:
+                max_length = max(len(item["mention"]) for item in contained)
+                matches = [item for item in contained if len(item["mention"]) == max_length]
         if len(matches) != 1:
             _mark_partial(record, "STATE_INDICATOR_UNRESOLVED")
             accepted.append(record)

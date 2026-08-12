@@ -105,6 +105,45 @@ def _source_ref(
     }
 
 
+def _source_refs_for_mention(chunk: EvidenceChunk, mention: str) -> list[dict[str, Any]]:
+    """由代码为逐字出现的实体生成全部可回放来源。
+
+    轻量实体发现阶段只让模型做类型和名称判断。此函数以每次 ``mention`` 出现所在
+    的非空文本行作为最小可回放原文单元，并由已有 ``_source_ref`` 复验其字符位置。
+    它不解释表格箭头等非连续语义；这类名称无法逐字找到时必须交给 Judge。
+    """
+    if not isinstance(mention, str) or not mention:
+        raise GraphBuilderConfigurationError("mention_missing")
+    starts = _occurrence_starts(chunk.text, mention)
+    if not starts:
+        raise GraphBuilderConfigurationError("semantic_mention_not_in_source")
+    refs: list[dict[str, Any]] = []
+    seen_spans: set[tuple[int, int, int]] = set()
+    for mention_start in starts:
+        line_start = chunk.text.rfind("\n", 0, mention_start) + 1
+        line_end = chunk.text.find("\n", mention_start)
+        if line_end < 0:
+            line_end = len(chunk.text)
+        quote = chunk.text[line_start:line_end]
+        if not quote:
+            raise GraphBuilderConfigurationError("semantic_mention_source_unit_missing")
+        mention_starts = _occurrence_starts(chunk.text, mention, start=line_start, end=line_end)
+        occurrence_index = mention_starts.index(mention_start)
+        ref = _source_ref(
+            chunk,
+            mention,
+            quote,
+            source_char_start=line_start,
+            source_char_end=line_end,
+            mention_occurrence_index=occurrence_index,
+        )
+        identity = (ref["char_start"], ref["char_end"], ref["mention_char_start"])
+        if identity not in seen_spans:
+            seen_spans.add(identity)
+            refs.append(ref)
+    return refs
+
+
 def _candidate_key(entity_type: str, mention: str, source_ref: Mapping[str, Any]) -> str:
     """以类型、chunk 和 mention 原文位置生成稳定候选键。"""
     mention_start = source_ref.get("mention_char_start")

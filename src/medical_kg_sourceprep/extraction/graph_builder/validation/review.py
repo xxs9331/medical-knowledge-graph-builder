@@ -11,7 +11,15 @@ import json
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from ..contract import GraphBuilderConfigurationError
+if __package__ in {None, ""}:
+    # 允许直接运行本文件查看底部示例；正常作为包导入时仍走下面的相对导入。
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+    from medical_kg_sourceprep.extraction.graph_builder.contract import GraphBuilderConfigurationError
+else:
+    from ..contract import GraphBuilderConfigurationError
 
 
 _JUDGE_TEXT_LIMIT = 2_000
@@ -71,7 +79,7 @@ def _node_judge_draft(node: Any) -> dict[str, Any] | None:
     if not (isinstance(label, str) and label and has_minimum_identity):
         return None
     allowed = (
-        "mention", "canonical_name_candidate", "exact_quote", "exact_quote_occurrence_index",
+        "mention", "extraction_reason", "canonical_name_candidate", "exact_quote", "exact_quote_occurrence_index",
         "mention_occurrence_index", "source_char_start", "source_char_end",
         "bound_indicator_mention", "rule_stage_candidate", "rule_expression", "rule_name",
         "rule_evidence_json", "table_state_evidence_json",
@@ -219,3 +227,74 @@ def _relationship_summary(relationship: Any) -> dict[str, Any]:
         "end_node_id": str(getattr(relationship, "end_node_id", ""))[:160],
         "relation_cue": str(properties.get("relation_cue", ""))[:80],
     }
+
+
+if __name__ == "__main__":
+    # 此处只用于手动观察本模块的输入和输出；不调用模型，也不读写文件。
+    from types import SimpleNamespace
+
+    node = SimpleNamespace(
+        # 模型临时 ID 只在本次响应中有意义，不能成为 Judge 队列里的稳定身份。
+        id="node-17",
+        label="UnknownType",
+        properties={
+            "mention": "血清铁降低",
+            "canonical_name_candidate": "血清铁降低",
+            "exact_quote": "血清铁降低提示缺铁性贫血。",
+            # 同一句引语多次出现时，用下标标明本候选引用的是第几次出现。
+            "exact_quote_occurrence_index": 0,
+            # 以下是模型可能擅自输出的自评分和解释，均不属于 Schema 证据。
+            "model_confidence": 0.94,
+            "model_explanation": "根据医学知识推断该状态与缺铁性贫血有关。",
+        },
+    )
+    relationship = SimpleNamespace(
+        type="INDICATES",
+        start_node_id="candidate:serum-iron-low",
+        end_node_id="candidate:iron-deficiency-anemia",
+        properties={
+            "exact_quote": "血清铁降低提示缺铁性贫血。",
+            "relation_cue": "提示",
+            "exact_quote_occurrence_index": 0,
+        },
+    )
+    partial_record = {
+        "candidate_key": "candidate:state",
+        "entity_type": "IndicatorState",
+        "mention": "血清铁降低",
+        "extraction_status": "VALID",
+        "review_status": "PENDING",
+        "publication_status": "HOLD",
+    }
+    print("模型原始节点（包含不受合同约束的字段）\n", node)
+    node_draft = _node_judge_draft(node)
+    print("送入 Judge 的节点草稿（仅保留身份和证据字段）\n", node_draft)
+    relationship_draft = _relationship_judge_draft(relationship)
+    assert node_draft is not None and relationship_draft is not None
+
+    examples = {
+        "输入节点": {"label": node.label, "properties": node.properties},
+        "节点摘要": _node_summary(node),
+        "节点 Judge 草稿": _judge_draft("entity", 0, "entity_type_not_enabled_for_trial", node_draft),
+        "输入关系": {
+            "type": relationship.type,
+            "start_node_id": relationship.start_node_id,
+            "end_node_id": relationship.end_node_id,
+            "properties": relationship.properties,
+        },
+        "关系摘要": _relationship_summary(relationship),
+        "关系 Judge 草稿": _judge_draft(
+            "relation", 1, "relation_endpoint_not_from_frozen_catalog", relationship_draft,
+        ),
+        "PARTIAL 前": dict(partial_record),
+    }
+    _mark_partial(partial_record, "RULE_INPUTS_INCOMPLETE", "OUTPUT_ENTITY_UNRESOLVED")
+    examples["PARTIAL 后"] = partial_record
+    examples["REJECTED 审查项"] = _hold(
+        "rule", 2, "rule_expression_missing", {"label": "RuleDefinition", "rule_expression": ""},
+    )
+    examples["REVIEW_REQUIRED 审查项"] = _review_item(
+        "relation", 3, "REVIEW_REQUIRED", "relation_may_be_joint_condition",
+        _relationship_summary(relationship), warnings=("RELATION_MAY_BE_JOINT_CONDITION",),
+    )
+    # print(json.dumps(examples, ensure_ascii=False, indent=2, sort_keys=True))
