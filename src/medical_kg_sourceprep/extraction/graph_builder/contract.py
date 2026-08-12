@@ -36,10 +36,10 @@ DEFAULT_SCHEMA_PATH = PROJECT_ROOT / "knowledge/schema/candidate-graph-schema.v1
 DEFAULT_CHUNK_ID = "clinical-hematology:chapter-01:0012:0001"
 # 每次正式候选运行会在此目录下再创建 run_id 子目录，写入 graph、review queue 和 manifest。
 # 此处产物始终是 candidate-only/HOLD，不是 Neo4j 数据库，也不是已批准医学知识。
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "runtime/candidates/chapter-01/rule-definition-contract-v0.3"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "runtime/candidates/chapter-01/relaxed-admission-v0.4"
 # 候选节点与关系的本地哈希 ID 会包含该版本。调整身份或证据契约时更新它，
 # 以免不同契约生成的记录被误认为同一候选。
-CANDIDATE_RUN_VERSION = "neo4j-graph-builder-rule-definition/v0.3"
+CANDIDATE_RUN_VERSION = "neo4j-graph-builder-relaxed-admission/v0.4"
 
 # ---- 候选图的封闭类型集合 -------------------------------------------------
 #

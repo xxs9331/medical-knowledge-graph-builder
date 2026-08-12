@@ -42,6 +42,7 @@ from .contract import (
 )
 from .schema import _extract_graph, build_graphrag_schema, load_candidate_graph_schema
 from .validation import (
+    CandidateNormalization,
     _catalog_for_prompt,
     _hold,
     normalize_candidate_nodes,
@@ -63,27 +64,33 @@ async def run_candidate_graph(
     """Run entity, rule, ordinary relation, and rule-edge phases for one chunk."""
     input_text = chunk.text
     effective_run_id = run_id or output_dir.name
+
+    async def extract_with_retry(
+        *, graph_schema: Any, prompt_template: str, examples: str, diagnostics: list[dict[str, Any]],
+    ) -> tuple[Neo4jGraph | None, LLMGenerationError | None, int]:
+        """每阶段总共尝试两次；失败响应只保存安全形状诊断。"""
+        last_error: LLMGenerationError | None = None
+        for attempt in range(1, 3):
+            try:
+                return await _extract_graph(
+                    client, chunk=chunk, graph_schema=graph_schema, prompt_template=prompt_template,
+                    examples=examples, input_text=input_text, response_diagnostics=diagnostics,
+                ), None, attempt
+            except LLMGenerationError as error:
+                last_error = error
+        return None, last_error, 2
+
+    judge_drafts: list[dict[str, Any]] = []
     entity_response_diagnostics: list[dict[str, Any]] = []
-    try:
-        entity_graph = await _extract_graph(
-            client,
-            chunk=chunk,
-            graph_schema=build_graphrag_schema(
-                schema, relation_types=(), node_types=sorted(BUSINESS_NODE_TYPES)
-            ),
-            prompt_template=NODE_PROMPT_TEMPLATE,
-            examples="{}",
-            input_text=input_text,
-            response_diagnostics=entity_response_diagnostics,
-        )
-        entity_nodes, entity_holds = normalize_candidate_nodes(
-            entity_graph, chunk=chunk, schema=schema, allowed_node_types=BUSINESS_NODE_TYPES
-        )
-    except LLMGenerationError as error:
+    entity_graph, entity_error, entity_attempts = await extract_with_retry(
+        graph_schema=build_graphrag_schema(schema, relation_types=(), node_types=sorted(BUSINESS_NODE_TYPES)),
+        prompt_template=NODE_PROMPT_TEMPLATE, examples="{}", diagnostics=entity_response_diagnostics,
+    )
+    if entity_error is not None:
         entity_nodes = []
         entity_holds = [_model_phase_failure_hold(
-            stage="entity", phase="entity_phase", error=error,
-            response_diagnostics=entity_response_diagnostics,
+            stage="entity", phase="entity_phase", error=entity_error,
+            response_diagnostics=entity_response_diagnostics, attempts=entity_attempts,
         )]
         write_candidate_artifacts(
             output_dir,
@@ -94,104 +101,95 @@ async def run_candidate_graph(
             source_manifest_sha256=source_manifest_sha256,
             nodes=[],
             relationships=[],
-            holds=entity_holds,
+            holds=entity_holds, judge_drafts=judge_drafts,
         )
         return candidate_summary(
-            chunk=chunk, nodes=[], relationships=[], holds=entity_holds, output_dir=output_dir
+            chunk=chunk, nodes=[], relationships=[], holds=entity_holds, output_dir=output_dir, judge_drafts=judge_drafts,
         )
+    entity_result = normalize_candidate_nodes(
+        entity_graph or Neo4jGraph(), chunk=chunk, schema=schema, allowed_node_types=BUSINESS_NODE_TYPES
+    )
+    entity_nodes, entity_holds = entity_result
+    judge_drafts.extend(entity_result.judge_drafts)
     rule_response_diagnostics: list[dict[str, Any]] = []
-    try:
-        rule_graph = await _extract_graph(
-            client,
-            chunk=chunk,
-            graph_schema=build_graphrag_schema(schema, relation_types=(), node_types=("RuleDefinition",)),
-            prompt_template=RULE_NODE_PROMPT_TEMPLATE,
-            examples=_catalog_for_prompt(entity_nodes),
-            input_text=input_text,
-            response_diagnostics=rule_response_diagnostics,
-        )
-        rule_nodes, rule_holds = normalize_candidate_nodes(
-            rule_graph, chunk=chunk, schema=schema, allowed_node_types=("RuleDefinition",)
-        )
-    except LLMGenerationError as error:
+    rule_graph, rule_error, rule_attempts = await extract_with_retry(
+        graph_schema=build_graphrag_schema(schema, relation_types=(), node_types=("RuleDefinition",)),
+        prompt_template=RULE_NODE_PROMPT_TEMPLATE, examples=_catalog_for_prompt(entity_nodes), diagnostics=rule_response_diagnostics,
+    )
+    if rule_error is not None:
         rule_nodes = []
         rule_holds = [_model_phase_failure_hold(
-            stage="rule", phase="rule_phase", error=error, response_diagnostics=rule_response_diagnostics
+            stage="rule", phase="rule_phase", error=rule_error, response_diagnostics=rule_response_diagnostics,
+            attempts=rule_attempts,
         )]
+    else:
+        rule_result = normalize_candidate_nodes(
+            rule_graph or Neo4jGraph(), chunk=chunk, schema=schema, allowed_node_types=("RuleDefinition",)
+        )
+        rule_nodes, rule_holds = rule_result
+        judge_drafts.extend(rule_result.judge_drafts)
     nodes = [*entity_nodes, *rule_nodes]
+    frozen_nodes = [item for item in nodes if item.get("extraction_status") == "VALID"]
     ordinary_response_diagnostics: list[dict[str, Any]] = []
-    try:
-        ordinary_relation_graph = await _extract_graph(
-            client,
-            chunk=chunk,
-            graph_schema=build_graphrag_schema(
-                schema, relation_types=sorted(ORDINARY_RELATION_TYPES), node_types=sorted(BUSINESS_NODE_TYPES)
-            ),
-            prompt_template=ORDINARY_RELATION_PROMPT_TEMPLATE,
-            examples=_catalog_for_prompt(entity_nodes),
-            input_text=input_text,
-            response_diagnostics=ordinary_response_diagnostics,
-        )
-        ordinary_relationships, ordinary_holds = normalize_candidate_relationships(
-            ordinary_relation_graph,
-            chunk=chunk,
-            schema=schema,
-            nodes=nodes,
-            allowed_relation_types=sorted(ORDINARY_RELATION_TYPES),
-            include_deterministic_state=True,
-            validate_rule_structures=False,
-        )
-    except LLMGenerationError as error:
-        ordinary_relationships, ordinary_holds = normalize_candidate_relationships(
+    ordinary_relation_graph, ordinary_error, ordinary_attempts = await extract_with_retry(
+        graph_schema=build_graphrag_schema(
+            schema, relation_types=sorted(ORDINARY_RELATION_TYPES), node_types=sorted(BUSINESS_NODE_TYPES),
+        ),
+        prompt_template=ORDINARY_RELATION_PROMPT_TEMPLATE, examples=_catalog_for_prompt(entity_nodes),
+        diagnostics=ordinary_response_diagnostics,
+    )
+    if ordinary_error is not None:
+        ordinary_result = normalize_candidate_relationships(
             Neo4jGraph(),
             chunk=chunk,
             schema=schema,
-            nodes=nodes,
+            nodes=frozen_nodes,
             allowed_relation_types=sorted(ORDINARY_RELATION_TYPES),
             include_deterministic_state=True,
             validate_rule_structures=False,
         )
-        ordinary_holds.append(_model_phase_failure_hold(
-            stage="relation", phase="ordinary_relation_phase", error=error,
-            response_diagnostics=ordinary_response_diagnostics,
+        ordinary_result.review_items.append(_model_phase_failure_hold(
+            stage="relation", phase="ordinary_relation_phase", error=ordinary_error,
+            response_diagnostics=ordinary_response_diagnostics, attempts=ordinary_attempts,
         ))
+    else:
+        ordinary_result = normalize_candidate_relationships(
+            ordinary_relation_graph or Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
+            allowed_relation_types=sorted(ORDINARY_RELATION_TYPES), include_deterministic_state=True,
+            validate_rule_structures=False,
+        )
+    ordinary_relationships, ordinary_holds = ordinary_result
+    judge_drafts.extend(ordinary_result.judge_drafts)
     rule_edge_response_diagnostics: list[dict[str, Any]] = []
-    if rule_nodes:
-        try:
-            rule_edge_graph = await _extract_graph(
-                client,
-                chunk=chunk,
-                graph_schema=build_graphrag_schema(schema, relation_types=sorted(RULE_EDGE_TYPES)),
-                prompt_template=RULE_EDGE_PROMPT_TEMPLATE,
-                examples=_catalog_for_prompt(nodes),
-                input_text=input_text,
-                response_diagnostics=rule_edge_response_diagnostics,
-            )
-            rule_relationships, rule_edge_holds, invalid_rule_keys = normalize_candidate_relationships(
-                rule_edge_graph,
-                chunk=chunk,
-                schema=schema,
-                nodes=nodes,
-                allowed_relation_types=sorted(RULE_EDGE_TYPES),
-                include_deterministic_state=False,
-                validate_rule_structures=True,
-                return_invalid_rule_keys=True,
-            )
-        except LLMGenerationError as error:
-            rule_relationships, rule_edge_holds, invalid_rule_keys = normalize_candidate_relationships(
+    if any(item.get("entity_type") == "RuleDefinition" for item in frozen_nodes):
+        rule_edge_graph, rule_edge_error, rule_edge_attempts = await extract_with_retry(
+            graph_schema=build_graphrag_schema(schema, relation_types=sorted(RULE_EDGE_TYPES)),
+            prompt_template=RULE_EDGE_PROMPT_TEMPLATE, examples=_catalog_for_prompt(frozen_nodes), diagnostics=rule_edge_response_diagnostics,
+        )
+        if rule_edge_error is not None:
+            rule_result = normalize_candidate_relationships(
                 Neo4jGraph(),
                 chunk=chunk,
                 schema=schema,
-                nodes=nodes,
+                nodes=frozen_nodes,
                 allowed_relation_types=sorted(RULE_EDGE_TYPES),
                 include_deterministic_state=False,
                 validate_rule_structures=True,
                 return_invalid_rule_keys=True,
             )
-            rule_edge_holds.append(_model_phase_failure_hold(
-                stage="rule", phase="rule_edge_phase", error=error,
-                response_diagnostics=rule_edge_response_diagnostics,
+            rule_result.review_items.append(_model_phase_failure_hold(
+                stage="rule", phase="rule_edge_phase", error=rule_edge_error,
+                response_diagnostics=rule_edge_response_diagnostics, attempts=rule_edge_attempts,
             ))
+        else:
+            rule_result = normalize_candidate_relationships(
+                rule_edge_graph or Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
+                allowed_relation_types=sorted(RULE_EDGE_TYPES), include_deterministic_state=False,
+                validate_rule_structures=True, return_invalid_rule_keys=True,
+            )
+        rule_relationships, rule_edge_holds = rule_result
+        invalid_rule_keys = rule_result.invalid_rule_keys
+        judge_drafts.extend(rule_result.judge_drafts)
     else:
         rule_relationships, rule_edge_holds, invalid_rule_keys = [], [], set()
     relationships = [*ordinary_relationships, *rule_relationships]
@@ -208,10 +206,11 @@ async def run_candidate_graph(
         source_manifest_sha256=source_manifest_sha256,
         nodes=nodes,
         relationships=relationships,
-        holds=holds,
+        holds=holds, judge_drafts=judge_drafts,
     )
     return candidate_summary(
-        chunk=chunk, nodes=nodes, relationships=relationships, holds=holds, output_dir=output_dir
+        chunk=chunk, nodes=nodes, relationships=relationships, holds=holds, output_dir=output_dir,
+        judge_drafts=judge_drafts,
     )
 
 

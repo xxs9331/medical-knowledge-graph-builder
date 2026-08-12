@@ -229,6 +229,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             graph = json.loads((output / "graph.json").read_text(encoding="utf-8"))
             manifest = json.loads((output / "run-manifest.json").read_text(encoding="utf-8"))
             queue = json.loads((output / "review-queue.json").read_text(encoding="utf-8"))
+            judge_queue = json.loads((output / "judge-queue.json").read_text(encoding="utf-8"))
 
         self.assertEqual(summary["node_count"], 4)
         self.assertEqual(summary["relationship_count"], 2, queue)
@@ -246,6 +247,9 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             schema_sha256,
         )
         self.assertNotIn("raw_response", json.dumps(graph, ensure_ascii=False))
+        self.assertEqual(judge_queue["counts"], {"pending": 0})
+        self.assertIn("judge-queue.json", manifest["artifacts"])
+        self.assertEqual(manifest["counts"]["judge_pending"], 0)
 
     def test_candidate_graph_routes_invalid_nodes_and_relations_to_hold(self):
         text = "HGB 参考区间。普通疾病。甲和乙导致丙。"
@@ -293,6 +297,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             ))
             queue = json.loads((output / "review-queue.json").read_text(encoding="utf-8"))
             graph = json.loads((output / "graph.json").read_text(encoding="utf-8"))
+            judge_queue = json.loads((output / "judge-queue.json").read_text(encoding="utf-8"))
 
         self.assertEqual(summary["node_count"], 2)
         self.assertEqual(summary["relationship_count"], 0)
@@ -301,13 +306,15 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         state = next(item for item in graph["nodes"] if item["entity_type"] == "IndicatorState")
         self.assertEqual(state["extraction_status"], "PARTIAL")
         self.assertEqual(state["review_status"], "REVIEW_REQUIRED")
-        self.assertEqual(queue["counts"], {"review_required": 1, "rejected": 3})
+        self.assertEqual(queue["counts"], {"review_required": 3, "rejected": 1})
         self.assertEqual({item["reason_code"] for item in queue["items"]}, {
             "entity_type_not_enabled_for_trial",
             "rule_definition_uses_business_fields",
             "state_indicator_binding_not_unique",
             "relation_endpoint_not_from_frozen_catalog",
         })
+        self.assertEqual(judge_queue["counts"], {"pending": 2})
+        self.assertTrue(all(item["judge_status"] == "PENDING" for item in judge_queue["items"]))
 
     def test_candidate_graph_preserves_dedicated_rule_definition_inputs_and_outputs(self):
         sentence = "贫血状态且MCV正常且RDW增大时，提示缺铁性贫血。"
@@ -589,8 +596,41 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         relations, holds = graph_builder.normalize_candidate_relationships(
             graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=nodes
         )
-        self.assertEqual([item["relation_type"] for item in relations], ["HAS_STATE", "HAS_STATE"])
+        relation = next(item for item in relations if item["relation_type"] == "INDICATES")
+        self.assertEqual([item["relation_type"] for item in relations], ["HAS_STATE", "HAS_STATE", "INDICATES"])
+        self.assertEqual(relation["extraction_status"], "PARTIAL")
+        self.assertIn("RELATION_MAY_BE_JOINT_CONDITION", relation["warnings"])
         self.assertEqual([item["reason_code"] for item in holds], ["relation_may_be_joint_condition"])
+
+    def test_relation_endpoint_type_mismatch_is_retained_as_partial(self):
+        text = "血清铁提示缺铁性贫血。"
+        chunk = EvidenceChunk("synthetic:type-mismatch", text, hashlib.sha256(text.encode()).hexdigest())
+        source_ref = graph_builder._source_ref(chunk, "血清铁", text)
+        target_ref = graph_builder._source_ref(chunk, "缺铁性贫血", text)
+        source = {
+            "candidate_key": graph_builder._candidate_key("Disease", "血清铁", source_ref),
+            "entity_type": "Disease", "mention": "血清铁", "canonical_name_candidate": "血清铁",
+            "source_ref": source_ref,
+        }
+        target = {
+            "candidate_key": graph_builder._candidate_key("Disease", "缺铁性贫血", target_ref),
+            "entity_type": "Disease", "mention": "缺铁性贫血", "canonical_name_candidate": "缺铁性贫血",
+            "source_ref": target_ref,
+        }
+        graph = Neo4jGraph(relationships=[Neo4jRelationship(
+            start_node_id=f"{chunk.chunk_id}:{source['candidate_key']}",
+            end_node_id=f"{chunk.chunk_id}:{target['candidate_key']}", type="INDICATES",
+            properties={"exact_quote": text, "relation_cue": "提示"},
+        )])
+
+        relations, holds = graph_builder.normalize_candidate_relationships(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=[source, target]
+        )
+
+        self.assertEqual(len(relations), 1)
+        self.assertEqual(relations[0]["extraction_status"], "PARTIAL")
+        self.assertIn("RELATION_ENDPOINT_TYPE_INVALID", relations[0]["warnings"])
+        self.assertEqual(holds[0]["status"], "REVIEW_REQUIRED")
 
     def test_verbatim_relation_cue_is_retained_without_local_semantic_grading(self):
         text = "血清铁降低反映铁储备不足。"
@@ -710,6 +750,11 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(nodes[0]["rule_evidence_refs"][0]["role"], "table_caption")
         self.assertEqual({item["reason_code"] for item in holds},
                          {"duplicate_rule_identity", "rule_evidence_quote_absent_or_ambiguous"})
+        result = graph_builder.normalize_candidate_nodes(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema()
+        )
+        self.assertEqual(len(result.judge_drafts), 1)
+        self.assertEqual(result.judge_drafts[0]["reason_code"], "rule_evidence_quote_absent_or_ambiguous")
 
     def test_repeated_table_text_replays_with_structured_positions(self):
         header = "<tr><td>指标甲</td><td>指标乙</td><td>结果</td></tr>"
@@ -810,7 +855,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertIn("OUTPUT_ENTITY_UNRESOLVED", rule["warnings"])
         self.assertEqual(
             next(item for item in holds if item["reason_code"] == "relation_endpoint_not_from_frozen_catalog")["status"],
-            "REJECTED",
+            "REVIEW_REQUIRED",
         )
         self.assertEqual(
             next(item for item in holds if item["reason_code"] == "rule_structure_incomplete")["status"],
@@ -871,7 +916,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             "REVIEW_REQUIRED",
         )
 
-    def test_invalid_dedicated_rule_response_enters_hold_without_rule_artifact(self):
+    def test_rule_phase_retries_once_after_invalid_response(self):
         text = "PTR = 受检血浆。"
         chunk = EvidenceChunk("synthetic:invalid-rule-response", text, hashlib.sha256(text.encode()).hexdigest())
         schema = graph_builder.load_candidate_graph_schema()
@@ -903,11 +948,71 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
 
         self.assertEqual(summary["node_count"], 1)
         self.assertFalse(any(item["entity_type"] == "RuleDefinition" for item in graph["nodes"]))
+        self.assertFalse(any(item["reason_code"] == "rule_phase_model_response_invalid" for item in queue["items"]))
+
+    def test_rule_phase_two_failures_record_rejected_stage_failure(self):
+        text = "PTR = 受检血浆。"
+        chunk = EvidenceChunk("synthetic:two-rule-failures", text, hashlib.sha256(text.encode()).hexdigest())
+        schema = graph_builder.load_candidate_graph_schema()
+
+        class FakeLLM:
+            def __init__(self):
+                self.calls = 0
+
+            async def ainvoke(self, prompt):
+                self.calls += 1
+                if self.calls == 1:
+                    return SimpleNamespace(content=json.dumps({"nodes": [{
+                        "label": "LabIndicator", "properties": {
+                            "mention": "PTR", "canonical_name_candidate": "PTR", "exact_quote": text,
+                        }
+                    }], "relationships": []}, ensure_ascii=False))
+                if self.calls in {2, 3}:
+                    raise graph_builder.LLMGenerationError("invalid graph response")
+                return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "candidate"
+            asyncio.run(graph_builder.run_candidate_graph(
+                graph_builder.DeepSeekGraphBuilderClient(llm=FakeLLM(), http_client=SimpleNamespace()),
+                chunk=chunk, schema=schema, output_dir=output, source_manifest_sha256="z" * 64,
+            ))
+            queue = json.loads((output / "review-queue.json").read_text(encoding="utf-8"))
+
         hold = next(item for item in queue["items"] if item["reason_code"] == "rule_phase_model_response_invalid")
         self.assertEqual(hold["status"], "REJECTED")
-        self.assertEqual(hold["candidate_summary"]["parse_phase"], "rule_phase")
-        self.assertEqual(hold["candidate_summary"]["reason_code"], "llm_generation_error")
-        self.assertEqual(hold["candidate_summary"]["missing_fields"], ["nodes", "relationships", "properties"])
+        self.assertEqual(hold["candidate_summary"]["attempts"], 2)
+
+    def test_judge_draft_is_bounded_and_never_enters_graph(self):
+        text = "血清铁降低。"
+        chunk = EvidenceChunk("synthetic:judge-draft", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[{
+            "id": "unknown", "label": "UnknownType", "properties": {
+                "mention": "血清铁降低", "canonical_name_candidate": "血清铁降低",
+                "exact_quote": "x" * 2_100,
+            },
+        }])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema()
+        )
+
+        self.assertEqual(result.accepted, [])
+        self.assertEqual(len(result.judge_drafts), 1)
+        draft = result.judge_drafts[0]
+        self.assertEqual(draft["judge_status"], "PENDING")
+        self.assertLessEqual(len(draft["candidate_draft"]["properties"]["exact_quote"]), 2_000)
+        self.assertNotIn("source_ref", draft["candidate_draft"])
+
+    def test_partial_nodes_are_not_exposed_in_frozen_catalog(self):
+        nodes = [
+            {"candidate_key": "candidate:valid", "entity_type": "LabIndicator", "mention": "血清铁",
+             "canonical_name_candidate": "血清铁", "extraction_status": "VALID"},
+            {"candidate_key": "candidate:partial", "entity_type": "IndicatorState", "mention": "血清铁降低",
+             "canonical_name_candidate": "血清铁降低", "extraction_status": "PARTIAL"},
+        ]
+        catalog = json.loads(graph_builder._catalog_for_prompt(nodes))["frozen_candidate_catalog"]
+        self.assertEqual([item["candidate_key"] for item in catalog], ["candidate:valid"])
 
     def test_rule_response_diagnostic_records_shape_without_raw_model_text(self):
         raw = json.dumps({"nodes": [], "relationships": [], "node_types": []})

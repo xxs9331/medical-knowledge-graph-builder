@@ -37,6 +37,7 @@ from .graph_builder.contract import GraphBuilderConfigurationError
 from .graph_builder.runner import run_candidate_block, run_candidate_graph, run_smoke
 from .graph_builder.schema import _extract_graph, build_graphrag_schema, load_candidate_graph_schema
 from .graph_builder.validation import (
+    CandidateNormalization,
     _candidate_key,
     _catalog_for_prompt,
     _hold,

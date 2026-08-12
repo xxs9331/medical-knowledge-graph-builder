@@ -1,6 +1,6 @@
 {
   "schema_id": "medical-report-candidate-graph",
-  "schema_version": "1.3.0",
+  "schema_version": "1.4.0",
   "title": "体检报告解读候选实体关系图 Schema",
   "status": "draft",
   "purpose": "约束自动建图阶段可生成的候选实体、普通关系、属性及来源引用；代码端读取后转换为抽取器和本地校验器配置。",
@@ -34,12 +34,12 @@
     "lifecycle": {
       "extraction_status": {
         "VALID": "字段、来源、冻结端点和候选结构完整。",
-        "PARTIAL": "候选可回放但端点、位置、参数或规则结构不完整；必须携带 warnings。"
+        "PARTIAL": "候选可回放但端点、位置、参数或规则结构不完整；必须携带 warnings。不可回放但具备最小字段的草稿不进入候选图，进入独立 Judge 队列。"
       },
       "review_status": {
         "PENDING": "结构完整但尚未人工审核。",
         "REVIEW_REQUIRED": "存在结构或语义不确定性，保留候选供审核。",
-        "REJECTED": "来源不可回放、类型或字段非法、端点不存在、原文外补造或响应不可解析。"
+        "REJECTED": "阶段连续两次调用失败、最小字段不足以形成 Judge 草稿，或确定性重复候选。其他类型、端点、证据或阶段问题先进入 Judge 队列。"
       },
       "publication_status": "所有候选均为 HOLD，未经审核不得发布或执行。"
     },

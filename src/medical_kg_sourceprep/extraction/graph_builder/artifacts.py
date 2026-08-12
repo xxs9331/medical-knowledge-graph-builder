@@ -30,6 +30,7 @@ def write_candidate_artifacts(
     nodes: Sequence[Mapping[str, Any]],
     relationships: Sequence[Mapping[str, Any]],
     holds: Sequence[Mapping[str, Any]],
+    judge_drafts: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     """Write candidate-only artifacts and review outcomes, never model response text."""
     base = {
@@ -45,7 +46,7 @@ def write_candidate_artifacts(
     relation_doc = {**base, "relationships": list(relationships)}
     graph_doc = {**base, "nodes": list(nodes), "relationships": list(relationships)}
     review_doc = {
-        "schema_version": "candidate-graph-review-queue/v0.2",
+        "schema_version": "candidate-graph-review-queue/v0.3",
         "status": "candidate-only",
         "publication_status": "HOLD",
         "approved": 0,
@@ -55,11 +56,23 @@ def write_candidate_artifacts(
             "rejected": sum(item.get("status") == "REJECTED" for item in holds),
         },
     }
+    judge_doc = {
+        "schema_version": "candidate-graph-judge-queue/v0.1",
+        "status": "candidate-only",
+        "publication_status": "HOLD",
+        "approved": 0,
+        "source": base["source"],
+        "items": [{**item, "source": base["source"]} for item in judge_drafts],
+        "counts": {"pending": len(judge_drafts)},
+    }
     atomic_write_json(output_dir / "candidate-nodes.json", node_doc)
     atomic_write_json(output_dir / "candidate-relations.json", relation_doc)
     atomic_write_json(output_dir / "graph.json", graph_doc)
     atomic_write_json(output_dir / "review-queue.json", review_doc)
-    artifact_names = ("candidate-nodes.json", "candidate-relations.json", "graph.json", "review-queue.json")
+    atomic_write_json(output_dir / "judge-queue.json", judge_doc)
+    artifact_names = (
+        "candidate-nodes.json", "candidate-relations.json", "graph.json", "review-queue.json", "judge-queue.json",
+    )
     manifest = {
         "schema_version": CANDIDATE_RUN_VERSION,
         "run_id": run_id,
@@ -87,6 +100,7 @@ def write_candidate_artifacts(
             "relationships": len(relationships),
             "review_required": sum(item.get("status") == "REVIEW_REQUIRED" for item in holds),
             "rejected": sum(item.get("status") == "REJECTED" for item in holds),
+            "judge_pending": len(judge_drafts),
         },
         "artifacts": {name: sha256_path(output_dir / name) for name in artifact_names},
     }
@@ -95,7 +109,8 @@ def write_candidate_artifacts(
 
 
 def candidate_summary(
-    *, chunk: EvidenceChunk, nodes: Sequence[Mapping[str, Any]], relationships: Sequence[Mapping[str, Any]], holds: Sequence[Mapping[str, Any]], output_dir: Path
+    *, chunk: EvidenceChunk, nodes: Sequence[Mapping[str, Any]], relationships: Sequence[Mapping[str, Any]], holds: Sequence[Mapping[str, Any]], output_dir: Path,
+    judge_drafts: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     node_by_key = {item["candidate_key"]: item for item in nodes}
     review_count = sum(item.get("status") == "REVIEW_REQUIRED" for item in holds)
@@ -108,6 +123,7 @@ def candidate_summary(
         "review_count": review_count,
         "rejected_count": rejected_count,
         "hold_count": len(holds),
+        "judge_pending_count": len(judge_drafts),
         "output_dir": str(output_dir),
         "nodes": [
             {
@@ -143,7 +159,7 @@ def _public_candidate_nodes(nodes: Sequence[Mapping[str, Any]]) -> list[dict[str
 
 
 def _model_phase_failure_hold(
-    *, stage: str, phase: str, error: LLMGenerationError, response_diagnostics: Sequence[Mapping[str, Any]]
+    *, stage: str, phase: str, error: LLMGenerationError, response_diagnostics: Sequence[Mapping[str, Any]], attempts: int = 1,
 ) -> dict[str, Any]:
     """Write response shape only; never retain model text, keys, or environment."""
     observed = response_diagnostics[-1] if response_diagnostics else {}
@@ -160,5 +176,6 @@ def _model_phase_failure_hold(
             "json_top_level_field_types": observed.get("json_top_level_field_types", {}),
             "missing_fields": observed.get("missing_fields", ["nodes", "relationships", "properties"]),
             "response_shape_reason_code": observed.get("reason_code"),
+            "attempts": attempts,
         },
     )
