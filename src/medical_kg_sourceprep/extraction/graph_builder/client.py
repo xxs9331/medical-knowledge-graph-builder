@@ -139,7 +139,6 @@ class _GraphRagIdCompletingLLM:
                         "exact_quote_occurrence_index",
                         "source_char_start",
                         "source_char_end",
-                        "relation_cue",
                         "rule_evidence_role",
                     ):
                         if properties.get(field) is None and field in properties:

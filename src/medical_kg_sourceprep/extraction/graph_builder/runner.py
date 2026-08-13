@@ -190,7 +190,7 @@ async def run_candidate_graph(
             # GraphRAG 要求每种节点至少声明一个属性；关系阶段仅保留 mention，
             # 不再重复实体来源、规则和生命周期等无关字段。
             node_property_names=("mention",),
-            relationship_property_names=("exact_quote", "exact_quote_occurrence_index", "relation_cue"),
+            relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
         ),
         prompt_template=ORDINARY_RELATION_PROMPT_TEMPLATE, examples=_catalog_for_prompt(entity_nodes),
         diagnostics=ordinary_response_diagnostics,
@@ -440,7 +440,7 @@ if __name__ == "__main__":
             relation_types=sorted(ORDINARY_RELATION_TYPES),
             node_types=sorted(BUSINESS_NODE_TYPES),
             node_property_names=("mention",),
-            relationship_property_names=("exact_quote", "exact_quote_occurrence_index", "relation_cue"),
+            relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
         )
 
         # 提前渲染一份最终提示词，便于自行 print 检查。真正调用模型时

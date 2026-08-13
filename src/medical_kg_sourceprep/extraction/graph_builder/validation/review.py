@@ -99,7 +99,7 @@ def _relationship_judge_draft(relationship: Any) -> dict[str, Any] | None:
         properties = {}
     allowed = (
         "exact_quote", "exact_quote_occurrence_index", "source_char_start", "source_char_end",
-        "relation_cue", "rule_evidence_role",
+        "rule_evidence_role",
     )
     return {
         "kind": "relationship", "relation_type": relation_type,
@@ -215,17 +215,13 @@ def _node_summary(node: Any) -> dict[str, Any]:
 def _relationship_summary(relationship: Any) -> dict[str, Any]:
     """生成限长关系摘要，避免将原始模型响应写入审查项。
 
-    这里保留关系类型、两个模型端点 ID 和 cue，足以定位问题；不写入完整 exact_quote，
+    这里保留关系类型和两个模型端点 ID，足以定位问题；不写入完整 exact_quote，
     因为原文证据应在候选或来源包中按 source_ref 单独管理。
     """
-    properties = getattr(relationship, "properties", {})
-    if not isinstance(properties, Mapping):
-        properties = {}
     return {
         "relation_type": str(getattr(relationship, "type", ""))[:80],
         "start_node_id": str(getattr(relationship, "start_node_id", ""))[:160],
         "end_node_id": str(getattr(relationship, "end_node_id", ""))[:160],
-        "relation_cue": str(properties.get("relation_cue", ""))[:80],
     }
 
 

@@ -21,7 +21,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             relation_types=sorted(graph_builder.ORDINARY_RELATION_TYPES),
             node_types=sorted(graph_builder.BUSINESS_NODE_TYPES),
             node_property_names=("mention",),
-            relationship_property_names=("exact_quote", "exact_quote_occurrence_index", "relation_cue"),
+            relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
         )
 
         self.assertTrue(all(
@@ -31,7 +31,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         for relationship in graph_schema.relationship_types:
             self.assertEqual(
                 [property_definition.name for property_definition in relationship.properties],
-                ["exact_quote", "exact_quote_occurrence_index", "relation_cue"],
+                ["exact_quote", "exact_quote_occurrence_index"],
             )
 
     def test_missing_deepseek_key_fails_without_loading_local_environment(self):
@@ -121,7 +121,6 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                             "exact_quote_occurrence_index": 0,
                             "source_char_start": 12,
                             "source_char_end": 20,
-                            "relation_cue": None,
                             "rule_evidence_role": "condition_sentence",
                             "properties": {},
                         }],
@@ -270,7 +269,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                     },
                     {
                         "type": "CAUSES", "start_node_id": context_key, "end_node_id": disease_key,
-                        "exact_quote": "生长发育需要量多导致缺铁性贫血。", "relation_cue": "导致"
+                        "exact_quote": "生长发育需要量多导致缺铁性贫血。"
                     },
                 ]}, ensure_ascii=False))
 
@@ -347,7 +346,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                     }], "relationships": []}, ensure_ascii=False))
                 return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [{
                     "type": "CAUSES", "start_node_id": "unknown", "end_node_id": "other",
-                    "properties": {"exact_quote": "甲和乙导致丙。", "relation_cue": "导致"}
+                    "properties": {"exact_quote": "甲和乙导致丙。"}
                 }]}, ensure_ascii=False))
 
         with tempfile.TemporaryDirectory() as temporary:
@@ -614,7 +613,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             start_node_id=f"{chunk.chunk_id}:{source['candidate_key']}",
             end_node_id=f"{chunk.chunk_id}:{target['candidate_key']}",
             type="CAUSES",
-            properties={"exact_quote": text, "relation_cue": "导致"},
+            properties={"exact_quote": text},
         )])
         relations, holds = graph_builder.normalize_candidate_relationships(
             graph,
@@ -648,7 +647,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             start_node_id=f"{chunk.chunk_id}:{state_key}",
             end_node_id=f"{chunk.chunk_id}:{disease_key}",
             type="INDICATES",
-            properties={"exact_quote": text, "relation_cue": "提示"},
+            properties={"exact_quote": text},
         )])
         relations, holds = graph_builder.normalize_candidate_relationships(
             graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(), nodes=nodes
@@ -676,7 +675,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             start_node_id=f"{chunk.chunk_id}:{nodes[0]['candidate_key']}",
             end_node_id=f"{chunk.chunk_id}:{nodes[1]['candidate_key']}",
             type="CAUSES",
-            properties={"exact_quote": text, "relation_cue": "导致"},
+            properties={"exact_quote": text},
         )])
 
         result = graph_builder.normalize_candidate_relationships(
@@ -722,7 +721,6 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         partial = next(item for item in result.accepted if item["source_candidate_key"] == state["candidate_key"])
         self.assertEqual(valid["relation_type"], "HAS_STATE")
         self.assertEqual(valid["extraction_status"], "VALID")
-        self.assertNotIn("relation_cue", valid)
         self.assertEqual(partial["extraction_status"], "PARTIAL")
         self.assertIn("RELATION_ENDPOINT_TYPE_INVALID", partial["warnings"])
 
@@ -787,7 +785,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         graph = Neo4jGraph(relationships=[Neo4jRelationship(
             start_node_id=f"{chunk.chunk_id}:{source['candidate_key']}",
             end_node_id=f"{chunk.chunk_id}:{target['candidate_key']}", type="INDICATES",
-            properties={"exact_quote": text, "relation_cue": "提示"},
+            properties={"exact_quote": text},
         )])
 
         relations, holds = graph_builder.normalize_candidate_relationships(
@@ -799,7 +797,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertIn("RELATION_ENDPOINT_TYPE_INVALID", relations[0]["warnings"])
         self.assertEqual(holds[0]["status"], "REVIEW_REQUIRED")
 
-    def test_verbatim_relation_cue_is_retained_without_local_semantic_grading(self):
+    def test_relation_requires_only_complete_quote_for_later_semantic_grading(self):
         text = "血清铁降低反映铁储备不足。"
         chunk = EvidenceChunk("synthetic:unmapped-cue", text, hashlib.sha256(text.encode()).hexdigest())
         source_ref = graph_builder._source_ref(chunk, "血清铁降低", text)
@@ -822,7 +820,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             start_node_id=f"{chunk.chunk_id}:{source['candidate_key']}",
             end_node_id=f"{chunk.chunk_id}:{target['candidate_key']}",
             type="INDICATES",
-            properties={"exact_quote": text, "relation_cue": "反映"},
+            properties={"exact_quote": text},
         )])
 
         relations, holds = graph_builder.normalize_candidate_relationships(
@@ -833,7 +831,6 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         )
 
         relation = next(item for item in relations if item["relation_type"] == "INDICATES")
-        self.assertEqual(relation["relation_cue"], "反映")
         self.assertEqual(relation["extraction_status"], "VALID")
         self.assertEqual(relation["review_status"], "PENDING")
         self.assertNotIn("warnings", relation)
@@ -862,7 +859,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             start_node_id=f"{chunk.chunk_id}:{source['candidate_key']}",
             end_node_id=f"{chunk.chunk_id}:{target['candidate_key']}",
             type="INDICATES",
-            properties={"exact_quote": text, "relation_cue": "导致"},
+            properties={"exact_quote": text},
         )])
 
         relations, holds = graph_builder.normalize_candidate_relationships(

@@ -130,7 +130,6 @@ def build_graphrag_schema(
         "exact_quote_occurrence_index": "INTEGER",
         "source_char_start": "INTEGER",
         "source_char_end": "INTEGER",
-        "relation_cue": "STRING",
         "rule_evidence_role": "STRING",
     }
     selected_relationship_properties = (
