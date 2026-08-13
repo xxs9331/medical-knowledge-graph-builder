@@ -1,0 +1,17 @@
+{
+  "schema_version": "medical-kg-relationship-test-set/v0.1",
+  "status": "HUMAN_VALIDATED",
+  "source_graph_dataset": "typical-cases-v0.1.json",
+  "identity": ["source_mention", "relation_type", "target_mention"],
+  "notes": ["expected 为应抽取正例。forbidden 为原文不支持或会破坏联合条件的负例。"],
+  "cases": [
+    {"case_id":"TC-01","chunk_ids":["clinical-hematology:chapter-01:0010:0000"],"expected":[["血清铁","HAS_STATE","血清铁降低"],["慢性失血","CAUSES","血清铁降低"],["胃、十二指肠溃疡出血","CAUSES","慢性失血"],["钩虫病","CAUSES","慢性失血"],["月经过多","CAUSES","慢性失血"]],"forbidden":[["钩虫病","CAUSES","血清铁降低"],["月经过多","CAUSES","血清铁降低"]]},
+    {"case_id":"TC-02","chunk_ids":["clinical-hematology:chapter-01:0004:0000"],"expected":[["MCV","HAS_STATE","MCV 正常"],["RDW","HAS_STATE","RDW 增大"],["正细胞不均一性贫血","ASSOCIATED_WITH","早期缺铁性贫血"],["正细胞不均一性贫血","ASSOCIATED_WITH","G6PD 缺乏症"]],"forbidden":[["MCV 正常","INDICATES","缺铁性贫血"],["RDW 增大","INDICATES","G6PD 缺乏症"]]},
+    {"case_id":"TC-03","chunk_ids":["clinical-hematology:chapter-01:0012:0001"],"expected":[["血清铁","HAS_STATE","血清铁降低"],["血清铁","HAS_STATE","血清铁增高"],["TIBC","HAS_STATE","TIBC增高"],["TIBC","HAS_STATE","TIBC降低"],["痔","CAUSES","慢性失血"],["消化性溃疡出血","CAUSES","慢性失血"],["月经过多","CAUSES","慢性失血"],["妊娠","CAUSES","需铁量增加"],["婴幼儿生长发育","CAUSES","需铁量增加"]],"forbidden":[["血清铁降低","INDICATES","缺铁性贫血"],["TIBC增高","INDICATES","缺铁性贫血"]]},
+    {"case_id":"TC-04","chunk_ids":["clinical-hematology:chapter-01:0023:0000","clinical-hematology:chapter-01:0023:0001"],"expected":[["D-二聚体","HAS_STATE","D-二聚体阳性"],["D-二聚体","HAS_STATE","D-二聚体阴性"],["D-二聚体","HAS_STATE","D-二聚体不升高"],["D-二聚体","HAS_STATE","D-二聚体正常"],["D-二聚体阳性","ASSOCIATED_WITH","心肌梗死"],["D-二聚体阳性","ASSOCIATED_WITH","脑梗死"],["D-二聚体阳性","ASSOCIATED_WITH","肺栓塞"],["D-二聚体阳性","ASSOCIATED_WITH","恶性肿瘤"],["D-二聚体阳性","ASSOCIATED_WITH","外科手术"],["D-二聚体阳性","ASSOCIATED_WITH","炎症"],["D-二聚体阳性","ASSOCIATED_WITH","感染"],["D-二聚体阳性","ASSOCIATED_WITH","妊娠"]],"forbidden":[["D-二聚体正常","INDICATES","已排除深静脉血栓"]],"held_semantics":["鉴别原发性纤溶症","排除深静脉血栓","溶栓治疗监测"]},
+    {"case_id":"TC-05","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[["铁缺乏","CAUSES","缺铁性贫血"],["叶酸缺乏","CAUSES","巨幼细胞贫血"],["维生素 B12 缺乏","CAUSES","巨幼细胞贫血"],["铁缺乏","IS_A","造血原料缺乏"],["叶酸缺乏","IS_A","造血原料缺乏"],["维生素 B12 缺乏","IS_A","造血原料缺乏"],["造血原料缺乏","CAUSES","贫血"]],"forbidden":[]},
+    {"case_id":"TC-06","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[["轻度贫血","IS_A","贫血"],["中度贫血","IS_A","贫血"],["重度贫血","IS_A","贫血"],["极重度贫血","IS_A","贫血"]],"forbidden":[]},
+    {"case_id":"TC-07","chunk_ids":["clinical-hematology:chapter-01:0008:0001"],"expected":[],"forbidden":[["MPV 持续下降","INDICATES","骨髓造血功能衰竭"],["血小板数量持续下降","INDICATES","骨髓造血功能衰竭"]]},
+    {"case_id":"TC-08","chunk_ids":["clinical-hematology:chapter-01:0022:0000"],"expected":[],"forbidden":[["PTR","CAUSES","INR"]]}
+  ]
+}

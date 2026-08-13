@@ -1,0 +1,20 @@
+{
+  "schema_version": "medical-kg-rule-test-set/v0.1",
+  "status": "HUMAN_VALIDATED",
+  "source_graph_dataset": "typical-cases-v0.1.json",
+  "identity": ["rule_stage", "ordered_inputs", "ordered_outputs", "logic"],
+  "notes": [
+    "规则测试独立于普通关系测试。GRAPH_COMPOSITE 输入不得降级为输入到输出的普通直达边。",
+    "PREPROCESS 中的性别、单位、时间序列和ISI可以是运行时参数，不要求全部成为静态图节点。"
+  ],
+  "cases": [
+    {"case_id":"TC-01","chunk_ids":["clinical-hematology:chapter-01:0010:0000"],"expected":[]},
+    {"case_id":"TC-02","chunk_ids":["clinical-hematology:chapter-01:0004:0000"],"expected":[{"rule_stage":"GRAPH_COMPOSITE","inputs":["贫血","MCV 正常","RDW 增大"],"outputs":["正细胞不均一性贫血"],"logic":"ALL"}]},
+    {"case_id":"TC-03","chunk_ids":["clinical-hematology:chapter-01:0012:0001"],"expected":[{"rule_stage":"GRAPH_COMPOSITE","inputs":["血清铁降低","TIBC增高"],"outputs":["缺铁性贫血","铁吸收不良","慢性失血","需铁量增加"],"logic":"ALL"},{"rule_stage":"GRAPH_COMPOSITE","inputs":["血清铁降低","TIBC降低"],"outputs":["慢性感染","肝硬变","尿毒症","肾病综合征","恶性肿瘤"],"logic":"ALL"}]},
+    {"case_id":"TC-04","chunk_ids":["clinical-hematology:chapter-01:0023:0000","clinical-hematology:chapter-01:0023:0001"],"expected":[]},
+    {"case_id":"TC-05","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[],"forbidden_logic":["ALL"]},
+    {"case_id":"TC-06","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[{"rule_stage":"PREPROCESS","inputs":["血红蛋白","性别","单位"],"outputs":["血红蛋白正常","血红蛋白降低"],"logic":"RANGE_TABLE"},{"rule_stage":"PREPROCESS","inputs":["血红蛋白","性别","单位"],"outputs":["轻度贫血","中度贫血","重度贫血","极重度贫血"],"logic":"RANGE_TABLE"}]},
+    {"case_id":"TC-07","chunk_ids":["clinical-hematology:chapter-01:0008:0001"],"expected":[{"rule_stage":"PREPROCESS","inputs":["MPV时间序列"],"outputs":["MPV 持续下降"],"logic":"TREND"},{"rule_stage":"PREPROCESS","inputs":["血小板数量时间序列"],"outputs":["血小板数量持续下降"],"logic":"TREND"},{"rule_stage":"GRAPH_COMPOSITE","inputs":["MPV 持续下降","血小板数量持续下降"],"outputs":["骨髓造血功能衰竭"],"logic":"ALL_SAME_WINDOW"}]},
+    {"case_id":"TC-08","chunk_ids":["clinical-hematology:chapter-01:0022:0000"],"expected":[{"rule_stage":"PREPROCESS","inputs":["受检血浆 PT","正常人血浆 PT"],"outputs":["PTR"],"logic":"FORMULA"},{"rule_stage":"PREPROCESS","inputs":["PTR","ISI"],"outputs":["INR"],"logic":"FORMULA"}],"review_notes":["INR指数在规范Markdown中OCR为S1，需保留人工确认记录。"]}
+  ]
+}

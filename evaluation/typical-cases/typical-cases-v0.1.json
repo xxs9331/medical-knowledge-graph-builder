@@ -1,0 +1,196 @@
+{
+  "schema_version": "medical-kg-typical-cases-gold/v0.1",
+  "status": "HUMAN_VALIDATED",
+  "source_document": "D:/Lenovo/Documents/世界树/世界树/7. 典型案例分析.md",
+  "contract_alignment": {
+    "candidate_schema_version": "1.4.0",
+    "notes": [
+      "人工案例中的 Claim 在本数据中映射为当前候选合同的 RuleDefinition。",
+      "SUPPORTED_BY 和 Evidence 不属于当前候选图，不计入候选关系金标。",
+      "金标只用于 Judge 完成后的评分，禁止放入 Judge 提示词。"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "TC-01",
+      "title": "血清铁降低：标题统摄下的分层枚举",
+      "chunk_ids": ["clinical-hematology:chapter-01:0010:0000"],
+      "entities": [
+        ["LabIndicator", "血清铁"], ["IndicatorState", "血清铁降低"],
+        ["ClinicalContext", "慢性失血"], ["ClinicalContext", "胃、十二指肠溃疡出血"],
+        ["Disease", "钩虫病"], ["ClinicalContext", "月经过多"]
+      ],
+      "relationships": [
+        ["血清铁", "HAS_STATE", "血清铁降低"], ["慢性失血", "CAUSES", "血清铁降低"],
+        ["胃、十二指肠溃疡出血", "CAUSES", "慢性失血"], ["钩虫病", "CAUSES", "慢性失血"],
+        ["月经过多", "CAUSES", "慢性失血"]
+      ],
+      "rules": [],
+      "must_not_extract": [
+        ["钩虫病", "CAUSES", "血清铁降低"], ["月经过多", "CAUSES", "血清铁降低"]
+      ],
+      "review_notes": ["标题与正文共同构成上下文；不能跳过慢性失血建立直达边。"]
+    },
+    {
+      "case_id": "TC-02",
+      "title": "贫血形态分类：联合条件与疾病举例",
+      "chunk_ids": ["clinical-hematology:chapter-01:0004:0000"],
+      "entities": [
+        ["LabIndicator", "MCV"], ["LabIndicator", "RDW"], ["IndicatorState", "MCV 正常"],
+        ["IndicatorState", "RDW 增大"], ["ClinicalContext", "贫血"],
+        ["ClinicalContext", "正细胞不均一性贫血"], ["Disease", "早期缺铁性贫血"],
+        ["Disease", "G6PD 缺乏症"]
+      ],
+      "relationships": [
+        ["MCV", "HAS_STATE", "MCV 正常"], ["RDW", "HAS_STATE", "RDW 增大"],
+        ["正细胞不均一性贫血", "ASSOCIATED_WITH", "早期缺铁性贫血"],
+        ["正细胞不均一性贫血", "ASSOCIATED_WITH", "G6PD 缺乏症"]
+      ],
+      "rules": [{
+        "rule_stage": "GRAPH_COMPOSITE",
+        "inputs": ["贫血", "MCV 正常", "RDW 增大"],
+        "outputs": ["正细胞不均一性贫血"],
+        "logic": "ALL"
+      }],
+      "must_not_extract": [
+        ["MCV 正常", "INDICATES", "缺铁性贫血"],
+        ["RDW 增大", "INDICATES", "G6PD 缺乏症"]
+      ],
+      "review_notes": ["疾病是举例，不是联合分类规则的输出。"]
+    },
+    {
+      "case_id": "TC-03",
+      "title": "血清铁与TIBC二维联合检测表",
+      "chunk_ids": ["clinical-hematology:chapter-01:0012:0001"],
+      "entities": [
+        ["LabIndicator", "血清铁"], ["LabIndicator", "TIBC"],
+        ["IndicatorState", "血清铁降低"], ["IndicatorState", "血清铁增高"],
+        ["IndicatorState", "TIBC增高"], ["IndicatorState", "TIBC降低"],
+        ["Disease", "缺铁性贫血"], ["ClinicalContext", "铁吸收不良"],
+        ["ClinicalContext", "慢性失血"], ["ClinicalContext", "需铁量增加"],
+        ["ClinicalContext", "痔"], ["ClinicalContext", "消化性溃疡出血"],
+        ["ClinicalContext", "月经过多"], ["ClinicalContext", "妊娠"],
+        ["ClinicalContext", "婴幼儿生长发育"],
+        ["ClinicalContext", "慢性感染"], ["Disease", "肝硬变"], ["Disease", "尿毒症"],
+        ["Disease", "肾病综合征"], ["Disease", "恶性肿瘤"]
+      ],
+      "relationships": [
+        ["血清铁", "HAS_STATE", "血清铁降低"], ["血清铁", "HAS_STATE", "血清铁增高"],
+        ["TIBC", "HAS_STATE", "TIBC增高"], ["TIBC", "HAS_STATE", "TIBC降低"],
+        ["痔", "CAUSES", "慢性失血"], ["消化性溃疡出血", "CAUSES", "慢性失血"],
+        ["月经过多", "CAUSES", "慢性失血"], ["妊娠", "CAUSES", "需铁量增加"],
+        ["婴幼儿生长发育", "CAUSES", "需铁量增加"]
+      ],
+      "rules": [
+        {"rule_stage": "GRAPH_COMPOSITE", "inputs": ["血清铁降低", "TIBC增高"], "outputs": ["缺铁性贫血", "铁吸收不良", "慢性失血", "需铁量增加"], "logic": "ALL"},
+        {"rule_stage": "GRAPH_COMPOSITE", "inputs": ["血清铁降低", "TIBC降低"], "outputs": ["慢性感染", "肝硬变", "尿毒症", "肾病综合征", "恶性肿瘤"], "logic": "ALL"}
+      ],
+      "must_not_extract": [
+        ["血清铁降低", "INDICATES", "缺铁性贫血"], ["TIBC增高", "INDICATES", "缺铁性贫血"]
+      ],
+      "review_notes": ["第三行高铁低TIBC规则及部分简单关系端点需人工补齐后再冻结本版金标。"]
+    },
+    {
+      "case_id": "TC-04",
+      "title": "D-二聚体：阳性、阴性、排除与监测用途",
+      "chunk_ids": ["clinical-hematology:chapter-01:0023:0000", "clinical-hematology:chapter-01:0023:0001"],
+      "entities": [
+        ["LabIndicator", "D-二聚体"], ["IndicatorState", "D-二聚体阳性"],
+        ["IndicatorState", "D-二聚体阴性"], ["IndicatorState", "D-二聚体不升高"],
+        ["IndicatorState", "D-二聚体正常"], ["Disease", "心肌梗死"], ["Disease", "脑梗死"],
+        ["Disease", "肺栓塞"], ["Disease", "恶性肿瘤"], ["ClinicalContext", "外科手术"],
+        ["ClinicalContext", "炎症"], ["ClinicalContext", "感染"], ["ClinicalContext", "妊娠"]
+      ],
+      "relationships": [
+        ["D-二聚体", "HAS_STATE", "D-二聚体阳性"], ["D-二聚体", "HAS_STATE", "D-二聚体阴性"],
+        ["D-二聚体", "HAS_STATE", "D-二聚体不升高"], ["D-二聚体", "HAS_STATE", "D-二聚体正常"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "心肌梗死"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "脑梗死"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "肺栓塞"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "恶性肿瘤"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "外科手术"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "炎症"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "感染"],
+        ["D-二聚体阳性", "ASSOCIATED_WITH", "妊娠"]
+      ],
+      "rules": [],
+      "must_not_extract": [["D-二聚体正常", "INDICATES", "已排除深静脉血栓"]],
+      "held_semantics": ["鉴别原发性纤溶症", "排除深静脉血栓", "溶栓治疗监测"],
+      "review_notes": ["当前关系合同不能完整承载鉴别和反向证据；这些语义保持HOLD。"]
+    },
+    {
+      "case_id": "TC-05",
+      "title": "造血原料缺乏：并列成分共享谓词",
+      "chunk_ids": ["clinical-hematology:chapter-01:0001:0000"],
+      "entities": [
+        ["ClinicalContext", "铁缺乏"], ["ClinicalContext", "叶酸缺乏"],
+        ["ClinicalContext", "维生素 B12 缺乏"], ["ClinicalContext", "造血原料缺乏"],
+        ["ClinicalContext", "贫血"], ["Disease", "缺铁性贫血"], ["Disease", "巨幼细胞贫血"]
+      ],
+      "relationships": [
+        ["铁缺乏", "CAUSES", "缺铁性贫血"], ["叶酸缺乏", "CAUSES", "巨幼细胞贫血"],
+        ["维生素 B12 缺乏", "CAUSES", "巨幼细胞贫血"],
+        ["铁缺乏", "IS_A", "造血原料缺乏"], ["叶酸缺乏", "IS_A", "造血原料缺乏"],
+        ["维生素 B12 缺乏", "IS_A", "造血原料缺乏"], ["造血原料缺乏", "CAUSES", "贫血"]
+      ],
+      "rules": [],
+      "must_not_extract": [],
+      "review_notes": ["叶酸与维生素B12分别成立，不是AND联合规则。"]
+    },
+    {
+      "case_id": "TC-06",
+      "title": "血红蛋白：人群参考区间与贫血程度分层",
+      "chunk_ids": ["clinical-hematology:chapter-01:0001:0000"],
+      "entities": [
+        ["LabIndicator", "血红蛋白"], ["IndicatorState", "血红蛋白正常"],
+        ["IndicatorState", "血红蛋白降低"], ["ClinicalContext", "贫血"],
+        ["ClinicalContext", "轻度贫血"], ["ClinicalContext", "中度贫血"],
+        ["ClinicalContext", "重度贫血"], ["ClinicalContext", "极重度贫血"]
+      ],
+      "relationships": [
+        ["轻度贫血", "IS_A", "贫血"], ["中度贫血", "IS_A", "贫血"],
+        ["重度贫血", "IS_A", "贫血"], ["极重度贫血", "IS_A", "贫血"]
+      ],
+      "rules": [
+        {"rule_stage": "PREPROCESS", "inputs": ["血红蛋白", "性别", "单位"], "outputs": ["血红蛋白正常", "血红蛋白降低"], "logic": "RANGE_TABLE"},
+        {"rule_stage": "PREPROCESS", "inputs": ["血红蛋白", "性别", "单位"], "outputs": ["轻度贫血", "中度贫血", "重度贫血", "极重度贫血"], "logic": "RANGE_TABLE"}
+      ],
+      "must_not_extract": [],
+      "review_notes": ["性别、数值、单位是运行时参数，不是静态业务节点；区间边界歧义保持HOLD。"]
+    },
+    {
+      "case_id": "TC-07",
+      "title": "MPV与血小板计数：同步持续变化",
+      "chunk_ids": ["clinical-hematology:chapter-01:0008:0001"],
+      "entities": [
+        ["LabIndicator", "MPV"], ["LabIndicator", "血小板数量"],
+        ["IndicatorState", "MPV 持续下降"], ["IndicatorState", "血小板数量持续下降"],
+        ["ClinicalContext", "骨髓造血功能衰竭"]
+      ],
+      "relationships": [],
+      "rules": [
+        {"rule_stage": "PREPROCESS", "inputs": ["MPV时间序列"], "outputs": ["MPV 持续下降"], "logic": "TREND"},
+        {"rule_stage": "PREPROCESS", "inputs": ["血小板数量时间序列"], "outputs": ["血小板数量持续下降"], "logic": "TREND"},
+        {"rule_stage": "GRAPH_COMPOSITE", "inputs": ["MPV 持续下降", "血小板数量持续下降"], "outputs": ["骨髓造血功能衰竭"], "logic": "ALL_SAME_WINDOW"}
+      ],
+      "must_not_extract": [
+        ["MPV 持续下降", "INDICATES", "骨髓造血功能衰竭"],
+        ["血小板数量持续下降", "INDICATES", "骨髓造血功能衰竭"]
+      ],
+      "review_notes": ["单项状态不得绕过同步联合规则直达输出。"]
+    },
+    {
+      "case_id": "TC-08",
+      "title": "PTR与INR：公式、派生指标与方法参数",
+      "chunk_ids": ["clinical-hematology:chapter-01:0022:0000"],
+      "entities": [["LabIndicator", "PTR"], ["LabIndicator", "INR"]],
+      "relationships": [],
+      "rules": [
+        {"rule_stage": "PREPROCESS", "inputs": ["受检血浆 PT", "正常人血浆 PT"], "outputs": ["PTR"], "logic": "FORMULA"},
+        {"rule_stage": "PREPROCESS", "inputs": ["PTR", "ISI"], "outputs": ["INR"], "logic": "FORMULA"}
+      ],
+      "must_not_extract": [["PTR", "CAUSES", "INR"]],
+      "review_notes": ["规范源公式OCR为PTR ^{[S1]}，但后文定义ISI；INR指数符号需对照原PDF人工确认。"]
+    }
+  ]
+}

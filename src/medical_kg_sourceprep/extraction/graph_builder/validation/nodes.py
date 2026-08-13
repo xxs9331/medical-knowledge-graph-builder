@@ -10,10 +10,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from typing import Any
 
-from neo4j_graphrag.experimental.components.types import Neo4jGraph
+from neo4j_graphrag.experimental.components.types import Neo4jGraph, Neo4jNode
 
 if __package__ in {None, ""}:
     # 允许直接执行本文件观察底部演示；正常作为包导入时仍使用相对导入。
@@ -78,7 +78,7 @@ def normalize_candidate_nodes(
     *,
     chunk: EvidenceChunk,
     schema: Mapping[str, Any],
-    allowed_node_types: Sequence[str] = TRIAL_NODE_TYPES,
+    allowed_node_types: Collection[str] = TRIAL_NODE_TYPES,
     derive_entity_provenance: bool = False,
 ) -> CandidateNormalization:
     """校验一个模型节点列表，并返回候选、审查项和 Judge 草稿。
@@ -120,7 +120,9 @@ def normalize_candidate_nodes(
                 raw_rule_stage = properties.get("rule_stage_candidate")
                 rule_warnings: list[str] = []
                 # 阶段值未知时仍保留规则候选，但标记为 UNKNOWN，后续会降为 PARTIAL。
-                if raw_rule_stage in {"PREPROCESS", "GRAPH_COMPOSITE", "UNKNOWN"}:
+                if isinstance(raw_rule_stage, str) and raw_rule_stage in {
+                    "PREPROCESS", "GRAPH_COMPOSITE", "UNKNOWN",
+                }:
                     rule_stage = raw_rule_stage
                 else:
                     rule_stage = "UNKNOWN"
@@ -198,7 +200,7 @@ def normalize_candidate_nodes(
                 raise GraphBuilderConfigurationError("duplicate_candidate")
             seen_keys.add(candidate_key)
             # 到此为止已具备类型、名称、来源和稳定身份；所有候选仍是 HOLD，尚未发布。
-            record = {
+            record: dict[str, Any] = {
                 "candidate_key": candidate_key,
                 "entity_type": entity_type,
                 "mention": mention,
@@ -233,7 +235,15 @@ def normalize_candidate_nodes(
                 ))
 
     # 第二轮：规则节点与业务实体不同，规则身份由表达式与证据位置共同决定。
-    for index, rule_stage, expression, rule_name, evidence_refs, rule_warnings, raw_rule_stage in pending_rules:
+    for (
+        index,
+        rule_stage,
+        expression,
+        rule_name,
+        evidence_refs,
+        pending_rule_warnings,
+        raw_rule_stage,
+    ) in pending_rules:
         candidate_key = _rule_candidate_key(
             chunk=chunk,
             rule_stage=rule_stage,
@@ -248,7 +258,7 @@ def normalize_candidate_nodes(
             ))
             continue
         seen_keys.add(candidate_key)
-        record = {
+        record: dict[str, Any] = {
             "candidate_key": candidate_key,
             "rule_candidate_key": candidate_key,
             "entity_type": "RuleDefinition",
@@ -261,11 +271,13 @@ def normalize_candidate_nodes(
             "publication_status": "HOLD",
             "_model_node_index": index,
         }
-        if rule_stage == "UNKNOWN" or rule_warnings:
+        if rule_stage == "UNKNOWN" or pending_rule_warnings:
             # 规则文本和证据仍可回放，所以不拒绝；只是禁止它传播到后续冻结目录。
-            warnings = tuple(sorted(set((*rule_warnings, "RULE_STAGE_UNKNOWN" if rule_stage == "UNKNOWN" else ""))))
-            warnings = tuple(warning for warning in warnings if warning)
-            _mark_partial(record, *warnings)
+            status_warnings = tuple(sorted(set(
+                (*pending_rule_warnings, "RULE_STAGE_UNKNOWN" if rule_stage == "UNKNOWN" else "")
+            )))
+            status_warnings = tuple(warning for warning in status_warnings if warning)
+            _mark_partial(record, *status_warnings)
             holds.append(_review_item(
                 "rule",
                 index,
@@ -276,7 +288,7 @@ def normalize_candidate_nodes(
                     "rule_expression": expression,
                     "rule_stage_candidate": raw_rule_stage,
                 },
-                warnings=warnings,
+                warnings=status_warnings,
             ))
         accepted.append(record)
 
@@ -349,21 +361,21 @@ if __name__ == "__main__":
     schema = load_candidate_graph_schema(DEFAULT_SCHEMA_PATH)
 
     graph = Neo4jGraph(nodes=[
-        {
-            "id": "indicator",
-            "label": "LabIndicator",
-            "properties": {"mention": "转铁蛋白", "extraction_reason": "原文明示的检验指标。"},
-        },
-        {
-            "id": "state",
-            "label": "IndicatorState",
-            "properties": {"mention": "转铁蛋白减少", "extraction_reason": "原文明示的指标状态。"},
-        },
-        {
-            "id": "duplicate",
-            "label": "LabIndicator",
-            "properties": {"mention": "转铁蛋白", "extraction_reason": "重复模型输出。"},
-        },
+        Neo4jNode(
+            id="indicator",
+            label="LabIndicator",
+            properties={"mention": "转铁蛋白", "extraction_reason": "原文明示的检验指标。"},
+        ),
+        Neo4jNode(
+            id="state",
+            label="IndicatorState",
+            properties={"mention": "转铁蛋白减少", "extraction_reason": "原文明示的指标状态。"},
+        ),
+        Neo4jNode(
+            id="duplicate",
+            label="LabIndicator",
+            properties={"mention": "转铁蛋白", "extraction_reason": "重复模型输出。"},
+        ),
     ])
 
     # 本地校验只负责分流节点，还没有调用关系抽取模型。

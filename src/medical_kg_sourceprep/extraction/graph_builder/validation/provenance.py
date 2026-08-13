@@ -146,9 +146,11 @@ def _source_refs_for_mention(chunk: EvidenceChunk, mention: str) -> list[dict[st
 
 def _candidate_key(entity_type: str, mention: str, source_ref: Mapping[str, Any]) -> str:
     """以类型、chunk 和 mention 原文位置生成稳定候选键。"""
-    mention_start = source_ref.get("mention_char_start")
-    if not _is_source_offset(mention_start):
-        mention_start = source_ref["char_start"] + source_ref["exact_quote"].find(mention)
+    raw_mention_start = source_ref.get("mention_char_start")
+    if isinstance(raw_mention_start, int) and not isinstance(raw_mention_start, bool):
+        mention_start = raw_mention_start
+    else:
+        mention_start = int(source_ref["char_start"]) + str(source_ref["exact_quote"]).find(mention)
     raw = f"{CANDIDATE_RUN_VERSION}:{entity_type}:{source_ref['chunk_id']}:{mention_start}:{mention_start + len(mention)}"
     return f"candidate:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
 

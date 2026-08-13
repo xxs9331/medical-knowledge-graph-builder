@@ -22,7 +22,13 @@ medical-report = "medical_kg_sourceprep.report.report_pipeline:main"
 medical-report-ocr = "medical_kg_sourceprep.report.paddleocr_report:main"
 medical-kg-graph-builder-smoke = "medical_kg_sourceprep.extraction.neo4j_graph_builder:main"
 medical-kg-graph-builder-candidate-block = "medical_kg_sourceprep.extraction.neo4j_graph_builder:candidate_block_main"
+medical-kg-graph-builder-judge = "medical_kg_sourceprep.extraction.graph_builder.judge:main"
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.39.9",
+]

@@ -15,10 +15,10 @@ LLM Judge。所有本地接纳结果仍为 ``publication_status=HOLD``，不会�
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from typing import Any
 
-from neo4j_graphrag.experimental.components.types import Neo4jGraph
+from neo4j_graphrag.experimental.components.types import Neo4jGraph, Neo4jNode
 
 if __package__ in {None, ""}:
     # 允许直接执行本文件观察底部离线 demo；正常作为包导入时不进入该分支。
@@ -42,6 +42,7 @@ if __package__ in {None, ""}:
         _hold,
         _judge_draft,
         _mark_partial,
+        _node_judge_draft,
         _node_summary,
         _relationship_judge_draft,
         _relationship_summary,
@@ -57,6 +58,7 @@ else:
         _hold,
         _judge_draft,
         _mark_partial,
+        _node_judge_draft,
         _node_summary,
         _relationship_judge_draft,
         _relationship_summary,
@@ -107,7 +109,7 @@ def _has_state_source_refs(
     *,
     source: Mapping[str, Any],
     target: Mapping[str, Any],
-) -> tuple[Mapping[str, Any], list[Mapping[str, Any]] | None]:
+) -> tuple[Mapping[str, Any] | None, list[Mapping[str, Any]] | None]:
     """为 HAS_STATE 选择普通引语或表格派生状态已验证过的双锚点。
 
     普通状态词如“血清铁降低”可直接出现在关系引语中；表格箭头派生状态则没有
@@ -139,7 +141,7 @@ def normalize_candidate_relationships(
     chunk: EvidenceChunk,
     schema: Mapping[str, Any],
     nodes: Sequence[Mapping[str, Any]],
-    allowed_relation_types: Sequence[str] = MODEL_RELATION_TYPES,
+    allowed_relation_types: Collection[str] = MODEL_RELATION_TYPES,
     validate_rule_structures: bool = True,
 ) -> CandidateNormalization:
     """接纳模型提出的可回放关系，并将无法入图的最小关系分流给 Judge。
@@ -162,7 +164,6 @@ def normalize_candidate_relationships(
 
     # 关系阶段不允许新增节点，关系必须引用先前冻结的 candidate_key。
     for index, node in enumerate(graph.nodes):
-        from .review import _node_judge_draft
         draft = _node_judge_draft(node)
         if draft is None:
             # 连最小节点身份都没有，只能记录 REJECTED 审查项。
@@ -255,7 +256,7 @@ def normalize_candidate_relationships(
                 raise GraphBuilderConfigurationError("duplicate_relation")
             seen_keys.add(candidate_key)
             # VALID 仅表示本地结构与证据通过，不代表语义已由 Judge 确认。
-            record = {
+            record: dict[str, Any] = {
                 "candidate_key": candidate_key,
                 "relation_type": relation_type,
                 "source_candidate_key": source_key,
@@ -449,11 +450,11 @@ if __name__ == "__main__":
         ("LabIndicator", "亚铁嗪显色法", "原文明示的检验方法，作为检验指标背景。"),
     ]
     entity_graph = Neo4jGraph(nodes=[
-        {
-            "id": f"recorded-entity-{index}",
-            "label": label,
-            "properties": {"mention": mention, "extraction_reason": reason},
-        }
+        Neo4jNode(
+            id=f"recorded-entity-{index}",
+            label=label,
+            properties={"mention": mention, "extraction_reason": reason},
+        )
         for index, (label, mention, reason) in enumerate(raw_entity_nodes)
     ])
     entity_result = normalize_candidate_nodes(

@@ -117,15 +117,17 @@ Judge 应与抽取模型独立调用；实验中应评估同模型、不同模�
 ## 参考文献
 
 1. Huang, H., Chen, C., Sheng, Z., Li, Y., & Zhang, W. (2025). *Can LLMs be
-   Good Graph Judge for Knowledge Graph Construction?* EMNLP 2025, 10929-10948.
-   https://aclanthology.org/2025.emnlp-main.554/
+   Good Graph Judge for Knowledge Graph Construction?* In *Proceedings of
+   EMNLP 2025* (pp. 10929-10948). Association for Computational Linguistics.
+   https://doi.org/10.18653/v1/2025.emnlp-main.554
 
    该工作将图谱抽取与后置 LLM Judge 分离，用 Judge 提升生成图谱质量；支持将
    “发现候选”和“语义审查”拆开，但不证明任一具体 Judge 足以取代人工审核。
 
 2. Zhang, B., & Soh, H. (2024). *Extract, Define, Canonicalize: An LLM-based
-   Framework for Knowledge Graph Construction.* EMNLP 2024, 9820-9836.
-   https://aclanthology.org/2024.emnlp-main.548/
+   Framework for Knowledge Graph Construction.* In *Proceedings of EMNLP 2024*
+   (pp. 9820-9836). Association for Computational Linguistics.
+   https://doi.org/10.18653/v1/2024.emnlp-main.548
 
    该工作采用开放抽取、Schema 定义和后置规范化的多阶段流程，说明抽取后再处理
    类型与规范化是可行的工程路径。
@@ -138,15 +140,17 @@ Judge 应与抽取模型独立调用；实验中应评估同模型、不同模�
    替代证据回放或人工发布门。
 
 4. Regino, A. G., & dos Reis, J. C. (2025). *Can LLMs be Knowledge Graph
-   Curators for Validating Triple Insertions?* GenAIK 2025, 87-99.
-   https://aclanthology.org/2025.genaik-1.10/
+   Curators for Validating Triple Insertions?* In *Proceedings of GenAIK 2025*
+   (pp. 87-99). Association for Computational Linguistics.
+   https://doi.org/10.18653/v1/2025.genaik-1.10
 
    该工作把类型/属性对齐、URI 标准化、语义一致性和语法正确性作为不同验证任务，
    并指出领域泛化、语义漂移和 human-in-the-loop 仍是部署问题。
 
 5. Yang, S., et al. (2026). *AutoSchemaKG: Autonomous Knowledge Graph
-   Construction through LLMs.* ACL 2026.
-   https://aclanthology.org/2026.acl-long.942.pdf
+   Construction through Dynamic Schema Induction from Web-Scale Corpora.*
+   In *Proceedings of ACL 2026*. Association for Computational Linguistics.
+   https://aclanthology.org/2026.acl-long.942/
 
    该工作在附加分析中使用多个 Judge 交叉验证抽取质量，可作为本项目比较单 Judge 与
    多 Judge 的设计参考。其任务和数据集不同，不能外推具体性能数值。
