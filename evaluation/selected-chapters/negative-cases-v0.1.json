@@ -1,0 +1,20 @@
+{
+  "schema_version": "medical-kg-negative-case-set/v0.1",
+  "status": "HUMAN_REVIEW_REQUIRED",
+  "source_document": "source-packages/canonical/evidence/full-book-v0.2",
+  "notes": ["负例只表达原文明确不支持的过度推断。", "evidence_quote 必须逐字回放。"],
+  "cases": [
+    {"case_id":"NEG-02-01","chapter_id":"chapter-02","chunk_id":"health-check-interpretation-v2:full-book:0034:0000","evidence_quote":"血清中的MAO活力和肝纤维化程度有一定的关系","forbidden":["单凭单胺氧化酶升高即可确诊肝纤维化"]},
+    {"case_id":"NEG-02-02","chapter_id":"chapter-02","chunk_id":"health-check-interpretation-v2:full-book:0040:0000","evidence_quote":"CHI3L1 表达水平是肝纤维化辅助诊断、疗效监测的指标","forbidden":["CHI3L1 升高等于肝纤维化确诊"]},
+    {"case_id":"NEG-06-01","chapter_id":"chapter-06","chunk_id":"health-check-interpretation-v2:full-book:0067:0000","evidence_quote":"不能反映瞬间血糖水平及血糖波动情况","forbidden":["HbA1c 可以反映瞬间血糖水平","HbA1c 可以反映血糖波动"]},
+    {"case_id":"NEG-06-02","chapter_id":"chapter-06","chunk_id":"health-check-interpretation-v2:full-book:0073:0001","evidence_quote":"它反映的是采血瞬间的血糖水平","forbidden":["一次空腹血糖可代表长期平均血糖"]},
+    {"case_id":"NEG-13-01","chapter_id":"chapter-13","chunk_id":"health-check-interpretation-v2:full-book:0126:0000","evidence_quote":"泌尿系感染、结石、血尿、前列腺炎等也有一定的阳性率，需进一步通过膀胱镜检查来确诊。","forbidden":["尿液BTA阳性即可确诊膀胱癌"]},
+    {"case_id":"NEG-13-02","chapter_id":"chapter-13","chunk_id":"health-check-interpretation-v2:full-book:0126:0000","evidence_quote":"膀胱炎、前列腺炎、尿路结石和前列腺癌患者中, 也有一定的阳性率, 要进一步做尿脱落细胞学和膀胱镜检查来确诊。","forbidden":["NMP22阳性即可确诊尿路上皮细胞癌"]},
+    {"case_id":"NEG-13-03","chapter_id":"chapter-13","chunk_id":"health-check-interpretation-v2:full-book:0137:0000","evidence_quote":"不能单凭肿瘤标志超过参考区间（正常值）来进行筛查和诊断。","forbidden":["肿瘤标志物超过参考区间等于恶性肿瘤","单凭肿瘤标志物可完成肿瘤筛查"]},
+    {"case_id":"NEG-13-04","chapter_id":"chapter-13","chunk_id":"health-check-interpretation-v2:full-book:0141:0000","evidence_quote":"绝不能单纯依靠肿瘤标志物检测来达到肿瘤的早期发现和诊断的目的。","forbidden":["单纯依靠肿瘤标志物即可早期发现并诊断肿瘤"]},
+    {"case_id":"NEG-18-01","chapter_id":"chapter-18","chunk_id":"health-check-interpretation-v2:full-book:0177:0000","evidence_quote":"血糖含量正常, 但由于肾糖阈值下降, 近曲小管对葡萄糖重吸收能力下降, 出现糖尿, 又称肾性糖尿。","forbidden":["尿糖阳性必然表示血糖升高","尿糖阳性即可确诊糖尿病"]},
+    {"case_id":"NEG-18-02","chapter_id":"chapter-18","chunk_id":"health-check-interpretation-v2:full-book:0180:0000","evidence_quote":"本方法能检出尿中血红蛋白、肌红蛋白","forbidden":["尿试带隐血阳性可区分血红蛋白和肌红蛋白"]},
+    {"case_id":"NEG-18-03","chapter_id":"chapter-18","chunk_id":"health-check-interpretation-v2:full-book:0184:0000","evidence_quote":"隐血试验虽无特异性","forbidden":["粪便隐血试验阳性即可确诊结直肠癌"]},
+    {"case_id":"NEG-18-04","chapter_id":"chapter-18","chunk_id":"health-check-interpretation-v2:full-book:0184:0000","evidence_quote":"两者联合检测可以提高阳性率，减少假阴性，达到优势互补的作用。","forbidden":["粪便转铁蛋白可以替代粪便隐血试验","任一单项阴性即可排除消化道出血"]}
+  ]
+}
