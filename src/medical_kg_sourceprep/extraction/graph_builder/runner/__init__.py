@@ -1,6 +1,7 @@
 """候选图抽取、单轮评测和二次抽取实验的工作流入口。"""
 
-from .candidate_graph import run_candidate_block, run_candidate_graph, run_smoke
+from ..candidate_graph import run_candidate_block, run_candidate_graph, run_smoke
+from ..evaluation.aggregation import aggregate_case_scores
 from .judge_guided_reextraction import (
     build_revision_context,
     comparison_summary,
@@ -8,7 +9,6 @@ from .judge_guided_reextraction import (
     run_reextraction_chunk,
     run_typical_cases_experiment,
 )
-from .score_aggregation import aggregate_case_scores
 from .single_pass_evaluation import (
     aggregate_judge_results,
     evaluation_summary,

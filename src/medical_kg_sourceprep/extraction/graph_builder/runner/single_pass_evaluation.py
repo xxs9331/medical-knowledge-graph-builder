@@ -25,11 +25,11 @@ from ..evaluation.artifacts import (
     first_extraction_is_usable,
     load_json_object,
 )
+from ..candidate_graph import run_candidate_graph
+from ..evaluation.aggregation import aggregate_case_scores
 from ..evaluation.scoring import merge_candidate_graphs, score_candidate_graph
 from ..judge import judge_candidate_graph
 from ..schema import load_candidate_graph_schema
-from .candidate_graph import run_candidate_graph
-from .score_aggregation import aggregate_case_scores
 
 
 def aggregate_judge_results(
