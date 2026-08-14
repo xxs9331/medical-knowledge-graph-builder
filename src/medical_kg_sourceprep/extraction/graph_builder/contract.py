@@ -310,6 +310,8 @@ Input text:
 #   单位、阈值等非目录项不作图端点，但完整公式必须作为 formula 证据保留供后续参数解析。
 # - 表达式端点必须完全使用冻结目录的 mention，不能换全称、缩写或别名；要先扫描整个 chunk 的
 #   所有明确公式（含大表之后的公式），每个有原文证据的公式应生成一条 PREPROCESS 规则。
+# - OCR 导致指数、运算符或参数名不清晰时，只要“命名输出 = 表达式”的公式形状仍明确，就保留
+#   PREPROCESS 候选并逐字保存原式；不得因无法可靠修复符号而静默漏掉整条规则。
 # - rule_evidence_json 是 JSON 字符串数组。每项有非空 role 和 exact_quote；重复引语还需 occurrence
 #   index 或字符位置。role 是来源定位标签，不是封闭枚举；模型按实际原文选择需要的锚点。
 # - 模型直接阅读 Markdown/HTML 表格，自行判断某行、跨行、表头、箭头或其他布局是否支持规则。
@@ -349,6 +351,11 @@ Rules for this dedicated rule phase:
   explicit formulas in the chunk before processing tables, including formulas
   after tables, and emit one PREPROCESS RuleDefinition for every formula
   supported by source evidence.
+- An OCR-corrupted exponent, operator, or parameter token does not erase an
+  otherwise explicit `named output = expression` formula. Emit the PREPROCESS
+  candidate using only frozen business endpoints and preserve the unreadable
+  token verbatim in formula evidence. Do not repair or reinterpret that token
+  with outside knowledge; later review handles the uncertainty.
 - rule_evidence_json is a JSON array encoded as a string. Every item has a
   non-empty descriptive role and exact_quote.
   If that quote repeats, include exact_quote_occurrence_index or

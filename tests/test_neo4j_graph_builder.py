@@ -10,10 +10,24 @@ from unittest.mock import patch
 from neo4j_graphrag.experimental.components.types import Neo4jGraph, Neo4jRelationship
 
 from medical_kg_sourceprep.extraction import neo4j_graph_builder as graph_builder
+from medical_kg_sourceprep.extraction.graph_builder.validation.provenance import _parse_rule_evidence
 from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
 
 
 class Neo4jGraphBuilderTests(unittest.TestCase):
+    def test_rule_evidence_repairs_markdown_backslashes_before_replay(self):
+        text = r"国际标准化比值 (INR) = PTR \( ^{[S1]} \)"
+        chunk = EvidenceChunk("synthetic:markdown-formula", text, hashlib.sha256(text.encode()).hexdigest())
+        malformed_nested_json = (
+            r'[{"role":"formula","exact_quote":"国际标准化比值 (INR) = PTR \( ^{[S1]} \)"}]'
+        )
+
+        refs = _parse_rule_evidence(chunk, malformed_nested_json)
+
+        self.assertEqual(refs[0]["exact_quote"], text)
+        self.assertEqual(refs[0]["char_start"], 0)
+        self.assertEqual(refs[0]["char_end"], len(text))
+
     def test_ordinary_relation_schema_omits_unused_node_and_relation_properties(self):
         schema = graph_builder.load_candidate_graph_schema()
         graph_schema = graph_builder.build_graphrag_schema(

@@ -38,7 +38,10 @@ class GraphBuilderJudgeTests(unittest.TestCase):
         )
         self.assertNotIn("must_not_extract", prompt)
         self.assertNotIn("HUMAN_REVIEW_REQUIRED", prompt)
-        self.assertIn("explicit mention alone is not sufficient", prompt)
+        self.assertIn("already passed deterministic structural and provenance validation", prompt)
+        self.assertIn("Do not re-check JSON shape", prompt)
+        self.assertIn("Co-occurrence of endpoints is not evidence", prompt)
+        self.assertIn("do not search for or report missing extractions", prompt)
         self.assertIn("Never return REPAIR with repair null", prompt)
         self.assertIn("OUTPUT_TEMPLATE_JSON", prompt)
         self.assertIn('"results"', prompt)
@@ -109,6 +112,44 @@ class GraphBuilderJudgeTests(unittest.TestCase):
             self.assertEqual(document["publication_status"], "HOLD")
             self.assertEqual(document["approved"], 0)
             self.assertFalse(document["configuration"]["gold_answers_exposed"])
+
+    def test_judge_batches_large_candidate_graph_and_preserves_order(self):
+        graph = {"nodes": [
+            {"candidate_key": f"candidate:{index}", "entity_type": "LabIndicator", "mention": "血清铁"}
+            for index in range(13)
+        ], "relationships": []}
+
+        class FakeLLM:
+            def __init__(self):
+                self.calls = 0
+
+            async def ainvoke(self, prompt):
+                self.calls += 1
+                payload = json.loads(prompt.split("SOURCE_DATA_JSON:\n", 1)[1])
+                return SimpleNamespace(content=json.dumps({"results": [{
+                    "judge_item_id": item["judge_item_id"], "verdict": "SUPPORTED",
+                    "reason_code": "SOURCE_SUPPORTS_NODE", "reason": "原文直接支持。",
+                    "evidence_spans": [{"chunk_id": "case:chunk", "start": 0, "end": 3}],
+                    "repair": None,
+                } for item in payload["candidate_items"]]}, ensure_ascii=False))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            graph_path = Path(temporary) / "graph.json"
+            output_path = Path(temporary) / "judge.json"
+            graph_path.write_text(json.dumps(graph, ensure_ascii=False), encoding="utf-8")
+            llm = FakeLLM()
+            document = asyncio.run(judge_candidate_graph(
+                SimpleNamespace(llm=llm), graph_path=graph_path, chunks=[self.chunk],
+                schema={"node_types": [], "relationship_types": []}, output_path=output_path,
+                case_id="TC-BATCH",
+            ))
+
+        self.assertEqual(llm.calls, 2)
+        self.assertEqual(document["configuration"]["batch_count"], 2)
+        self.assertEqual(
+            [item["judge_item_id"] for item in document["results"]],
+            [f"node:candidate:{index}" for index in range(13)],
+        )
 
     def test_typical_case_gold_has_eight_cases(self):
         path = Path("evaluation/typical-cases/typical-cases-v0.1.json")

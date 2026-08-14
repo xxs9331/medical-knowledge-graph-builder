@@ -285,7 +285,13 @@ def _parse_rule_evidence(chunk: EvidenceChunk, value: Any) -> list[dict[str, Any
         try:
             value = json.loads(value)
         except json.JSONDecodeError as error:
-            raise GraphBuilderConfigurationError("rule_evidence_json_invalid") from error
+            # Markdown 数学原文常含 ``\(``、``\)``。模型把 JSON 再编码进字符串时可能
+            # 漏掉这一层反斜杠转义；只修复 JSON 标准之外的转义，随后仍逐字回放原文。
+            escaped_value = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', value)
+            try:
+                value = json.loads(escaped_value)
+            except json.JSONDecodeError:
+                raise GraphBuilderConfigurationError("rule_evidence_json_invalid") from error
     if not isinstance(value, list) or not value:
         raise GraphBuilderConfigurationError("rule_evidence_missing")
     refs: list[dict[str, Any]] = []

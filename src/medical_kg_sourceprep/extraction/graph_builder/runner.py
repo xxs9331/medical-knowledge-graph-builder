@@ -74,6 +74,7 @@ async def run_candidate_graph(
     output_dir: Path,
     source_manifest_sha256: str,
     run_id: str | None = None,
+    revision_context: str = "",
 ) -> dict[str, Any]:
     """对一个 chunk 依次执行实体、规则、普通关系和规则边四个候选抽取阶段。
 
@@ -85,6 +86,21 @@ async def run_candidate_graph(
     input_text = chunk.text
     # 显式 run_id 优先；未提供时使用本轮输出目录名，保证摘要和工件目录身份一致。
     effective_run_id = run_id or output_dir.name
+
+    def revised_prompt(template: str) -> str:
+        """仅在二次抽取实验中附加上一轮审查反馈；默认生产行为完全不变。"""
+        if not revision_context:
+            return template
+        # GraphRAG 会对模板执行 str.format；转义反馈中的 JSON 花括号，避免被当作占位符。
+        escaped_context = revision_context.replace("{", "{{").replace("}", "}}")
+        return template + """
+
+Revision context from an independent audit of the previous extraction:
+{revision_context}
+Use it only to avoid previously identified extraction errors. Re-extract the complete phase from
+the original Input text; do not merely patch the previous output, and do not assume the audit is
+correct when it conflicts with the source or Schema.
+""".replace("{revision_context}", escaped_context)
 
     async def extract_with_retry(
         *, graph_schema: Any, prompt_template: str, examples: str, diagnostics: list[dict[str, Any]],
@@ -114,7 +130,7 @@ async def run_candidate_graph(
             node_types=sorted(BUSINESS_NODE_TYPES),
             node_property_names=("mention", "extraction_reason"),
         ),
-        prompt_template=ENTITY_DISCOVERY_PROMPT_TEMPLATE,
+        prompt_template=revised_prompt(ENTITY_DISCOVERY_PROMPT_TEMPLATE),
         examples=ENTITY_DISCOVERY_EXAMPLES,
         diagnostics=entity_response_diagnostics,
     )
@@ -160,7 +176,8 @@ async def run_candidate_graph(
     rule_response_diagnostics: list[dict[str, Any]] = []
     rule_graph, rule_error, rule_attempts = await extract_with_retry(
         graph_schema=build_graphrag_schema(schema, relation_types=(), node_types=("RuleDefinition",)),
-        prompt_template=RULE_NODE_PROMPT_TEMPLATE, examples=_catalog_for_prompt(entity_nodes), diagnostics=rule_response_diagnostics,
+        prompt_template=revised_prompt(RULE_NODE_PROMPT_TEMPLATE),
+        examples=_catalog_for_prompt(entity_nodes), diagnostics=rule_response_diagnostics,
     )
     if rule_error is not None:
         # 连续两次模型调用失败时，本阶段不产生规则节点，只留下阶段失败审查项。
@@ -174,6 +191,33 @@ async def run_candidate_graph(
         rule_result = normalize_candidate_nodes(
             rule_graph or Neo4jGraph(), chunk=chunk, schema=schema, allowed_node_types=("RuleDefinition",)
         )
+        # 数学原式常被模型直接填入 rule_expression，例如 ``INR=PTR^ISI``。证据可以正确，
+        # 但该字段的图合同固定为“输出=规则名(输入...)”；只对此形状错误追加一次纠正重试。
+        if any(item.get("reason_code") == "rule_expression_invalid" for item in rule_result.review_items):
+            correction_prompt = revised_prompt(RULE_NODE_PROMPT_TEMPLATE) + """
+
+Your previous rule response used a raw mathematical equation in rule_expression.
+Retry the complete rule phase. Every rule_expression must use exactly
+`output=descriptive_rule_name(input1,input2)` with no spaces around `=`. Put only frozen catalog
+mentions in output and input positions. Preserve the raw mathematical equation only in the
+verbatim formula evidence. Do not omit a source-supported formula merely because OCR damaged an
+operator or exponent.
+"""
+            corrected_graph, corrected_error, _corrected_attempts = await extract_with_retry(
+                graph_schema=build_graphrag_schema(
+                    schema, relation_types=(), node_types=("RuleDefinition",)
+                ),
+                prompt_template=correction_prompt,
+                examples=_catalog_for_prompt(entity_nodes),
+                diagnostics=rule_response_diagnostics,
+            )
+            if corrected_error is None:
+                corrected_result = normalize_candidate_nodes(
+                    corrected_graph or Neo4jGraph(), chunk=chunk, schema=schema,
+                    allowed_node_types=("RuleDefinition",),
+                )
+                if len(corrected_result.accepted) > len(rule_result.accepted):
+                    rule_result = corrected_result
         rule_nodes, rule_holds = rule_result
         judge_drafts.extend(rule_result.judge_drafts)
     # 此时只有节点，没有关系。VALID 和 PARTIAL 都可保留在候选集合中，
@@ -192,7 +236,8 @@ async def run_candidate_graph(
             node_property_names=("mention",),
             relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
         ),
-        prompt_template=ORDINARY_RELATION_PROMPT_TEMPLATE, examples=_catalog_for_prompt(entity_nodes),
+        prompt_template=revised_prompt(ORDINARY_RELATION_PROMPT_TEMPLATE),
+        examples=_catalog_for_prompt(entity_nodes),
         diagnostics=ordinary_response_diagnostics,
     )
     if ordinary_error is not None:
@@ -226,7 +271,8 @@ async def run_candidate_graph(
     if any(item.get("entity_type") == "RuleDefinition" for item in frozen_nodes):
         rule_edge_graph, rule_edge_error, rule_edge_attempts = await extract_with_retry(
             graph_schema=build_graphrag_schema(schema, relation_types=sorted(RULE_EDGE_TYPES)),
-            prompt_template=RULE_EDGE_PROMPT_TEMPLATE, examples=_catalog_for_prompt(frozen_nodes), diagnostics=rule_edge_response_diagnostics,
+            prompt_template=revised_prompt(RULE_EDGE_PROMPT_TEMPLATE),
+            examples=_catalog_for_prompt(frozen_nodes), diagnostics=rule_edge_response_diagnostics,
         )
         if rule_edge_error is not None:
             # 规则边阶段失败时保留此前节点和普通关系，同时记录本阶段失败，不伪造规则边。

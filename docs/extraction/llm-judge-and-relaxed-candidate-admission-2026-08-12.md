@@ -2,11 +2,12 @@
 
 日期：2026-08-12
 
-状态：第一阶段已实现，LLM Judge 尚未接入。
+状态：候选准入和只读 LLM Judge 已实现；自动修复、漏抽评估和发布闭环尚未实现。
 
 当前候选构建器已实现宽松准入、图内 `PARTIAL`、独立 `judge-queue.json`、四阶段
-最多两次调用和发布前复验边界；尚未调用 Judge，也不能将 Judge 队列中的草稿作为图
-候选或已批准医学知识。所有产物仍为 `candidate-only`、`publication_status=HOLD`。
+最多两次调用和发布前复验边界，并已提供只读 Judge 对候选图进行语义审查。Judge 不会
+自动执行修复，也不能将 Judge 队列中的草稿作为图候选或已批准医学知识。所有产物仍为
+`candidate-only`、`publication_status=HOLD`。
 
 ## 问题
 
@@ -34,9 +35,10 @@ LLM 抽取
 1. 候选阶段的目标是保留可审计的发现，不应使用有限关键词表裁决医学语义。
 2. 表达不唯一、端点暂未解析、关系方向不确定、疑似联合条件、规则输入输出不全等
    情况，优先标为 `PARTIAL` 和 `REVIEW_REQUIRED`，而不是直接 `REJECTED`。
-3. 独立 LLM Judge 负责判断实体分类、关系类型、RuleDefinition 语义，以及给出的
-   原文证据是否支持候选。Judge 必须只使用提供的原文和候选上下文，不得用外部医学
-   知识补造端点或证据。
+3. 独立 LLM Judge 只负责硬校验无法机械证明的语义忠实性：mention 在当前语境中的
+   实体分类与语义边界、关系类型和方向、关系是否直接，以及否定、范围、比较、阈值或
+   联合条件是否丢失。Judge 必须只使用提供的原文和候选上下文，不得用外部医学知识
+   补造端点或证据。
 4. Judge 的修复意见必须生成新的候选版本，不能静默覆盖抽取结果。
 5. 发布前仍必须由程序复验：原文位置、chunk hash、端点存在性、Schema domain/range、
    以及规则图结构。任何未通过复验的记录不得发布。
@@ -67,6 +69,10 @@ Judge 输入必须包括：
 - 已冻结实体目录及候选阶段的 warning；
 - 该候选声明的原文锚点，或待定位的 mention/exact quote。
 
+进入 Judge 的正式候选已经通过确定性硬校验。Judge 不重复判断 JSON 形状、类型是否
+属于 Schema、candidate_key 身份、冻结端点是否存在、端点类型组合、重复身份、chunk
+hash 或引文坐标回放。这些合同继续由程序执行；Judge 只评判其上层语义是否忠实于原文。
+
 Judge 输出固定为一个 JSON 对象，至少包含：
 
 ```json
@@ -80,10 +86,15 @@ Judge 输出固定为一个 JSON 对象，至少包含：
 }
 ```
 
-- `SUPPORTED`：语义支持候选，但仍需程序复验全部证据位置和图结构。
+- `SUPPORTED`：所有适用的语义检查均支持候选，但仍不代表批准发布。
 - `UNSUPPORTED`：原文不支持候选，记录拒绝原因。
-- `REPAIR`：原文可能支持，但候选端点、类型、位置或规则结构需要重建。
-- `ABSTAIN`：Judge 无法可靠判断，保留给人工审核，不自动发布。
+- `REPAIR`：原文明确支持一个可通过封闭动作得到的修正版；只记录建议，不直接改图。
+- `ABSTAIN`：原文歧义、冲突、OCR 缺损或指代不清，无法可靠选择其他判定；保留给
+  人工审核，不自动发布。
+
+当前 Judge 是候选级准确性审查，不能单独发现漏抽，也不能计算完整抽取召回率。漏抽
+必须通过独立 coverage audit 产生待复核建议，最终实体和关系 Precision、Recall、F1
+仍以人工金标为准，不能用 Judge 自己的补抽结果充当金标。
 
 Judge 应与抽取模型独立调用；实验中应评估同模型、不同模型和多 Judge 投票的差异。
 
@@ -142,7 +153,7 @@ Judge 应与抽取模型独立调用；实验中应评估同模型、不同模�
 4. Regino, A. G., & dos Reis, J. C. (2025). *Can LLMs be Knowledge Graph
    Curators for Validating Triple Insertions?* In *Proceedings of GenAIK 2025*
    (pp. 87-99). Association for Computational Linguistics.
-   https://doi.org/10.18653/v1/2025.genaik-1.10
+   https://aclanthology.org/2025.genaik-1.10/
 
    该工作把类型/属性对齐、URI 标准化、语义一致性和语法正确性作为不同验证任务，
    并指出领域泛化、语义漂移和 human-in-the-loop 仍是部署问题。
@@ -155,6 +166,38 @@ Judge 应与抽取模型独立调用；实验中应评估同模型、不同模�
    该工作在附加分析中使用多个 Judge 交叉验证抽取质量，可作为本项目比较单 Judge 与
    多 Judge 的设计参考。其任务和数据集不同，不能外推具体性能数值。
 
+6. Jiang, P., Lin, J., Wang, Z., Sun, J., & Han, J. (2024). *GenRES:
+   Rethinking Evaluation for Generative Relation Extraction in the Era of
+   Large Language Models.* In *Proceedings of NAACL 2024* (pp. 2820-2837).
+   Association for Computational Linguistics.
+   https://doi.org/10.18653/v1/2024.naacl-long.155
+
+   该工作将生成式关系抽取按事实性、粒度、完整性等维度评估，并指出人工参考关系也
+   可能不完整。因此候选正确性和漏抽覆盖率应分开评估，不能由单一整体 verdict 代替。
+
+7. Zhang, W., et al. (2024). *Unexpected Phenomenon: LLMs' Spurious
+   Associations in Information Extraction.* In *Findings of ACL 2024*
+   (pp. 9176-9190). Association for Computational Linguistics.
+   https://doi.org/10.18653/v1/2024.findings-acl.545
+
+   该工作表明 LLM 可能识别出实体对，却接受语义无关的关系标签。因此 Judge 必须把
+   端点存在与关系类型、方向和直接性的语义支持分开，不能因实体共同出现就支持关系。
+
+8. Parvez, M. R. (2025). *Chain of Evidences and Evidence to Generate:
+   Prompting for Context Grounded and Retrieval Augmented Reasoning.* In
+   *Proceedings of KnowledgeNLP 2025* (pp. 230-245). Association for
+   Computational Linguistics. https://doi.org/10.18653/v1/2025.knowledgenlp-1.21
+
+   该工作支持先定位上下文证据、再据此判断的提示顺序。本项目进一步由程序回放 Judge
+   返回的字符区间，避免将模型自由复述的引语当作可审计证据。
+
+9. Hong, Y., Yao, H., Shen, B., Xu, W., Wei, H., & Dong, Y. (2026). *From
+   Rubrics to Reliable Scores: Evidence-Grounded Text Evaluation with LLM
+   Judges.* arXiv:2601.08654. https://doi.org/10.48550/arXiv.2601.08654
+
+   该工作强调锁定评判标准、结构化检查和可验证证据。它支持对 Judge 合同做版本化并
+   保留确定性证据验证，但其文本评分实验不能直接证明医疗图谱 Judge 的准确率。
+
 ## 与现有文档的关系
 
 - [分阶段与联合抽取的待决问题](llm-extraction-pipeline-vs-joint-literature-2026-08-12.md)
@@ -163,5 +206,5 @@ Judge 应与抽取模型独立调用；实验中应评估同模型、不同模�
   哪些约束不可放宽。
 - 当前代码的中文说明位于
   `src/medical_kg_sourceprep/extraction/graph_builder/validation/`；在本设计实现前，
-  宽松 `PARTIAL` 路由和 Judge 输入队列已经实现；Judge 合同中的模型调用、修复候选
-  和复验闭环仍未实现，不得描述为已有能力。
+  宽松 `PARTIAL` 路由、Judge 输入队列和只读 Judge 模型调用已经实现；修复候选、
+  coverage audit 和发布复验闭环仍未实现，不得描述为已有能力。
