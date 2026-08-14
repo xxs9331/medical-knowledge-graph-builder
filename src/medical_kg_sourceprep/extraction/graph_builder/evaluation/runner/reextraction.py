@@ -1,4 +1,4 @@
-"""真实候选图评测的可复用编排。
+"""携带审查反馈的二次抽取、两轮并集与提升效果对比。
 
 本模块负责首次抽取、候选 Judge、遗漏审查、携带反馈的二次抽取、两轮并集和
 人工典型案例评分。模型调用阶段只读取原文、Schema、候选图和审查建议；人工金标
@@ -10,28 +10,29 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
-from ...artifacts import sha256_path
-from ...llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
-from ..contract import (
+from ....artifacts import sha256_path
+from ....llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from ...contract import (
     DEFAULT_CHUNK_MANIFEST,
     DEFAULT_SCHEMA_PATH,
     GraphBuilderConfigurationError,
 )
-from ..judge import judge_candidate_graph
-from ..runner import run_candidate_graph
-from ..schema import load_candidate_graph_schema
-from .artifacts import (
+from ...judge import judge_candidate_graph
+from ...runner import run_candidate_graph
+from ...schema import load_candidate_graph_schema
+from ..artifacts import (
     artifact_matches_graph,
     first_extraction_is_usable,
     load_json_object,
     second_extraction_is_usable,
 )
-from .coverage import audit_extraction_coverage
-from .scoring import merge_candidate_graphs, score_candidate_graph
+from ..coverage import audit_extraction_coverage
+from ..scoring import merge_candidate_graphs, score_candidate_graph
+from .common import aggregate_case_scores
 
 
 def compact_candidate_graph(graph: Mapping[str, Any]) -> dict[str, Any]:
@@ -78,47 +79,6 @@ def build_revision_context(
         "judge_actionable_results": actionable_results,
         "coverage_missing_items": coverage.get("missing_items", []),
     }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-
-
-def aggregate_case_scores(case_results: Sequence[Mapping[str, Any]], phase: str) -> dict[str, Any]:
-    """汇总一个阶段的 micro、macro 和分类型目标覆盖率。"""
-    if not case_results:
-        raise GraphBuilderConfigurationError("experiment_cases_missing")
-    # micro 按全部约束汇总，约束较多的案例权重更大；macro 对每个案例等权平均。
-    satisfied = sum(item[phase]["challenge"]["satisfied_constraints"] for item in case_results)
-    total = sum(item[phase]["challenge"]["total_constraints"] for item in case_results)
-    macro = sum(item[phase]["challenge"]["score"] for item in case_results) / len(case_results)
-    categories: dict[str, Any] = {}
-    for category in ("entities", "relationships", "rules"):
-        matched = sum(item[phase][category]["matched"] for item in case_results)
-        target_total = sum(item[phase][category]["target_total"] for item in case_results)
-        categories[category] = {
-            "matched": matched,
-            "target_total": target_total,
-            "coverage": round(matched / target_total, 6) if target_total else 1.0,
-        }
-    forbidden_total = sum(item[phase]["forbidden"]["target_total"] for item in case_results)
-    forbidden_violations = sum(item[phase]["forbidden"]["violations"] for item in case_results)
-    categories["forbidden"] = {
-        "violations": forbidden_violations,
-        "target_total": forbidden_total,
-        "avoidance": round((forbidden_total - forbidden_violations) / forbidden_total, 6)
-        if forbidden_total else 1.0,
-    }
-    return {
-        "micro": {
-            "satisfied_constraints": satisfied,
-            "total_constraints": total,
-            "score": round(satisfied / total, 6) if total else 1.0,
-            "score_percent": round(100 * satisfied / total, 2) if total else 100.0,
-        },
-        "macro": {
-            "case_count": len(case_results),
-            "score": round(macro, 6),
-            "score_percent": round(100 * macro, 2),
-        },
-        "categories": categories,
-    }
 
 
 async def run_reextraction_chunk(

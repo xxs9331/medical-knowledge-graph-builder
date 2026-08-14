@@ -50,10 +50,14 @@ EvidenceChunk、当前 Schema、输出路径和客户端。输出判定固定为
 - `REPAIR`：只记录修改建议，不自动改图；
 - `ABSTAIN`：模型无法可靠判断。
 
-完整的“首次抽取 -> Judge 与遗漏审查 -> 携带反馈二次抽取 -> 两轮并集 -> 金标评分”
-编排位于 `medical_kg_sourceprep.extraction.graph_builder.evaluation.runner`。其中模型阶段
-不读取金标，金标只在两轮候选图生成完成后参与评分。`scripts/run_typical_cases_experiment.py`
-和 `scripts/run_judge_reextraction_experiment.py` 仅负责固定实验参数、创建真实客户端和展示结果。
+主评测编排位于 `medical_kg_sourceprep.extraction.graph_builder.evaluation.runner`，入口
+`scripts/run_typical_cases_experiment.py` 运行单轮链路：真实 EvidenceChunk 生成候选图后，
+同一份 `graph.json` 分别进入无监督 LLM Judge 和有监督人工金标评分，结果写入
+`runtime/evaluations/typical-cases/v0.1/evaluation-result.json`。模型不读取金标答案。
+
+“Judge 与遗漏审查 -> 携带反馈二次抽取 -> 两轮并集”属于独立的分数提升实验，由
+`run_reextraction_chunk()` 和 `scripts/run_judge_reextraction_experiment.py` 执行，不参与
+上述主评测链路。
 
 ## 尚未实现
 

@@ -6,8 +6,10 @@ from typing import Any
 
 from medical_kg_sourceprep.extraction.graph_builder.evaluation.runner import (
     aggregate_case_scores,
+    aggregate_judge_results,
     build_revision_context,
     comparison_summary,
+    evaluation_summary,
 )
 from medical_kg_sourceprep.extraction.graph_builder.evaluation.artifacts import (
     first_extraction_is_usable,
@@ -107,6 +109,40 @@ class GraphBuilderEvaluationRunnerTests(unittest.TestCase):
         summary = comparison_summary(comparison)
 
         self.assertEqual(summary["case_scores"][0]["union"], 70.0)
+        self.assertNotIn("chunk_artifacts", summary)
+
+    def test_aggregate_judge_results_keeps_verdicts_separate_from_gold_score(self):
+        aggregate = aggregate_judge_results([
+            {"results": [
+                {"verdict": "SUPPORTED"},
+                {"verdict": "REPAIR"},
+            ]},
+            {"results": [{"verdict": "SUPPORTED"}]},
+        ])
+
+        self.assertEqual(aggregate["reviewed_candidates"], 3)
+        self.assertEqual(aggregate["counts"]["SUPPORTED"], 2)
+        self.assertEqual(aggregate["rates"]["REPAIR"], 0.333333)
+        self.assertNotIn("score", aggregate)
+
+    def test_evaluation_summary_contains_unsupervised_and_supervised_results(self):
+        report = {
+            "case_count": 1,
+            "unique_chunk_count": 1,
+            "unsupervised_judge": {"reviewed_candidates": 2},
+            "supervised_gold": {"micro": {"score_percent": 50.0}},
+            "cases": [{
+                "case_id": "TC-01",
+                "score": {"challenge": {"score_percent": 50.0}},
+            }],
+            "chunk_artifacts": {"chunk": {"graph": "graph.json"}},
+        }
+
+        summary = evaluation_summary(report)
+
+        self.assertEqual(summary["unsupervised_judge"]["reviewed_candidates"], 2)
+        self.assertEqual(summary["supervised_gold"]["micro"]["score_percent"], 50.0)
+        self.assertEqual(summary["case_scores"], [{"case_id": "TC-01", "score_percent": 50.0}])
         self.assertNotIn("chunk_artifacts", summary)
 
     @staticmethod
