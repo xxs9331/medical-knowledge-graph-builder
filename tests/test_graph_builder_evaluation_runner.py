@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-from medical_kg_sourceprep.extraction.graph_builder.evaluation.runner import (
+from medical_kg_sourceprep.extraction.graph_builder.runner import (
     aggregate_case_scores,
     aggregate_judge_results,
     build_revision_context,

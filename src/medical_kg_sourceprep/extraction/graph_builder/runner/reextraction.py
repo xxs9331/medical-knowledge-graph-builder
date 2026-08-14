@@ -14,25 +14,25 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
-from ....artifacts import sha256_path
-from ....llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
-from ...contract import (
+from ...artifacts import sha256_path
+from ...llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
+from ..contract import (
     DEFAULT_CHUNK_MANIFEST,
     DEFAULT_SCHEMA_PATH,
     GraphBuilderConfigurationError,
 )
-from ...judge import judge_candidate_graph
-from ...runner import run_candidate_graph
-from ...schema import load_candidate_graph_schema
-from ..artifacts import (
+from ..evaluation.artifacts import (
     artifact_matches_graph,
     first_extraction_is_usable,
     load_json_object,
     second_extraction_is_usable,
 )
-from ..coverage import audit_extraction_coverage
-from ..scoring import merge_candidate_graphs, score_candidate_graph
+from ..evaluation.coverage import audit_extraction_coverage
+from ..evaluation.scoring import merge_candidate_graphs, score_candidate_graph
+from ..judge import judge_candidate_graph
+from ..schema import load_candidate_graph_schema
 from .common import aggregate_case_scores
+from .extraction import run_candidate_graph
 
 
 def compact_candidate_graph(graph: Mapping[str, Any]) -> dict[str, Any]:

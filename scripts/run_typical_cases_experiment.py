@@ -8,7 +8,7 @@ import json
 
 from medical_kg_sourceprep.extraction.graph_builder.client import create_deepseek_graph_builder
 from medical_kg_sourceprep.extraction.graph_builder.contract import PROJECT_ROOT
-from medical_kg_sourceprep.extraction.graph_builder.evaluation.runner import (
+from medical_kg_sourceprep.extraction.graph_builder.runner import (
     evaluation_summary,
     run_typical_cases_evaluation,
 )

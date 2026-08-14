@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from ...contract import GraphBuilderConfigurationError
+from ..contract import GraphBuilderConfigurationError
 
 
 def aggregate_case_scores(

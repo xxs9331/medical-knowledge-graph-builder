@@ -12,8 +12,8 @@ if __package__ in {None, ""}:
     import sys
     from pathlib import Path as _BootstrapPath
 
-    sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[3]))
-    __package__ = "medical_kg_sourceprep.extraction.graph_builder"
+    sys.path.insert(0, str(_BootstrapPath(__file__).resolve().parents[4]))
+    __package__ = "medical_kg_sourceprep.extraction.graph_builder.runner"
 
 import argparse
 import asyncio
@@ -25,18 +25,23 @@ from typing import Any
 
 from neo4j_graphrag.exceptions import LLMGenerationError
 from neo4j_graphrag.experimental.components.entity_relation_extractor import LLMEntityRelationExtractor, OnError
-from neo4j_graphrag.experimental.components.types import Neo4jGraph, TextChunk, TextChunks
+from neo4j_graphrag.experimental.components.types import (
+    Neo4jGraph,
+    Neo4jNode,
+    TextChunk,
+    TextChunks,
+)
 
-from ..artifacts import sha256_path
-from .artifacts import (
+from ...artifacts import sha256_path
+from ..artifacts import (
     _candidate_display,
     _public_candidate_nodes,
     candidate_summary,
     write_candidate_artifacts,
     _model_phase_failure_hold,
 )
-from .client import DeepSeekGraphBuilderClient, create_deepseek_graph_builder
-from .contract import (
+from ..client import DeepSeekGraphBuilderClient, create_deepseek_graph_builder
+from ..contract import (
     BUSINESS_NODE_TYPES,
     DEFAULT_CHUNK_ID,
     DEFAULT_CHUNK_MANIFEST,
@@ -54,15 +59,15 @@ from .contract import (
     SMOKE_TEXT,
     GraphBuilderConfigurationError,
 )
-from .schema import _extract_graph, build_graphrag_schema, load_candidate_graph_schema
-from .validation import (
+from ..schema import _extract_graph, build_graphrag_schema, load_candidate_graph_schema
+from ..validation import (
     CandidateNormalization,
     _catalog_for_prompt,
     _hold,
     normalize_candidate_nodes,
     normalize_candidate_relationships,
 )
-from ..llm_extraction import EvidenceChunk, load_chunk_manifest
+from ...llm_extraction import EvidenceChunk, load_chunk_manifest
 
 
 async def run_candidate_graph(
@@ -454,11 +459,11 @@ if __name__ == "__main__":
         # 将记录下来的轻量实体结果包装成 GraphRAG 的 Neo4jGraph。这里的 id 只是
         # 本次内存响应中的临时 ID，不会成为最终 candidate_key，也不会写入数据库。
         entity_graph = Neo4jGraph(nodes=[
-            {
-                "id": f"recorded-entity-{index}",
-                "label": label,
-                "properties": {"mention": mention, "extraction_reason": reason},
-            }
+            Neo4jNode(
+                id=f"recorded-entity-{index}",
+                label=label,
+                properties={"mention": mention, "extraction_reason": reason},
+            )
             for index, (label, mention, reason) in enumerate(raw_entity_nodes)
         ])
 
