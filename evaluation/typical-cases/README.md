@@ -10,6 +10,11 @@
 - Judge 只读取规范 EvidenceChunk、当前 Schema 和待判候选，不读取金标答案。
 - Judge 输出是独立的 `candidate-only/HOLD` 工件，不修改 `graph.json`，不写 Neo4j，
   也不自动批准或发布候选。
+- 典型案例是针对关键目标与禁止边的小批量挑战集，不是每个 chunk 的穷举标注。评分使用
+  目标覆盖率与禁止项规避率；未标注候选交给独立 Judge，不直接计为假阳性。
+- 全称与缩写只有在规范原文以“全称（缩写）”明确绑定时才视为等价，不使用外部别名词典。
+- 公式中的运行时参数可以由 RuleDefinition 的逐字公式证据证明覆盖，不要求为了评分把参数
+  强制建成业务实体或 `RULE_INPUT` 图端点。
 
 ## 已知覆盖边界
 
@@ -26,36 +31,32 @@
 6. 原案例中的 `Claim` 已映射为当前 `RuleDefinition`；`SUPPORTED_BY/Evidence` 不进入
    当前候选图评分。
 
-## 运行 Judge
+## 运行真实 Judge demo
 
-先准备与案例对应的现有候选 `graph.json`，再运行：
-
-```bash
-.venv/bin/medical-kg-graph-builder-judge \
-  --graph runtime/candidates/<run-id>/graph.json \
-  --case-id TC-03 \
-  --output runtime/evaluations/typical-cases/TC-03/judge-result.json
-```
-
-也可以不依赖安装后的脚本入口：
+模块入口固定读取仓库已有的 PT/PTR/INR 真实候选图及其规范 EvidenceChunk，调用真实
+DeepSeek Judge，并将只读结果写入
+`runtime/evaluations/judge-demo/ptr-inr-0022/judge-result.json`。运行前需要在项目根目录
+`.env` 或当前环境中配置 `DEEPSEEK_API_KEY`：
 
 ```bash
-.venv/bin/python -m medical_kg_sourceprep.extraction.graph_builder.judge \
-  --graph runtime/candidates/<run-id>/graph.json \
-  --case-id TC-03 \
-  --output runtime/evaluations/typical-cases/TC-03/judge-result.json
+.venv/bin/python -m medical_kg_sourceprep.extraction.graph_builder.judge
 ```
 
-Judge 要求环境中已有 `DEEPSEEK_API_KEY`，通过现有 `trust_env=false` 客户端直连。输出固定为：
+生产调用方直接使用 `judge_candidate_graph()`，传入已经完成硬校验的候选图、真实
+EvidenceChunk、当前 Schema、输出路径和客户端。输出判定固定为：
 
 - `SUPPORTED`：原文支持候选，但仍是 `HOLD`；
 - `UNSUPPORTED`：原文不支持；
 - `REPAIR`：只记录修改建议，不自动改图；
 - `ABSTAIN`：模型无法可靠判断。
 
+完整的“首次抽取 -> Judge 与遗漏审查 -> 携带反馈二次抽取 -> 两轮并集 -> 金标评分”
+编排位于 `medical_kg_sourceprep.extraction.graph_builder.evaluation.runner`。其中模型阶段
+不读取金标，金标只在两轮候选图生成完成后参与评分。`scripts/run_typical_cases_experiment.py`
+和 `scripts/run_judge_reextraction_experiment.py` 仅负责固定实验参数、创建真实客户端和展示结果。
+
 ## 尚未实现
 
-- 金标与 Judge 输出的 Precision、Recall、F1 汇总；
 - `REPAIR` 生成新候选并重新执行确定性校验；
 - 多模型或多 Judge 对照；
 - 自动发布。最终发布仍必须由人工批准。
