@@ -31,8 +31,8 @@ from ..evaluation.coverage import audit_extraction_coverage
 from ..evaluation.scoring import merge_candidate_graphs, score_candidate_graph
 from ..judge import judge_candidate_graph
 from ..schema import load_candidate_graph_schema
-from .common import aggregate_case_scores
-from .extraction import run_candidate_graph
+from .candidate_graph import run_candidate_graph
+from .score_aggregation import aggregate_case_scores
 
 
 def compact_candidate_graph(graph: Mapping[str, Any]) -> dict[str, Any]:

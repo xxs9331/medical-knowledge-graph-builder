@@ -50,7 +50,8 @@ EvidenceChunk、当前 Schema、输出路径和客户端。输出判定固定为
 - `REPAIR`：只记录修改建议，不自动改图；
 - `ABSTAIN`：模型无法可靠判断。
 
-主评测编排位于 `medical_kg_sourceprep.extraction.graph_builder.runner.evaluation`，入口
+主评测编排位于
+`medical_kg_sourceprep.extraction.graph_builder.runner.single_pass_evaluation`，入口
 `scripts/run_typical_cases_experiment.py` 运行单轮链路：真实 EvidenceChunk 生成候选图后，
 同一份 `graph.json` 分别进入无监督 LLM Judge 和有监督人工金标评分，结果写入
 `runtime/evaluations/typical-cases/v0.1/evaluation-result.json`。模型不读取金标答案。
