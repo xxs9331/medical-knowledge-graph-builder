@@ -1,9 +1,12 @@
 import unittest
+from typing import Any
 
 from medical_kg_sourceprep.extraction.entity_ontology import build_ontology_candidate
 
 
 class EntityOntologyTests(unittest.TestCase):
+    pages: list[dict[str, Any]] = []
+
     def setUp(self):
         self.pages = [
             {
@@ -67,6 +70,12 @@ class EntityOntologyTests(unittest.TestCase):
         self.assertFalse(slots["年龄"]["is_entity"])
         self.assertFalse(slots["中性粒细胞绝对值"]["raw_entity_present"])
         self.assertIsNotNone(slots["中性粒细胞绝对值"]["supplemented_entity"])
+        neut_review = next(
+            item for item in result["review_items"]
+            if item["type"] == "supplemented_labtest_missing_abbreviation"
+        )
+        self.assertEqual(neut_review["name"], "中性粒细胞绝对值")
+        self.assertIn("中性粒细胞绝对值", neut_review["evidence"][0]["quote"])
 
     def test_calculation_dependencies_keep_unresolved_source_terms_visible(self):
         result = build_ontology_candidate([

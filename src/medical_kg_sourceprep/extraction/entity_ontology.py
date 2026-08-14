@@ -355,13 +355,15 @@ def build_ontology_candidate(
     supplemental_by_name = {item["name"]: dict(item) for item in SUPPLEMENTAL_ENTITIES}
     supplemented_names: list[str] = []
     for supplemental in supplemental_by_name.values():
+        supplemental_name = str(supplemental["name"])
         if not any(
-            entity["category"] == supplemental["category"] and entity["name"] == supplemental["name"]
+            entity["category"] == supplemental["category"] and entity["name"] == supplemental_name
             for entity in entities
         ):
             _insert_by_category(entities, supplemental)
-            supplemented_names.append(supplemental["name"])
+            supplemented_names.append(supplemental_name)
     neut_supplemental = supplemental_by_name["中性粒细胞绝对值"]
+    neut_supplemental_name = str(neut_supplemental["name"])
 
     names_by_category = {
         category: {str(entity["name"]) for entity in entities if entity["category"] == category}
@@ -441,13 +443,13 @@ def build_ontology_candidate(
         {str(item["name"]) for item in raw_entities},
     )
     review_items = [*unresolved_dependencies]
-    if neut_supplemental["name"] in supplemented_names:
+    if neut_supplemental_name in supplemented_names:
         review_items.append({
             "type": "supplemented_labtest_missing_abbreviation",
-            "name": supplemental["name"],
+            "name": neut_supplemental_name,
             "requested_alias": "NEUT#",
             "reason": "NEUT# is not present in chapter text; do not approve until a source-grounded abbreviation is found.",
-            "evidence": source_evidence(source_pages, supplemental["name"]),
+            "evidence": source_evidence(source_pages, neut_supplemental_name),
         })
     review_items.extend({
         "type": "context_slot_is_not_entity",
