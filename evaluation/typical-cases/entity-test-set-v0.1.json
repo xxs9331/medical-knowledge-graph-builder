@@ -1,16 +1,711 @@
 {
-  "schema_version": "medical-kg-entity-test-set/v0.1",
-  "status": "HUMAN_VALIDATED",
+  "schema_version": "medical-kg-entity-test-set/v0.2",
+  "status": "HUMAN_REVIEW_REQUIRED",
   "source_graph_dataset": "typical-cases-v0.1.json",
-  "identity": ["entity_type", "mention"],
+  "annotation_method": "SCOPED_CLOSED_WORLD_POOLED_DRAFT",
+  "scope_contract": "每个案例只评价 evaluation_scopes 内有完整证据的候选；范围内未匹配预测记 FP，未匹配金标记 FN。",
+  "identity": [
+    "entity_type",
+    "mention"
+  ],
   "cases": [
-    {"case_id":"TC-01","chunk_ids":["clinical-hematology:chapter-01:0010:0000"],"expected":[["LabIndicator","血清铁"],["IndicatorState","血清铁降低"],["ClinicalContext","慢性失血"],["ClinicalContext","胃、十二指肠溃疡出血"],["Disease","钩虫病"],["ClinicalContext","月经过多"]]},
-    {"case_id":"TC-02","chunk_ids":["clinical-hematology:chapter-01:0004:0000"],"expected":[["LabIndicator","MCV"],["LabIndicator","RDW"],["IndicatorState","MCV 正常"],["IndicatorState","RDW 增大"],["ClinicalContext","贫血"],["ClinicalContext","正细胞不均一性贫血"],["Disease","早期缺铁性贫血"],["Disease","G6PD 缺乏症"]]},
-    {"case_id":"TC-03","chunk_ids":["clinical-hematology:chapter-01:0012:0001"],"expected":[["LabIndicator","血清铁"],["LabIndicator","TIBC"],["IndicatorState","血清铁降低"],["IndicatorState","血清铁增高"],["IndicatorState","TIBC增高"],["IndicatorState","TIBC降低"],["Disease","缺铁性贫血"],["ClinicalContext","铁吸收不良"],["ClinicalContext","慢性失血"],["ClinicalContext","需铁量增加"],["ClinicalContext","痔"],["ClinicalContext","消化性溃疡出血"],["ClinicalContext","月经过多"],["ClinicalContext","妊娠"],["ClinicalContext","婴幼儿生长发育"],["ClinicalContext","慢性感染"],["Disease","肝硬变"],["Disease","尿毒症"],["Disease","肾病综合征"],["Disease","恶性肿瘤"]]},
-    {"case_id":"TC-04","chunk_ids":["clinical-hematology:chapter-01:0023:0000","clinical-hematology:chapter-01:0023:0001"],"expected":[["LabIndicator","D-二聚体"],["IndicatorState","D-二聚体阳性"],["IndicatorState","D-二聚体阴性"],["IndicatorState","D-二聚体不升高"],["IndicatorState","D-二聚体正常"],["Disease","心肌梗死"],["Disease","脑梗死"],["Disease","肺栓塞"],["Disease","恶性肿瘤"],["ClinicalContext","外科手术"],["ClinicalContext","炎症"],["ClinicalContext","感染"],["ClinicalContext","妊娠"]]},
-    {"case_id":"TC-05","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[["ClinicalContext","铁缺乏"],["ClinicalContext","叶酸缺乏"],["ClinicalContext","维生素 B12 缺乏"],["ClinicalContext","造血原料缺乏"],["ClinicalContext","贫血"],["Disease","缺铁性贫血"],["Disease","巨幼细胞贫血"]]},
-    {"case_id":"TC-06","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[["LabIndicator","血红蛋白"],["IndicatorState","血红蛋白正常"],["IndicatorState","血红蛋白降低"],["ClinicalContext","贫血"],["ClinicalContext","轻度贫血"],["ClinicalContext","中度贫血"],["ClinicalContext","重度贫血"],["ClinicalContext","极重度贫血"]]},
-    {"case_id":"TC-07","chunk_ids":["clinical-hematology:chapter-01:0008:0001"],"expected":[["LabIndicator","MPV"],["LabIndicator","血小板数量"],["IndicatorState","MPV 持续下降"],["IndicatorState","血小板数量持续下降"],["ClinicalContext","骨髓造血功能衰竭"]]},
-    {"case_id":"TC-08","chunk_ids":["clinical-hematology:chapter-01:0022:0000"],"expected":[["LabIndicator","PTR"],["LabIndicator","INR"]]}
+    {
+      "case_id": "TC-01",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0010:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+          "start": 81,
+          "end": 528
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "血清铁"
+        ],
+        [
+          "LabIndicator",
+          "SI"
+        ],
+        [
+          "IndicatorState",
+          "血清铁降低"
+        ],
+        [
+          "IndicatorState",
+          "血清铁升高"
+        ],
+        [
+          "ClinicalContext",
+          "摄入不足"
+        ],
+        [
+          "ClinicalContext",
+          "缺铁性饮食"
+        ],
+        [
+          "ClinicalContext",
+          "肠道吸收不良"
+        ],
+        [
+          "ClinicalContext",
+          "慢性失血"
+        ],
+        [
+          "Disease",
+          "胃、十二指肠溃疡出血"
+        ],
+        [
+          "Disease",
+          "钩虫病"
+        ],
+        [
+          "ClinicalContext",
+          "月经过多"
+        ],
+        [
+          "ClinicalContext",
+          "铁缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "妊娠期"
+        ],
+        [
+          "ClinicalContext",
+          "哺乳期妇女"
+        ],
+        [
+          "ClinicalContext",
+          "婴幼儿时期"
+        ],
+        [
+          "ClinicalContext",
+          "生长发育的需要量多"
+        ],
+        [
+          "Disease",
+          "缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "严重感染"
+        ],
+        [
+          "Disease",
+          "恶性肿瘤"
+        ],
+        [
+          "Disease",
+          "肝硬化"
+        ],
+        [
+          "ClinicalContext",
+          "食欲降低"
+        ],
+        [
+          "ClinicalContext",
+          "机体代谢障碍"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-02",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0004:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "start": 0,
+          "end": 268
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "MCV"
+        ],
+        [
+          "LabIndicator",
+          "RDW"
+        ],
+        [
+          "IndicatorState",
+          "MCV 减小"
+        ],
+        [
+          "IndicatorState",
+          "MCV 正常"
+        ],
+        [
+          "IndicatorState",
+          "MCV 增大"
+        ],
+        [
+          "IndicatorState",
+          "RDW 正常"
+        ],
+        [
+          "IndicatorState",
+          "RDW 增大"
+        ],
+        [
+          "ClinicalContext",
+          "小细胞均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "小细胞不均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "正细胞均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "正细胞不均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "大细胞均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "大细胞不均一性贫血"
+        ],
+        [
+          "Disease",
+          "珠蛋白生成障碍性贫血"
+        ],
+        [
+          "Disease",
+          "缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "急性失血性贫血"
+        ],
+        [
+          "Disease",
+          "慢性疾病"
+        ],
+        [
+          "Disease",
+          "早期缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "G6PD 缺乏症"
+        ],
+        [
+          "Disease",
+          "慢性再生障碍性贫血"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-03",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0012:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "start": 0,
+          "end": 493
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "总铁结合力"
+        ],
+        [
+          "LabIndicator",
+          "TIBC"
+        ],
+        [
+          "LabIndicator",
+          "血清铁"
+        ],
+        [
+          "IndicatorState",
+          "总铁结合力降低"
+        ],
+        [
+          "IndicatorState",
+          "总铁结合力增高"
+        ],
+        [
+          "IndicatorState",
+          "TIBC降低"
+        ],
+        [
+          "IndicatorState",
+          "TIBC增高"
+        ],
+        [
+          "IndicatorState",
+          "血清铁降低"
+        ],
+        [
+          "IndicatorState",
+          "血清铁增高"
+        ],
+        [
+          "ClinicalContext",
+          "转铁蛋白合成不足"
+        ],
+        [
+          "ClinicalContext",
+          "转铁蛋白丢失增加"
+        ],
+        [
+          "ClinicalContext",
+          "转铁蛋白合成增加"
+        ],
+        [
+          "ClinicalContext",
+          "转铁蛋白释放增加"
+        ],
+        [
+          "ClinicalContext",
+          "铁吸收不良"
+        ],
+        [
+          "ClinicalContext",
+          "慢性失血"
+        ],
+        [
+          "ClinicalContext",
+          "月经过多"
+        ],
+        [
+          "ClinicalContext",
+          "妊娠后期"
+        ],
+        [
+          "ClinicalContext",
+          "妊娠"
+        ],
+        [
+          "ClinicalContext",
+          "婴幼儿生长发育"
+        ],
+        [
+          "ClinicalContext",
+          "需铁量增加"
+        ],
+        [
+          "ClinicalContext",
+          "铁剂治疗过量"
+        ],
+        [
+          "ClinicalContext",
+          "肝细胞坏死"
+        ],
+        [
+          "Disease",
+          "遗传性转铁蛋白缺乏症"
+        ],
+        [
+          "Disease",
+          "肝硬化"
+        ],
+        [
+          "Disease",
+          "肝硬变"
+        ],
+        [
+          "Disease",
+          "肾病综合征"
+        ],
+        [
+          "Disease",
+          "尿毒症"
+        ],
+        [
+          "Disease",
+          "肿瘤"
+        ],
+        [
+          "Disease",
+          "慢性感染"
+        ],
+        [
+          "Disease",
+          "珠蛋白合成障碍性贫血"
+        ],
+        [
+          "Disease",
+          "缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "急性肝炎"
+        ],
+        [
+          "Disease",
+          "痔"
+        ],
+        [
+          "Disease",
+          "消化性溃疡出血"
+        ],
+        [
+          "Disease",
+          "恶性肿瘤"
+        ],
+        [
+          "Disease",
+          "溶血性贫血"
+        ],
+        [
+          "Disease",
+          "再生障碍性贫血"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ],
+        [
+          "Disease",
+          "地中海贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-04",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0023:0000",
+        "clinical-hematology:chapter-01:0023:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "start": 0,
+          "end": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "start": 0,
+          "end": 154
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "D-二聚体"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体阳性"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体阴性"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体不升高"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体正常"
+        ],
+        [
+          "Disease",
+          "心肌梗死"
+        ],
+        [
+          "Disease",
+          "脑梗死"
+        ],
+        [
+          "Disease",
+          "肺栓塞"
+        ],
+        [
+          "Disease",
+          "恶性肿瘤"
+        ],
+        [
+          "ClinicalContext",
+          "外科手术"
+        ],
+        [
+          "ClinicalContext",
+          "炎症"
+        ],
+        [
+          "ClinicalContext",
+          "感染"
+        ],
+        [
+          "ClinicalContext",
+          "妊娠"
+        ],
+        [
+          "Disease",
+          "继发性纤溶症"
+        ],
+        [
+          "Disease",
+          "DIC"
+        ],
+        [
+          "Disease",
+          "原发性纤溶症"
+        ],
+        [
+          "ClinicalContext",
+          "溶栓治疗"
+        ],
+        [
+          "Disease",
+          "深静脉血栓"
+        ],
+        [
+          "Disease",
+          "DVT"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-05",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0001:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 551,
+          "end": 610
+        }
+      ],
+      "expected": [
+        [
+          "ClinicalContext",
+          "铁缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "叶酸缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "维生素 B12 缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "造血原料缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "贫血"
+        ],
+        [
+          "Disease",
+          "缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-06",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0001:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 0,
+          "end": 334
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "血红蛋白"
+        ],
+        [
+          "IndicatorState",
+          "血红蛋白正常"
+        ],
+        [
+          "IndicatorState",
+          "血红蛋白降低"
+        ],
+        [
+          "ClinicalContext",
+          "贫血"
+        ],
+        [
+          "ClinicalContext",
+          "贫血程度"
+        ],
+        [
+          "ClinicalContext",
+          "轻度贫血"
+        ],
+        [
+          "ClinicalContext",
+          "中度贫血"
+        ],
+        [
+          "ClinicalContext",
+          "重度贫血"
+        ],
+        [
+          "ClinicalContext",
+          "极重度贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-07",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0008:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+          "start": 0,
+          "end": 102
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "平均血小板体积"
+        ],
+        [
+          "LabIndicator",
+          "MPV"
+        ],
+        [
+          "LabIndicator",
+          "血小板数量"
+        ],
+        [
+          "IndicatorState",
+          "平均血小板体积增高"
+        ],
+        [
+          "IndicatorState",
+          "平均血小板体积减低"
+        ],
+        [
+          "IndicatorState",
+          "MPV 持续下降"
+        ],
+        [
+          "IndicatorState",
+          "血小板数量持续下降"
+        ],
+        [
+          "ClinicalContext",
+          "血小板破坏增多"
+        ],
+        [
+          "ClinicalContext",
+          "骨髓代偿功能良好"
+        ],
+        [
+          "ClinicalContext",
+          "骨髓造血功能不良"
+        ],
+        [
+          "ClinicalContext",
+          "血小板生成减少"
+        ],
+        [
+          "ClinicalContext",
+          "骨髓造血功能衰竭"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-08",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0022:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+          "start": 589,
+          "end": 926
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "血浆凝血酶原时间"
+        ],
+        [
+          "LabIndicator",
+          "PT"
+        ],
+        [
+          "LabIndicator",
+          "凝血酶原时间比值"
+        ],
+        [
+          "LabIndicator",
+          "PTR"
+        ],
+        [
+          "LabIndicator",
+          "国际标准化比值"
+        ],
+        [
+          "LabIndicator",
+          "INR"
+        ],
+        [
+          "LabIndicator",
+          "国际灵敏性指数"
+        ],
+        [
+          "LabIndicator",
+          "ISI"
+        ],
+        [
+          "IndicatorState",
+          "PT正常"
+        ],
+        [
+          "IndicatorState",
+          "PT异常"
+        ],
+        [
+          "IndicatorState",
+          "PTR正常"
+        ],
+        [
+          "IndicatorState",
+          "INR正常"
+        ],
+        [
+          "ClinicalContext",
+          "外源性凝血系统"
+        ],
+        [
+          "ClinicalContext",
+          "组织凝血活酶"
+        ]
+      ]
+    }
   ]
 }

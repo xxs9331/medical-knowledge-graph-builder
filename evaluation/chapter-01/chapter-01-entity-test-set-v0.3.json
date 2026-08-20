@@ -1,0 +1,1317 @@
+{
+  "schema_version": "medical-kg-entity-test-set/v0.3",
+  "status": "HUMAN_REVIEW_REQUIRED",
+  "scoring_status": "HOLD_UNTIL_HUMAN_VALIDATED",
+  "source_graph_dataset": "chapter-01-graph-test-set-v0.3.json",
+  "source_document": "source-packages/canonical/evidence/chapter-01",
+  "source_chunk_manifest": "source-packages/canonical/evidence/chapter-01/manifest.json",
+  "source_chunk_manifest_sha256": "992377a534c8ba54a8f7df993c2834ef45cb25081fe4428df143183600669383",
+  "annotation_method": "MANUAL_READING_WITH_AUTO_PROVENANCE_AUDIT",
+  "scope_contract": "每个案例只评价 evaluation_scopes 内有完整证据的候选；范围内未匹配预测记 FP，未匹配金标记 FN。",
+  "identity": [
+    "entity_type",
+    "mention"
+  ],
+  "cases": [
+    {
+      "case_id": "CH01-01",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0000:0000",
+        "clinical-hematology:chapter-01:0000:0001",
+        "clinical-hematology:chapter-01:0001:0000",
+        "clinical-hematology:chapter-01:0001:0001",
+        "clinical-hematology:chapter-01:0002:0000",
+        "clinical-hematology:chapter-01:0002:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0000",
+          "start": 0,
+          "end": 16
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "start": 0,
+          "end": 565
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 0,
+          "end": 718
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "start": 0,
+          "end": 144
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "start": 0,
+          "end": 531
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "start": 0,
+          "end": 171
+        }
+      ],
+      "expected": [
+        [
+          "LabPanel",
+          "血液常规检验"
+        ],
+        [
+          "LabIndicator",
+          "红细胞计数"
+        ],
+        [
+          "LabIndicator",
+          "白细胞计数"
+        ],
+        [
+          "LabIndicator",
+          "血小板计数"
+        ],
+        [
+          "LabIndicator",
+          "血红蛋白"
+        ],
+        [
+          "LabIndicator",
+          "红细胞压积"
+        ],
+        [
+          "IndicatorState",
+          "红细胞和血红蛋白减少"
+        ],
+        [
+          "IndicatorState",
+          "红细胞和血红蛋白增多"
+        ],
+        [
+          "IndicatorState",
+          "红细胞压积增高"
+        ],
+        [
+          "IndicatorState",
+          "红细胞压积减少"
+        ],
+        [
+          "ClinicalContext",
+          "贫血"
+        ],
+        [
+          "ClinicalContext",
+          "轻度贫血"
+        ],
+        [
+          "ClinicalContext",
+          "中度贫血"
+        ],
+        [
+          "ClinicalContext",
+          "重度贫血"
+        ],
+        [
+          "ClinicalContext",
+          "极重度贫血"
+        ],
+        [
+          "Disease",
+          "再生障碍性贫血"
+        ],
+        [
+          "Disease",
+          "白血病"
+        ],
+        [
+          "Disease",
+          "缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ],
+        [
+          "Disease",
+          "溶血性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "铁缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "叶酸缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "维生素B12缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "急性失血"
+        ],
+        [
+          "ClinicalContext",
+          "慢性失血"
+        ],
+        [
+          "ClinicalContext",
+          "血液浓缩"
+        ],
+        [
+          "ClinicalContext",
+          "机体缺氧"
+        ],
+        [
+          "ClinicalContext",
+          "促红细胞生成素增高"
+        ],
+        [
+          "ClinicalContext",
+          "高原居民"
+        ],
+        [
+          "Disease",
+          "发绀型先天性心脏病"
+        ],
+        [
+          "Disease",
+          "获得性肺源性心脏病"
+        ],
+        [
+          "Disease",
+          "真性红细胞增多症"
+        ],
+        [
+          "Disease",
+          "肾癌"
+        ],
+        [
+          "Disease",
+          "肾母细胞瘤"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-02",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0003:0000",
+        "clinical-hematology:chapter-01:0004:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "start": 0,
+          "end": 869
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "start": 0,
+          "end": 268
+        }
+      ],
+      "expected": [
+        [
+          "LabPanel",
+          "红细胞平均指数"
+        ],
+        [
+          "LabIndicator",
+          "MCV"
+        ],
+        [
+          "LabIndicator",
+          "MCH"
+        ],
+        [
+          "LabIndicator",
+          "MCHC"
+        ],
+        [
+          "LabIndicator",
+          "RDW"
+        ],
+        [
+          "LabIndicator",
+          "RDW-CV"
+        ],
+        [
+          "LabIndicator",
+          "RDW-SD"
+        ],
+        [
+          "IndicatorState",
+          "MCV正常"
+        ],
+        [
+          "IndicatorState",
+          "MCV增大"
+        ],
+        [
+          "IndicatorState",
+          "MCV减小"
+        ],
+        [
+          "IndicatorState",
+          "RDW正常"
+        ],
+        [
+          "IndicatorState",
+          "RDW增大"
+        ],
+        [
+          "ClinicalContext",
+          "正细胞均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "正细胞不均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "小细胞均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "小细胞不均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "大细胞均一性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "大细胞不均一性贫血"
+        ],
+        [
+          "Disease",
+          "早期缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "G6PD缺乏症"
+        ],
+        [
+          "Disease",
+          "轻型地中海贫血"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ],
+        [
+          "IndicatorState",
+          "MCH增大"
+        ],
+        [
+          "IndicatorState",
+          "MCH正常"
+        ],
+        [
+          "IndicatorState",
+          "MCH减小"
+        ],
+        [
+          "IndicatorState",
+          "MCH显著减小(<23pg)"
+        ],
+        [
+          "IndicatorState",
+          "MCHC正常"
+        ],
+        [
+          "IndicatorState",
+          "MCHC减小"
+        ],
+        [
+          "ClinicalContext",
+          "大细胞性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "正细胞性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "单纯小细胞性贫血"
+        ],
+        [
+          "ClinicalContext",
+          "小细胞低色素性贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-03",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0004:0001",
+        "clinical-hematology:chapter-01:0005:0000",
+        "clinical-hematology:chapter-01:0005:0001",
+        "clinical-hematology:chapter-01:0006:0000",
+        "clinical-hematology:chapter-01:0006:0001",
+        "clinical-hematology:chapter-01:0007:0000",
+        "clinical-hematology:chapter-01:0007:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "start": 0,
+          "end": 482
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "start": 0,
+          "end": 184
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "start": 0,
+          "end": 646
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "start": 0,
+          "end": 546
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "start": 0,
+          "end": 197
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "start": 0,
+          "end": 355
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "start": 0,
+          "end": 193
+        }
+      ],
+      "expected": [
+        [
+          "LabPanel",
+          "白细胞分类计数"
+        ],
+        [
+          "LabIndicator",
+          "白细胞计数"
+        ],
+        [
+          "LabIndicator",
+          "中性粒细胞绝对值"
+        ],
+        [
+          "LabIndicator",
+          "淋巴细胞绝对值"
+        ],
+        [
+          "LabIndicator",
+          "单核细胞绝对值"
+        ],
+        [
+          "LabIndicator",
+          "嗜酸性粒细胞绝对值"
+        ],
+        [
+          "LabIndicator",
+          "嗜碱性粒细胞绝对值"
+        ],
+        [
+          "IndicatorState",
+          "白细胞增多"
+        ],
+        [
+          "IndicatorState",
+          "白细胞减少"
+        ],
+        [
+          "IndicatorState",
+          "中性粒细胞增多"
+        ],
+        [
+          "IndicatorState",
+          "中性粒细胞减少"
+        ],
+        [
+          "IndicatorState",
+          "淋巴细胞增多"
+        ],
+        [
+          "IndicatorState",
+          "淋巴细胞减少"
+        ],
+        [
+          "IndicatorState",
+          "单核细胞增多"
+        ],
+        [
+          "IndicatorState",
+          "嗜酸性粒细胞增多"
+        ],
+        [
+          "IndicatorState",
+          "嗜酸性粒细胞减少"
+        ],
+        [
+          "IndicatorState",
+          "嗜碱性粒细胞增多"
+        ],
+        [
+          "ClinicalContext",
+          "急性感染"
+        ],
+        [
+          "ClinicalContext",
+          "组织损伤"
+        ],
+        [
+          "ClinicalContext",
+          "急性出血"
+        ],
+        [
+          "ClinicalContext",
+          "急性溶血"
+        ],
+        [
+          "ClinicalContext",
+          "长期放射线照射"
+        ],
+        [
+          "ClinicalContext",
+          "药物影响"
+        ],
+        [
+          "Disease",
+          "白血病"
+        ],
+        [
+          "Disease",
+          "再生障碍性贫血"
+        ],
+        [
+          "Disease",
+          "粒细胞减少症"
+        ],
+        [
+          "Disease",
+          "病毒感染"
+        ],
+        [
+          "Disease",
+          "寄生虫病"
+        ],
+        [
+          "Disease",
+          "过敏性疾病"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-04",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0008:0000",
+        "clinical-hematology:chapter-01:0008:0001",
+        "clinical-hematology:chapter-01:0009:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+          "start": 0,
+          "end": 752
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+          "start": 0,
+          "end": 102
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0009:0000",
+          "start": 0,
+          "end": 113
+        }
+      ],
+      "expected": [
+        [
+          "LabPanel",
+          "血小板参数"
+        ],
+        [
+          "LabIndicator",
+          "血小板计数"
+        ],
+        [
+          "LabIndicator",
+          "MPV"
+        ],
+        [
+          "LabIndicator",
+          "PCT"
+        ],
+        [
+          "LabIndicator",
+          "PDW"
+        ],
+        [
+          "IndicatorState",
+          "血小板减少"
+        ],
+        [
+          "IndicatorState",
+          "血小板增多"
+        ],
+        [
+          "IndicatorState",
+          "MPV增大"
+        ],
+        [
+          "IndicatorState",
+          "MPV减小"
+        ],
+        [
+          "IndicatorState",
+          "MPV持续下降"
+        ],
+        [
+          "IndicatorState",
+          "血小板数量持续下降"
+        ],
+        [
+          "IndicatorState",
+          "PDW增大"
+        ],
+        [
+          "ClinicalContext",
+          "出血"
+        ],
+        [
+          "ClinicalContext",
+          "血栓形成"
+        ],
+        [
+          "ClinicalContext",
+          "骨髓造血功能衰竭"
+        ],
+        [
+          "ClinicalContext",
+          "骨髓造血功能恢复"
+        ],
+        [
+          "Disease",
+          "再生障碍性贫血"
+        ],
+        [
+          "Disease",
+          "白血病"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-05",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0009:0001",
+        "clinical-hematology:chapter-01:0010:0000",
+        "clinical-hematology:chapter-01:0010:0001",
+        "clinical-hematology:chapter-01:0011:0000",
+        "clinical-hematology:chapter-01:0011:0001",
+        "clinical-hematology:chapter-01:0012:0000",
+        "clinical-hematology:chapter-01:0012:0001",
+        "clinical-hematology:chapter-01:0013:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0009:0001",
+          "start": 0,
+          "end": 379
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+          "start": 0,
+          "end": 530
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0001",
+          "start": 0,
+          "end": 132
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "start": 0,
+          "end": 484
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+          "start": 0,
+          "end": 90
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0000",
+          "start": 0,
+          "end": 242
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "start": 0,
+          "end": 562
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0013:0000",
+          "start": 0,
+          "end": 758
+        }
+      ],
+      "expected": [
+        [
+          "LabPanel",
+          "铁代谢检查"
+        ],
+        [
+          "LabIndicator",
+          "血清铁"
+        ],
+        [
+          "LabIndicator",
+          "血清铁蛋白"
+        ],
+        [
+          "LabIndicator",
+          "转铁蛋白"
+        ],
+        [
+          "LabIndicator",
+          "TIBC"
+        ],
+        [
+          "LabIndicator",
+          "血清维生素B12"
+        ],
+        [
+          "LabIndicator",
+          "血清叶酸"
+        ],
+        [
+          "IndicatorState",
+          "血清铁降低"
+        ],
+        [
+          "IndicatorState",
+          "血清铁增高"
+        ],
+        [
+          "IndicatorState",
+          "血清铁蛋白降低"
+        ],
+        [
+          "IndicatorState",
+          "血清铁蛋白增高"
+        ],
+        [
+          "IndicatorState",
+          "转铁蛋白降低"
+        ],
+        [
+          "IndicatorState",
+          "TIBC增高"
+        ],
+        [
+          "IndicatorState",
+          "TIBC降低"
+        ],
+        [
+          "IndicatorState",
+          "维生素B12降低"
+        ],
+        [
+          "IndicatorState",
+          "叶酸降低"
+        ],
+        [
+          "ClinicalContext",
+          "慢性失血"
+        ],
+        [
+          "ClinicalContext",
+          "铁吸收不良"
+        ],
+        [
+          "ClinicalContext",
+          "需铁量增加"
+        ],
+        [
+          "ClinicalContext",
+          "铁利用障碍"
+        ],
+        [
+          "ClinicalContext",
+          "红细胞大量破坏"
+        ],
+        [
+          "Disease",
+          "缺铁性贫血"
+        ],
+        [
+          "Disease",
+          "巨幼细胞贫血"
+        ],
+        [
+          "Disease",
+          "再生障碍性贫血"
+        ],
+        [
+          "Disease",
+          "溶血性贫血"
+        ],
+        [
+          "Disease",
+          "肝硬变"
+        ],
+        [
+          "Disease",
+          "尿毒症"
+        ],
+        [
+          "Disease",
+          "肾病综合征"
+        ],
+        [
+          "Disease",
+          "恶性肿瘤"
+        ],
+        [
+          "Disease",
+          "恶性贫血"
+        ],
+        [
+          "Disease",
+          "慢性感染"
+        ],
+        [
+          "ClinicalContext",
+          "铁剂治疗过量"
+        ],
+        [
+          "Disease",
+          "地中海贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-06",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0014:0000",
+        "clinical-hematology:chapter-01:0014:0001",
+        "clinical-hematology:chapter-01:0015:0000",
+        "clinical-hematology:chapter-01:0015:0001",
+        "clinical-hematology:chapter-01:0016:0000",
+        "clinical-hematology:chapter-01:0016:0001",
+        "clinical-hematology:chapter-01:0017:0000",
+        "clinical-hematology:chapter-01:0017:0001",
+        "clinical-hematology:chapter-01:0018:0000",
+        "clinical-hematology:chapter-01:0018:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0014:0000",
+          "start": 0,
+          "end": 29
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+          "start": 0,
+          "end": 728
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "start": 0,
+          "end": 401
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+          "start": 0,
+          "end": 202
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "start": 0,
+          "end": 633
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0001",
+          "start": 0,
+          "end": 107
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0017:0000",
+          "start": 0,
+          "end": 785
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0017:0001",
+          "start": 0,
+          "end": 24
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0000",
+          "start": 0,
+          "end": 66
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+          "start": 0,
+          "end": 585
+        }
+      ],
+      "expected": [
+        [
+          "LabPanel",
+          "血液流变学检查"
+        ],
+        [
+          "LabIndicator",
+          "全血高切黏度"
+        ],
+        [
+          "LabIndicator",
+          "全血中切黏度"
+        ],
+        [
+          "LabIndicator",
+          "全血低切黏度"
+        ],
+        [
+          "LabIndicator",
+          "血浆黏度"
+        ],
+        [
+          "LabIndicator",
+          "还原全血黏度"
+        ],
+        [
+          "LabIndicator",
+          "红细胞变形指数IR"
+        ],
+        [
+          "LabIndicator",
+          "红细胞变形指数TK"
+        ],
+        [
+          "LabIndicator",
+          "红细胞变形指数FI"
+        ],
+        [
+          "LabIndicator",
+          "红细胞聚集指数"
+        ],
+        [
+          "LabIndicator",
+          "红细胞电泳时间"
+        ],
+        [
+          "IndicatorState",
+          "全血黏度增高"
+        ],
+        [
+          "IndicatorState",
+          "全血黏度降低"
+        ],
+        [
+          "IndicatorState",
+          "血浆黏度增高"
+        ],
+        [
+          "IndicatorState",
+          "红细胞变形能力降低"
+        ],
+        [
+          "IndicatorState",
+          "红细胞聚集指数增高"
+        ],
+        [
+          "IndicatorState",
+          "红细胞电泳时间延长"
+        ],
+        [
+          "ClinicalContext",
+          "红细胞聚集性增高"
+        ],
+        [
+          "IndicatorState",
+          "红细胞压积增高"
+        ],
+        [
+          "ClinicalContext",
+          "血浆蛋白增高"
+        ],
+        [
+          "ClinicalContext",
+          "血栓形成"
+        ],
+        [
+          "Disease",
+          "冠心病"
+        ],
+        [
+          "Disease",
+          "糖尿病"
+        ],
+        [
+          "Disease",
+          "高血压"
+        ],
+        [
+          "Disease",
+          "脑梗死"
+        ],
+        [
+          "ClinicalContext",
+          "单次血黏度升高"
+        ],
+        [
+          "ClinicalContext",
+          "仅使用血黏度参数"
+        ],
+        [
+          "ClinicalContext",
+          "不能据此诊断心脑血管疾病"
+        ],
+        [
+          "ClinicalContext",
+          "不能据此进行脑卒中预报"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-07",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0019:0000",
+        "clinical-hematology:chapter-01:0020:0000",
+        "clinical-hematology:chapter-01:0020:0001",
+        "clinical-hematology:chapter-01:0021:0000",
+        "clinical-hematology:chapter-01:0022:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "start": 0,
+          "end": 644
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+          "start": 0,
+          "end": 201
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0001",
+          "start": 0,
+          "end": 590
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0021:0000",
+          "start": 0,
+          "end": 615
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+          "start": 0,
+          "end": 926
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "红细胞沉降率"
+        ],
+        [
+          "IndicatorState",
+          "红细胞沉降率增快"
+        ],
+        [
+          "IndicatorState",
+          "红细胞沉降率减慢"
+        ],
+        [
+          "ClinicalContext",
+          "妊娠"
+        ],
+        [
+          "ClinicalContext",
+          "月经期"
+        ],
+        [
+          "ClinicalContext",
+          "组织损伤"
+        ],
+        [
+          "ClinicalContext",
+          "炎症"
+        ],
+        [
+          "Disease",
+          "恶性肿瘤"
+        ],
+        [
+          "Disease",
+          "结核病"
+        ],
+        [
+          "Disease",
+          "多发性骨髓瘤"
+        ],
+        [
+          "LabPanel",
+          "ABO血型鉴定"
+        ],
+        [
+          "LabIndicator",
+          "红细胞凝集反应"
+        ],
+        [
+          "LabIndicator",
+          "血清凝集反应"
+        ],
+        [
+          "IndicatorState",
+          "A型血"
+        ],
+        [
+          "IndicatorState",
+          "B型血"
+        ],
+        [
+          "IndicatorState",
+          "AB型血"
+        ],
+        [
+          "IndicatorState",
+          "O型血"
+        ],
+        [
+          "LabPanel",
+          "凝血酶原时间检查"
+        ],
+        [
+          "LabIndicator",
+          "PT"
+        ],
+        [
+          "LabIndicator",
+          "PTR"
+        ],
+        [
+          "LabIndicator",
+          "INR"
+        ],
+        [
+          "IndicatorState",
+          "PT延长"
+        ],
+        [
+          "IndicatorState",
+          "PT缩短"
+        ],
+        [
+          "Disease",
+          "肝脏疾病"
+        ],
+        [
+          "ClinicalContext",
+          "维生素K缺乏"
+        ],
+        [
+          "ClinicalContext",
+          "口服抗凝剂治疗"
+        ],
+        [
+          "LabIndicator",
+          "ABO血型"
+        ],
+        [
+          "LabPanel",
+          "ABO血型遗传规律"
+        ],
+        [
+          "LabIndicator",
+          "父母血型"
+        ],
+        [
+          "LabIndicator",
+          "子女可能的血型"
+        ],
+        [
+          "LabIndicator",
+          "子女不可能的血型"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为O+O"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为A+O"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为B+O"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为AB+O"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为A+A"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为B+B"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为AB+AB"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为A+B"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为A+AB"
+        ],
+        [
+          "IndicatorState",
+          "父母血型组合为B+AB"
+        ],
+        [
+          "IndicatorState",
+          "子女可能为A型血"
+        ],
+        [
+          "IndicatorState",
+          "子女可能为B型血"
+        ],
+        [
+          "IndicatorState",
+          "子女可能为AB型血"
+        ],
+        [
+          "IndicatorState",
+          "子女可能为O型血"
+        ],
+        [
+          "IndicatorState",
+          "子女不可能为A型血"
+        ],
+        [
+          "IndicatorState",
+          "子女不可能为B型血"
+        ],
+        [
+          "IndicatorState",
+          "子女不可能为AB型血"
+        ],
+        [
+          "IndicatorState",
+          "子女不可能为O型血"
+        ]
+      ]
+    },
+    {
+      "case_id": "CH01-08",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0022:0001",
+        "clinical-hematology:chapter-01:0023:0000",
+        "clinical-hematology:chapter-01:0023:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0001",
+          "start": 0,
+          "end": 316
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "start": 0,
+          "end": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "start": 0,
+          "end": 154
+        }
+      ],
+      "expected": [
+        [
+          "LabIndicator",
+          "D-二聚体"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体阳性"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体阴性"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体不升高"
+        ],
+        [
+          "IndicatorState",
+          "D-二聚体正常"
+        ],
+        [
+          "Disease",
+          "心肌梗死"
+        ],
+        [
+          "Disease",
+          "脑梗死"
+        ],
+        [
+          "Disease",
+          "肺栓塞"
+        ],
+        [
+          "Disease",
+          "深静脉血栓形成"
+        ],
+        [
+          "Disease",
+          "弥散性血管内凝血"
+        ],
+        [
+          "Disease",
+          "恶性肿瘤"
+        ],
+        [
+          "ClinicalContext",
+          "外科手术"
+        ],
+        [
+          "ClinicalContext",
+          "炎症"
+        ],
+        [
+          "ClinicalContext",
+          "感染"
+        ],
+        [
+          "ClinicalContext",
+          "妊娠"
+        ],
+        [
+          "ClinicalContext",
+          "排除深静脉血栓有重要价值"
+        ]
+      ]
+    }
+  ]
+}

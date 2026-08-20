@@ -3,33 +3,45 @@
 ## 当前状态
 
 - `typical-cases-v0.1.json` 是从人工确认的《7. 典型案例分析》转换出的图测试集。
-- 图测试集已经人工确认，状态为 `HUMAN_VALIDATED`。
+- 图测试集已经按冻结原文范围逐项补齐为审查草稿，状态为 `HUMAN_REVIEW_REQUIRED`；
+  人工逐项确认后才能升级为正式闭集基准。
 - `entity-test-set-v0.1.json` 是独立实体测试集，按 `entity_type + mention` 评分。
 - `relationship-test-set-v0.1.json` 是独立关系测试集，同时包含正例与禁止抽取负例。
-- `rule-test-set-v0.1.json` 是独立规则测试集，按阶段、输入、输出和逻辑评分。
+- `rule-test-set-v0.1.json` 是独立图规则测试集，按联合条件、结论和逻辑评分。
 - Judge 只读取规范 EvidenceChunk、当前 Schema 和待判候选，不读取金标答案。
 - Judge 输出是独立的 `candidate-only/HOLD` 工件，不修改 `graph.json`，不写 Neo4j，
   也不自动批准或发布候选。
-- 典型案例是针对关键目标与禁止边的小批量挑战集，不是每个 chunk 的穷举标注。评分使用
-  目标覆盖率与禁止项规避率；未标注候选交给独立 Judge，不直接计为假阳性。
+- 每个案例通过 `evaluation_scopes` 冻结真实 EvidenceChunk 中的闭集范围。只评价证据完整
+  落在该范围内的候选，避免同一 chunk 中不同案例互相产生假阳性。
+- 主指标是金标监督式 `P/R/F1`：`P=TP/(TP+FP)`，`R=TP/(TP+FN)`；实体、普通关系、
+  图规则分别计算，再对三类 TP/FP/FN 求整图 micro 指标。
+- LLM Judge 的 `SUPPORTED/UNSUPPORTED/REPAIR/ABSTAIN` 只作为无监督诊断统计，不参与
+  Precision、Recall 或 F1。
 - 全称与缩写只有在规范原文以“全称（缩写）”明确绑定时才视为等价，不使用外部别名词典。
-- 公式中的运行时参数可以由 RuleDefinition 的逐字公式证据证明覆盖，不要求为了评分把参数
-  强制建成业务实体或 `RULE_INPUT` 图端点。
+- 第一阶段只抽取能进入知识图谱的联合语义规则。公式、参考区间、阈值分级和单指标
+  时间计算属于可执行逻辑，留给后续执行器模块单独抽取和评测。
 
 ## 已知覆盖边界
 
-1. `TC-02`：案例文档要求“贫血”作为联合规则输入，但规范 chunk 的单条分类文字没有
-   单独重述这个前提；当前金标保留案例文档确认的标题上下文语义。
-2. `TC-03`：第一版只冻结了二维表前两行的联合规则；高铁低 TIBC 第三行及全部端点
-   类型仍需补齐。
+1. `TC-02`：六种贫血形态分别作为联合规则；不把当前 chunk 未单独给出的“贫血”重复
+   建成运行条件，也不把任一单项状态直连到分类结果。
+2. `TC-03`：二维表三行均已冻结为联合规则；单元格中的子原因保留层级普通关系，不重复
+   追加为规则输出。
 3. `TC-04`：鉴别、排除和监测语义不在当前关系合同内，暂列 `held_semantics`，不把它们
    强行转换为 `INDICATES`。
-4. `TC-06`：性别、数值和单位作为运行时参数，不加入静态业务实体；规则金标中的输入
-   列表是合同描述，不等于 `RULE_INPUT` 图端点。
-5. `TC-08`：规范 Markdown 将 INR 指数 OCR 为 `S1`，而正文定义 `ISI`；金标保留 ISI
-   公式语义，同时保留该 OCR 记录。
+4. `TC-06`：人群参考区间和贫血程度分级已移出图规则金标，后续按执行器规则处理。
+5. `TC-08`：PTR/INR 公式已移出图规则金标；OCR 与公式参数问题在执行器数据集中处理。
 6. 原案例中的 `Claim` 已映射为当前 `RuleDefinition`；`SUPPORTED_BY/Evidence` 不进入
    当前候选图评分。
+
+## 数据集维护
+
+人工只编辑 `typical-cases-v0.1.json`。修改后运行以下命令，机械生成实体、关系和规则
+三个独立视图：
+
+```bash
+.venv/bin/python evaluation/typical-cases/build_views.py
+```
 
 ## 运行真实 Judge demo
 

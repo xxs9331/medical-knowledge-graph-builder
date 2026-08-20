@@ -1,20 +1,285 @@
 {
-  "schema_version": "medical-kg-rule-test-set/v0.1",
-  "status": "HUMAN_VALIDATED",
+  "schema_version": "medical-kg-rule-test-set/v0.2",
+  "status": "HUMAN_REVIEW_REQUIRED",
   "source_graph_dataset": "typical-cases-v0.1.json",
-  "identity": ["rule_stage", "ordered_inputs", "ordered_outputs", "logic"],
+  "annotation_method": "SCOPED_CLOSED_WORLD_POOLED_DRAFT",
+  "scope_contract": "每个案例只评价 evaluation_scopes 内有完整证据的候选；范围内未匹配预测记 FP，未匹配金标记 FN。",
+  "identity": [
+    "rule_stage",
+    "ordered_inputs",
+    "ordered_outputs",
+    "logic"
+  ],
   "notes": [
-    "规则测试独立于普通关系测试。GRAPH_COMPOSITE 输入不得降级为输入到输出的普通直达边。",
-    "PREPROCESS 中的性别、单位、时间序列和ISI可以是运行时参数，不要求全部成为静态图节点。"
+    "GRAPH_COMPOSITE 输入不得降级为输入到输出的普通直达边。",
+    "公式、参考区间、阈值分级和单指标时间计算由后续执行器抽取负责。"
   ],
   "cases": [
-    {"case_id":"TC-01","chunk_ids":["clinical-hematology:chapter-01:0010:0000"],"expected":[]},
-    {"case_id":"TC-02","chunk_ids":["clinical-hematology:chapter-01:0004:0000"],"expected":[{"rule_stage":"GRAPH_COMPOSITE","inputs":["贫血","MCV 正常","RDW 增大"],"outputs":["正细胞不均一性贫血"],"logic":"ALL"}]},
-    {"case_id":"TC-03","chunk_ids":["clinical-hematology:chapter-01:0012:0001"],"expected":[{"rule_stage":"GRAPH_COMPOSITE","inputs":["血清铁降低","TIBC增高"],"outputs":["缺铁性贫血","铁吸收不良","慢性失血","需铁量增加"],"logic":"ALL"},{"rule_stage":"GRAPH_COMPOSITE","inputs":["血清铁降低","TIBC降低"],"outputs":["慢性感染","肝硬变","尿毒症","肾病综合征","恶性肿瘤"],"logic":"ALL"}]},
-    {"case_id":"TC-04","chunk_ids":["clinical-hematology:chapter-01:0023:0000","clinical-hematology:chapter-01:0023:0001"],"expected":[]},
-    {"case_id":"TC-05","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[],"forbidden_logic":["ALL"]},
-    {"case_id":"TC-06","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[{"rule_stage":"PREPROCESS","inputs":["血红蛋白","性别","单位"],"outputs":["血红蛋白正常","血红蛋白降低"],"logic":"RANGE_TABLE"},{"rule_stage":"PREPROCESS","inputs":["血红蛋白","性别","单位"],"outputs":["轻度贫血","中度贫血","重度贫血","极重度贫血"],"logic":"RANGE_TABLE"}]},
-    {"case_id":"TC-07","chunk_ids":["clinical-hematology:chapter-01:0008:0001"],"expected":[{"rule_stage":"PREPROCESS","inputs":["MPV时间序列"],"outputs":["MPV 持续下降"],"logic":"TREND"},{"rule_stage":"PREPROCESS","inputs":["血小板数量时间序列"],"outputs":["血小板数量持续下降"],"logic":"TREND"},{"rule_stage":"GRAPH_COMPOSITE","inputs":["MPV 持续下降","血小板数量持续下降"],"outputs":["骨髓造血功能衰竭"],"logic":"ALL_SAME_WINDOW"}]},
-    {"case_id":"TC-08","chunk_ids":["clinical-hematology:chapter-01:0022:0000"],"expected":[{"rule_stage":"PREPROCESS","inputs":["受检血浆 PT","正常人血浆 PT"],"outputs":["PTR"],"logic":"FORMULA"},{"rule_stage":"PREPROCESS","inputs":["PTR","ISI"],"outputs":["INR"],"logic":"FORMULA"}],"review_notes":["INR指数在规范Markdown中OCR为S1，需保留人工确认记录。"]}
+    {
+      "case_id": "TC-01",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0010:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+          "start": 81,
+          "end": 528
+        }
+      ],
+      "expected": [],
+      "review_notes": [
+        "子项先连接到摄入不足、慢性失血或铁缺乏，不得跳过原文层级建立远端直达边。"
+      ]
+    },
+    {
+      "case_id": "TC-02",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0004:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "start": 0,
+          "end": 268
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV 减小",
+            "RDW 正常"
+          ],
+          "outputs": [
+            "小细胞均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV 减小",
+            "RDW 增大"
+          ],
+          "outputs": [
+            "小细胞不均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV 正常",
+            "RDW 正常"
+          ],
+          "outputs": [
+            "正细胞均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV 正常",
+            "RDW 增大"
+          ],
+          "outputs": [
+            "正细胞不均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV 增大",
+            "RDW 正常"
+          ],
+          "outputs": [
+            "大细胞均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV 增大",
+            "RDW 增大"
+          ],
+          "outputs": [
+            "大细胞不均一性贫血"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "review_notes": [
+        "分类由两个指标状态联合决定；疾病只作为分类示例，不能成为规则输出。"
+      ]
+    },
+    {
+      "case_id": "TC-03",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0012:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "start": 0,
+          "end": 493
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "血清铁降低",
+            "TIBC增高"
+          ],
+          "outputs": [
+            "缺铁性贫血",
+            "铁吸收不良",
+            "慢性失血",
+            "需铁量增加"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "血清铁降低",
+            "TIBC降低"
+          ],
+          "outputs": [
+            "慢性感染",
+            "肝硬变",
+            "尿毒症",
+            "肾病综合征",
+            "恶性肿瘤"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "血清铁增高",
+            "TIBC降低"
+          ],
+          "outputs": [
+            "铁剂治疗过量",
+            "溶血性贫血",
+            "再生障碍性贫血",
+            "巨幼细胞贫血",
+            "地中海贫血"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "review_notes": [
+        "表格每行是一条联合规则；原因单元格中的子原因只建普通层级关系，不追加为规则输出。"
+      ]
+    },
+    {
+      "case_id": "TC-04",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0023:0000",
+        "clinical-hematology:chapter-01:0023:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "start": 0,
+          "end": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "start": 0,
+          "end": 154
+        }
+      ],
+      "expected": [],
+      "review_notes": [
+        "当前关系合同不能表达阴性证据和排除结论；不得把排除价值降级成无极性的相关边。"
+      ]
+    },
+    {
+      "case_id": "TC-05",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0001:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 551,
+          "end": 610
+        }
+      ],
+      "expected": [],
+      "review_notes": [
+        "叶酸缺乏与维生素B12缺乏分别成立，不构成AND联合规则。"
+      ]
+    },
+    {
+      "case_id": "TC-06",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0001:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 0,
+          "end": 334
+        }
+      ],
+      "expected": [],
+      "review_notes": [
+        "参考区间和贫血程度分级属于后续执行器，不计为图规则；命名指标、状态和分级类别仍属于图实体。"
+      ]
+    },
+    {
+      "case_id": "TC-07",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0008:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+          "start": 0,
+          "end": 102
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MPV 持续下降",
+            "血小板数量持续下降"
+          ],
+          "outputs": [
+            "骨髓造血功能衰竭"
+          ],
+          "logic": "ALL_SAME_WINDOW"
+        }
+      ],
+      "review_notes": [
+        "前两句是普通见于关系；末句才是两个同步状态共同触发的图联合规则。"
+      ]
+    },
+    {
+      "case_id": "TC-08",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0022:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+          "start": 589,
+          "end": 926
+        }
+      ],
+      "expected": [],
+      "review_notes": [
+        "PTR/INR 公式和参考区间判断由后续执行器处理；本阶段只评价命名指标、状态和上下文。"
+      ]
+    }
   ]
 }

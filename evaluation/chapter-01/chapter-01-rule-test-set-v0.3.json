@@ -1,0 +1,1203 @@
+{
+  "schema_version": "medical-kg-rule-test-set/v0.3",
+  "status": "HUMAN_REVIEW_REQUIRED",
+  "scoring_status": "HOLD_UNTIL_HUMAN_VALIDATED",
+  "source_graph_dataset": "chapter-01-graph-test-set-v0.3.json",
+  "source_document": "source-packages/canonical/evidence/chapter-01",
+  "source_chunk_manifest": "source-packages/canonical/evidence/chapter-01/manifest.json",
+  "source_chunk_manifest_sha256": "992377a534c8ba54a8f7df993c2834ef45cb25081fe4428df143183600669383",
+  "annotation_method": "MANUAL_READING_WITH_AUTO_PROVENANCE_AUDIT",
+  "scope_contract": "每个案例只评价 evaluation_scopes 内有完整证据的候选；范围内未匹配预测记 FP，未匹配金标记 FN。",
+  "identity": [
+    "rule_stage",
+    "ordered_inputs",
+    "ordered_outputs",
+    "logic"
+  ],
+  "cases": [
+    {
+      "case_id": "CH01-01",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0000:0000",
+        "clinical-hematology:chapter-01:0000:0001",
+        "clinical-hematology:chapter-01:0001:0000",
+        "clinical-hematology:chapter-01:0001:0001",
+        "clinical-hematology:chapter-01:0002:0000",
+        "clinical-hematology:chapter-01:0002:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0000",
+          "start": 0,
+          "end": 16
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "start": 0,
+          "end": 565
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 0,
+          "end": 718
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "start": 0,
+          "end": 144
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "start": 0,
+          "end": 531
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "start": 0,
+          "end": 171
+        }
+      ],
+      "expected": [],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞计数",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "红细胞计数参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血红蛋白",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "血红蛋白参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血红蛋白",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "轻度贫血",
+            "中度贫血",
+            "重度贫血",
+            "极重度贫血"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞压积",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "红细胞压积参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": []
+    },
+    {
+      "case_id": "CH01-02",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0003:0000",
+        "clinical-hematology:chapter-01:0004:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "start": 0,
+          "end": 869
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "start": 0,
+          "end": 268
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV正常",
+            "RDW正常"
+          ],
+          "outputs": [
+            "正细胞均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV正常",
+            "RDW增大"
+          ],
+          "outputs": [
+            "正细胞不均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV减小",
+            "RDW正常"
+          ],
+          "outputs": [
+            "小细胞均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV减小",
+            "RDW增大"
+          ],
+          "outputs": [
+            "小细胞不均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV增大",
+            "RDW正常"
+          ],
+          "outputs": [
+            "大细胞均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV增大",
+            "RDW增大"
+          ],
+          "outputs": [
+            "大细胞不均一性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV增大",
+            "MCH增大",
+            "MCHC正常"
+          ],
+          "outputs": [
+            "大细胞性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV正常",
+            "MCH正常",
+            "MCHC正常"
+          ],
+          "outputs": [
+            "正细胞性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV减小",
+            "MCH减小",
+            "MCHC正常"
+          ],
+          "outputs": [
+            "单纯小细胞性贫血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MCV减小",
+            "MCH显著减小(<23pg)",
+            "MCHC减小"
+          ],
+          "outputs": [
+            "小细胞低色素性贫血"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "MCV",
+            "MCH",
+            "MCHC"
+          ],
+          "outputs": [
+            "贫血形态分类"
+          ],
+          "logic": "RANGE_TABLE"
+        }
+      ],
+      "held_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞计数",
+            "红细胞压积"
+          ],
+          "outputs": [
+            "MCV"
+          ],
+          "logic": "FORMULA",
+          "hold_reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞计数",
+            "血红蛋白"
+          ],
+          "outputs": [
+            "MCH"
+          ],
+          "logic": "FORMULA",
+          "hold_reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞压积",
+            "血红蛋白"
+          ],
+          "outputs": [
+            "MCHC"
+          ],
+          "logic": "FORMULA",
+          "hold_reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+        }
+      ],
+      "review_notes": [
+        "补入表1-2的4条MCV/MCH/MCHC联合分类规则；病因列仍作为普通关联。"
+      ]
+    },
+    {
+      "case_id": "CH01-03",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0004:0001",
+        "clinical-hematology:chapter-01:0005:0000",
+        "clinical-hematology:chapter-01:0005:0001",
+        "clinical-hematology:chapter-01:0006:0000",
+        "clinical-hematology:chapter-01:0006:0001",
+        "clinical-hematology:chapter-01:0007:0000",
+        "clinical-hematology:chapter-01:0007:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "start": 0,
+          "end": 482
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "start": 0,
+          "end": 184
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "start": 0,
+          "end": 646
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "start": 0,
+          "end": 546
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "start": 0,
+          "end": 197
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "start": 0,
+          "end": 355
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "start": 0,
+          "end": 193
+        }
+      ],
+      "expected": [],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "白细胞计数",
+            "年龄",
+            "单位"
+          ],
+          "outputs": [
+            "白细胞计数参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "白细胞分类计数",
+            "年龄",
+            "单位"
+          ],
+          "outputs": [
+            "白细胞分类参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "中性粒细胞绝对值",
+            "单位"
+          ],
+          "outputs": [
+            "粒细胞减少症"
+          ],
+          "logic": "THRESHOLD"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": []
+    },
+    {
+      "case_id": "CH01-04",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0008:0000",
+        "clinical-hematology:chapter-01:0008:0001",
+        "clinical-hematology:chapter-01:0009:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+          "start": 0,
+          "end": 752
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+          "start": 0,
+          "end": 102
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0009:0000",
+          "start": 0,
+          "end": 113
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "MPV持续下降",
+            "血小板数量持续下降"
+          ],
+          "outputs": [
+            "骨髓造血功能衰竭"
+          ],
+          "logic": "ALL_SAME_WINDOW"
+        }
+      ],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血小板计数",
+            "单位"
+          ],
+          "outputs": [
+            "血小板减少",
+            "血小板增多",
+            "出血高风险",
+            "血栓形成高风险"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "MPV",
+            "单位"
+          ],
+          "outputs": [
+            "MPV参考范围判定"
+          ],
+          "logic": "RANGE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "PCT",
+            "单位"
+          ],
+          "outputs": [
+            "PCT参考范围判定"
+          ],
+          "logic": "RANGE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "MPV时间序列"
+          ],
+          "outputs": [
+            "MPV持续下降"
+          ],
+          "logic": "TREND"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血小板数量时间序列"
+          ],
+          "outputs": [
+            "血小板数量持续下降"
+          ],
+          "logic": "TREND"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": []
+    },
+    {
+      "case_id": "CH01-05",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0009:0001",
+        "clinical-hematology:chapter-01:0010:0000",
+        "clinical-hematology:chapter-01:0010:0001",
+        "clinical-hematology:chapter-01:0011:0000",
+        "clinical-hematology:chapter-01:0011:0001",
+        "clinical-hematology:chapter-01:0012:0000",
+        "clinical-hematology:chapter-01:0012:0001",
+        "clinical-hematology:chapter-01:0013:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0009:0001",
+          "start": 0,
+          "end": 379
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+          "start": 0,
+          "end": 530
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0001",
+          "start": 0,
+          "end": 132
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "start": 0,
+          "end": 484
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+          "start": 0,
+          "end": 90
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0000",
+          "start": 0,
+          "end": 242
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "start": 0,
+          "end": 562
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0013:0000",
+          "start": 0,
+          "end": 758
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "血清铁降低",
+            "TIBC增高"
+          ],
+          "outputs": [
+            "缺铁性贫血",
+            "铁吸收不良",
+            "慢性失血",
+            "需铁量增加"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "血清铁降低",
+            "TIBC降低"
+          ],
+          "outputs": [
+            "慢性感染",
+            "肝硬变",
+            "尿毒症",
+            "肾病综合征",
+            "恶性肿瘤"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "血清铁增高",
+            "TIBC降低"
+          ],
+          "outputs": [
+            "铁剂治疗过量",
+            "溶血性贫血",
+            "再生障碍性贫血",
+            "巨幼细胞贫血",
+            "地中海贫血"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血清铁",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "血清铁参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血清铁蛋白",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "血清铁蛋白参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "TIBC",
+            "单位"
+          ],
+          "outputs": [
+            "TIBC增高",
+            "TIBC降低"
+          ],
+          "logic": "RANGE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血清维生素B12",
+            "单位"
+          ],
+          "outputs": [
+            "维生素B12降低"
+          ],
+          "logic": "RANGE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血清叶酸",
+            "单位"
+          ],
+          "outputs": [
+            "叶酸降低"
+          ],
+          "logic": "RANGE"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": [
+        "补齐二维联合表规则输出，保证与 8 案例同源规则一致且端点闭合。"
+      ]
+    },
+    {
+      "case_id": "CH01-06",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0014:0000",
+        "clinical-hematology:chapter-01:0014:0001",
+        "clinical-hematology:chapter-01:0015:0000",
+        "clinical-hematology:chapter-01:0015:0001",
+        "clinical-hematology:chapter-01:0016:0000",
+        "clinical-hematology:chapter-01:0016:0001",
+        "clinical-hematology:chapter-01:0017:0000",
+        "clinical-hematology:chapter-01:0017:0001",
+        "clinical-hematology:chapter-01:0018:0000",
+        "clinical-hematology:chapter-01:0018:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0014:0000",
+          "start": 0,
+          "end": 29
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+          "start": 0,
+          "end": 728
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "start": 0,
+          "end": 401
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+          "start": 0,
+          "end": 202
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "start": 0,
+          "end": 633
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0001",
+          "start": 0,
+          "end": 107
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0017:0000",
+          "start": 0,
+          "end": 785
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0017:0001",
+          "start": 0,
+          "end": 24
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0000",
+          "start": 0,
+          "end": 66
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+          "start": 0,
+          "end": 585
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "单次血黏度升高"
+          ],
+          "outputs": [
+            "不能据此诊断心脑血管疾病"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "仅使用血黏度参数"
+          ],
+          "outputs": [
+            "不能据此进行脑卒中预报"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "全血高切黏度",
+            "全血中切黏度",
+            "全血低切黏度",
+            "性别",
+            "单位"
+          ],
+          "outputs": [
+            "全血黏度参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "血浆黏度",
+            "单位"
+          ],
+          "outputs": [
+            "血浆黏度参考范围判定"
+          ],
+          "logic": "RANGE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "全血黏度",
+            "血浆黏度",
+            "红细胞压积"
+          ],
+          "outputs": [
+            "还原全血黏度"
+          ],
+          "logic": "FORMULA"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "变形后红细胞长轴",
+            "变形后红细胞短轴"
+          ],
+          "outputs": [
+            "红细胞变形指数IR"
+          ],
+          "logic": "FORMULA"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "全血黏度",
+            "血浆黏度",
+            "红细胞压积"
+          ],
+          "outputs": [
+            "红细胞变形指数TK"
+          ],
+          "logic": "FORMULA"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "悬浮介质黏度",
+            "红细胞悬液黏度",
+            "红细胞压积"
+          ],
+          "outputs": [
+            "红细胞变形指数FI"
+          ],
+          "logic": "FORMULA"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": [
+        "“红细胞压积增高”统一为 IndicatorState，与章节前段类型保持一致。",
+        "补入原文明示的单次血黏度诊断限制和脑卒中预报排除规则。"
+      ]
+    },
+    {
+      "case_id": "CH01-07",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0019:0000",
+        "clinical-hematology:chapter-01:0020:0000",
+        "clinical-hematology:chapter-01:0020:0001",
+        "clinical-hematology:chapter-01:0021:0000",
+        "clinical-hematology:chapter-01:0022:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "start": 0,
+          "end": 644
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+          "start": 0,
+          "end": 201
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0001",
+          "start": 0,
+          "end": 590
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0021:0000",
+          "start": 0,
+          "end": 615
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+          "start": 0,
+          "end": 926
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为O+O"
+          ],
+          "outputs": [
+            "子女可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为O+O"
+          ],
+          "outputs": [
+            "子女不可能为A型血",
+            "子女不可能为B型血",
+            "子女不可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+O"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+O"
+          ],
+          "outputs": [
+            "子女不可能为B型血",
+            "子女不可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为B+O"
+          ],
+          "outputs": [
+            "子女可能为B型血",
+            "子女可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为B+O"
+          ],
+          "outputs": [
+            "子女不可能为A型血",
+            "子女不可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为AB+O"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为B型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为AB+O"
+          ],
+          "outputs": [
+            "子女不可能为O型血",
+            "子女不可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+A"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+A"
+          ],
+          "outputs": [
+            "子女不可能为B型血",
+            "子女不可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为B+B"
+          ],
+          "outputs": [
+            "子女可能为B型血",
+            "子女可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为B+B"
+          ],
+          "outputs": [
+            "子女不可能为A型血",
+            "子女不可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为AB+AB"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为B型血",
+            "子女可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为AB+AB"
+          ],
+          "outputs": [
+            "子女不可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+B"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为B型血",
+            "子女可能为AB型血",
+            "子女可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+AB"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为B型血",
+            "子女可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为A+AB"
+          ],
+          "outputs": [
+            "子女不可能为O型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为B+AB"
+          ],
+          "outputs": [
+            "子女可能为A型血",
+            "子女可能为B型血",
+            "子女可能为AB型血"
+          ],
+          "logic": "ALL"
+        },
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "父母血型组合为B+AB"
+          ],
+          "outputs": [
+            "子女不可能为O型血"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞沉降率",
+            "性别",
+            "年龄",
+            "单位"
+          ],
+          "outputs": [
+            "红细胞沉降率参考范围判定"
+          ],
+          "logic": "RANGE_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "红细胞凝集反应",
+            "血清凝集反应"
+          ],
+          "outputs": [
+            "A型血",
+            "B型血",
+            "AB型血",
+            "O型血"
+          ],
+          "logic": "LOOKUP_TABLE"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "受检血浆PT",
+            "正常人血浆PT"
+          ],
+          "outputs": [
+            "PTR"
+          ],
+          "logic": "FORMULA"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "PTR",
+            "ISI"
+          ],
+          "outputs": [
+            "INR"
+          ],
+          "logic": "FORMULA"
+        },
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "PT",
+            "正常对照PT",
+            "单位"
+          ],
+          "outputs": [
+            "PT延长",
+            "PT缩短"
+          ],
+          "logic": "DELTA_THRESHOLD"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": [
+        "表1-6按无序父母血型组合拆为10条可能性推理和9条排除规则；可能/不可能直接保留在输出文本中。"
+      ]
+    },
+    {
+      "case_id": "CH01-08",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0022:0001",
+        "clinical-hematology:chapter-01:0023:0000",
+        "clinical-hematology:chapter-01:0023:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0001",
+          "start": 0,
+          "end": 316
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "start": 0,
+          "end": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "start": 0,
+          "end": 154
+        }
+      ],
+      "expected": [
+        {
+          "rule_stage": "GRAPH_COMPOSITE",
+          "inputs": [
+            "D-二聚体正常"
+          ],
+          "outputs": [
+            "排除深静脉血栓有重要价值"
+          ],
+          "logic": "ALL"
+        }
+      ],
+      "executor_rules": [
+        {
+          "rule_stage": "PREPROCESS",
+          "inputs": [
+            "D-二聚体",
+            "试剂参考上限",
+            "单位"
+          ],
+          "outputs": [
+            "D-二聚体阳性",
+            "D-二聚体阴性"
+          ],
+          "logic": "THRESHOLD"
+        }
+      ],
+      "held_rules": [],
+      "review_notes": [
+        "原文只说明 D-二聚体正常对排除深静脉血栓有价值，不把医学常识推断为 D-二聚体阳性的直接关系。",
+        "补入D-二聚体正常对排除深静脉血栓具有重要价值的排除规则；不等同于深静脉血栓与D-二聚体阳性的正向关系。"
+      ]
+    }
+  ]
+}

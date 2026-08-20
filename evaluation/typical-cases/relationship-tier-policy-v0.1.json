@@ -1,0 +1,42 @@
+{
+  "schema_version": "medical-kg-relationship-tier-policy/v0.1",
+  "status": "HUMAN_REVIEW_REQUIRED",
+  "purpose": "annotation_contract_sensitivity_only",
+  "source_gold_path": "evaluation/typical-cases/typical-cases-v0.1.json",
+  "source_gold_sha256": "66cb8248bd61395210a7a8a38948b080fe8f2d1495a6d13829c3dbd11f22ba7d",
+  "default_tier": "explicit",
+  "case_overrides": {
+    "TC-05": {
+      "explicit_relationships": [
+        ["铁缺乏", "CAUSES", "缺铁性贫血"],
+        ["叶酸缺乏", "CAUSES", "巨幼细胞贫血"],
+        ["维生素 B12 缺乏", "CAUSES", "巨幼细胞贫血"]
+      ],
+      "structural_derived_relationships": [
+        ["铁缺乏", "IS_A", "造血原料缺乏"],
+        ["叶酸缺乏", "IS_A", "造血原料缺乏"],
+        ["维生素 B12 缺乏", "IS_A", "造血原料缺乏"],
+        ["造血原料缺乏", "CAUSES", "贫血"]
+      ],
+      "rationale": "共享谓词直接支持三条具体病因关系；类别层级和汇总因果需要结构展开，单列辅助指标。"
+    },
+    "TC-06": {
+      "explicit_relationships": [],
+      "structural_derived_relationships": [
+        ["血红蛋白", "HAS_STATE", "血红蛋白正常"],
+        ["血红蛋白", "HAS_STATE", "血红蛋白降低"],
+        ["轻度贫血", "IS_A", "贫血"],
+        ["中度贫血", "IS_A", "贫血"],
+        ["重度贫血", "IS_A", "贫血"],
+        ["极重度贫血", "IS_A", "贫血"]
+      ],
+      "rejected_alternatives": [
+        ["轻度贫血", "IS_A", "贫血程度"],
+        ["中度贫血", "IS_A", "贫血程度"],
+        ["重度贫血", "IS_A", "贫血程度"],
+        ["极重度贫血", "IS_A", "贫血程度"]
+      ],
+      "rationale": "参考区间状态和表格分组父类属于结构规范化；贫血程度是分类维度，不是贫血等级实体的父类。"
+    }
+  }
+}

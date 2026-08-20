@@ -1,0 +1,3507 @@
+{
+  "annotation_unit": "EXACT_CHARACTER_SPAN_WITH_ENTITY_TYPE",
+  "evidence_manifest": "source-packages/canonical/evidence/chapter-01/manifest.json",
+  "pages": [
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 180,
+          "entity_type": "Disease",
+          "exact_quote": "血液系统疾病",
+          "mention_id": "mention:3806699dd99e39003159",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 174
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 200,
+          "entity_type": "LabPanel",
+          "exact_quote": "血液常规检验",
+          "mention_id": "mention:b9ef91785cba67e0323e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 194
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 207,
+          "entity_type": "LabPanel",
+          "exact_quote": "血液常规检验",
+          "mention_id": "mention:947726369cc21f69de76",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 201
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 272,
+          "entity_type": "LabPanel",
+          "exact_quote": "血液常规检验",
+          "mention_id": "mention:ccdfa2d7f606db70071d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 266
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 294,
+          "entity_type": "Disease",
+          "exact_quote": "血液系统疾病",
+          "mention_id": "mention:fad6f04b199f720c3449",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 288
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 314,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:9df2ec021be5850fece7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 310
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 362,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:500bec09105accf02495",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 358
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 434,
+          "entity_type": "LabIndicator",
+          "exact_quote": "红细胞数量",
+          "mention_id": "mention:273a0a939ce6fb74a306",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 429
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 441,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白含量",
+          "mention_id": "mention:445048856769a9c0a485",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 435
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 456,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:019b7462eb2e52d03595",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 452
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 458,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血红蛋白减少",
+          "mention_id": "mention:864a2bc9901d594d3416",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 452
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 462,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:4660c0bc79b9a2e96ec1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 460
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 478,
+          "entity_type": "LabPanel",
+          "exact_quote": "血液常规检验",
+          "mention_id": "mention:e85f89a526ddeb0277aa",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 472
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 505,
+          "entity_type": "LabIndicator",
+          "exact_quote": "红细胞计数",
+          "mention_id": "mention:1c95e7b08c395e2f3c0c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 500
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0000",
+      "page_index": 0,
+      "source_path": "pages/cleaned/0000.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 5,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:f6154874b5cb015b104d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 43,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:46452784211b407dc6b2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 41
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 68,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:c6573b8092921c2a6a90",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 66
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 83,
+          "entity_type": "Disease",
+          "exact_quote": "轻度贫血",
+          "mention_id": "mention:cebe5fb364db5bb04d02",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 79
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 96,
+          "entity_type": "Disease",
+          "exact_quote": "中度贫血",
+          "mention_id": "mention:92ebf77c22a3f9501a36",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 92
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 109,
+          "entity_type": "Disease",
+          "exact_quote": "重度贫血",
+          "mention_id": "mention:8c1355aac2070944edb4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 105
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 123,
+          "entity_type": "Disease",
+          "exact_quote": "极重度贫血",
+          "mention_id": "mention:2a4216ba3bb361c4c045",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 118
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 145,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:042e38cc173952fbd4c5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 141
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 241,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:4fc52c29eeea242e5533",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 237
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 355,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:ce2347993489ce0ecef7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 351
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 357,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血红蛋白减少",
+          "mention_id": "mention:4b92e3b01b130c9cf72f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 351
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 381,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "3 个月的婴儿至 15 岁",
+          "mention_id": "mention:8d3cef7d92ecd2e3d493",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 368
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 400,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "造血原料相对不足",
+          "mention_id": "mention:d4e40fafb2e50e18ff44",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 392
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 410,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "妊娠中后期的孕妇",
+          "mention_id": "mention:ae5d991c0e895e27c7e7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 402
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 427,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血液稀释",
+          "mention_id": "mention:e39ca3c6e406801b3bcb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 423
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 432,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "老年人",
+          "mention_id": "mention:c89bc31e2cbfb273f2b8",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 429
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 440,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "造血功能逐渐减退",
+          "mention_id": "mention:871f8c3e4e5d99ee0317",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 432
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 451,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:2abb1252287f54d85a41",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 447
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 453,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血红蛋白减少",
+          "mention_id": "mention:b9aeaed55638b8e51bef",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 447
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 478,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:f0d7857833eca3a5dd99",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 476
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 487,
+          "entity_type": "Disease",
+          "exact_quote": "再生障碍性贫血",
+          "mention_id": "mention:9353e160637f72dfcee5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 480
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 499,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "骨髓造血功能受损",
+          "mention_id": "mention:52f8a9ee915297333280",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 491
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 507,
+          "entity_type": "IndicatorState",
+          "exact_quote": "红细胞减少",
+          "mention_id": "mention:8f3971d26483b3132187",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 502
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 517,
+          "entity_type": "Disease",
+          "exact_quote": "白血病",
+          "mention_id": "mention:a4cbc4d7e3b7368910f6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 514
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 522,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:232b28b6d413fc0ac12d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 520
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 558,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "造血原料缺乏",
+          "mention_id": "mention:334aeab85be11a8d435f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 552
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 563,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:ab4a7a71d326de67d854",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 561
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 568,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "铁缺乏",
+          "mention_id": "mention:23f9ab47ddd03021e74d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 565
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 576,
+          "entity_type": "Disease",
+          "exact_quote": "缺铁性贫血",
+          "mention_id": "mention:62cbe0e6fcc911f70572",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 571
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 579,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "叶酸",
+          "mention_id": "mention:e5ef1758ada9f7e0112c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 577
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 599,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "维生素 \\( B_{12} \\) 缺乏",
+          "mention_id": "mention:62c8cc70cf5fe9d69dca",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 580
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 608,
+          "entity_type": "Disease",
+          "exact_quote": "巨幼细胞贫血",
+          "mention_id": "mention:e0c7ec0b79462ff9e8e5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 602
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 616,
+          "entity_type": "Disease",
+          "exact_quote": "溶血性贫血",
+          "mention_id": "mention:11a9b7a4ca7da42701ba",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 611
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 642,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:aef4dc3ef8e9e25de163",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 638
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 646,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血红蛋白结构异常",
+          "mention_id": "mention:51bffc7ee830da99a2c7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 638
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 672,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:9ce60b3ba1597d60d8b6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 670
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 682,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性或慢性失血",
+          "mention_id": "mention:6685d4583ca132d4ca83",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 675
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 687,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:ad356b1533f72e049710",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 685
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 696,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "大量血液流失",
+          "mention_id": "mention:74c38ccdcdf8799ea4b7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 690
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 715,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:657078163bb3d5e98e57",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 713
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 12,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:d7bcc5f60fb0b9d7fcb0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 8
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 14,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血红蛋白增多",
+          "mention_id": "mention:6ec7156e93cae7059116",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 8
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 36,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血液浓缩",
+          "mention_id": "mention:9fb46bf30a527b0d67e5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 32
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 45,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "连续剧烈呕吐",
+          "mention_id": "mention:8f74d6aba1993cc1c03f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 39
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 50,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "严重腹泻",
+          "mention_id": "mention:549239fca3a8b557b860",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 46
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 55,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "大量出汗",
+          "mention_id": "mention:08786fad321db922a00c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 51
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 58,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "发热",
+          "mention_id": "mention:f5d45ae71c08f28182bb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 56
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 69,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "大量水分丢失",
+          "mention_id": "mention:6f2356d4270afa096591",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 63
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 76,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血液浓缩",
+          "mention_id": "mention:7e4b68c16be3c39d8def",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 72
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 85,
+          "entity_type": "IndicatorState",
+          "exact_quote": "红细胞相对增多",
+          "mention_id": "mention:2e58ee7cf7064d534e0c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 78
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 115,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "机体缺氧",
+          "mention_id": "mention:89d13bc6792d967a9443",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 111
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 128,
+          "entity_type": "LabIndicator",
+          "exact_quote": "促红细胞生成素",
+          "mention_id": "mention:57d8e7e43bea0f06e79c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 121
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 130,
+          "entity_type": "IndicatorState",
+          "exact_quote": "促红细胞生成素增高",
+          "mention_id": "mention:b865b4c9e19c28e8863b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 121
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 142,
+          "entity_type": "IndicatorState",
+          "exact_quote": "红细胞增多",
+          "mention_id": "mention:7f4816bda9e6ea5942e2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 137
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0001",
+      "page_index": 1,
+      "source_path": "pages/cleaned/0001.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 14,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "高原环境",
+          "mention_id": "mention:b95a6bff6ff77857d93e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 10
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 21,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "氧气稀薄",
+          "mention_id": "mention:42889d804f810fe8c2b1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 17
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 68,
+          "entity_type": "Disease",
+          "exact_quote": "发绀型先天性心脏病",
+          "mention_id": "mention:fe3ea765b3b119f05a95",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 59
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 78,
+          "entity_type": "Disease",
+          "exact_quote": "后天性肺源性心脏病",
+          "mention_id": "mention:11670ea852382ad28d9f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 69
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 93,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血液中含氧量减少",
+          "mention_id": "mention:59f4fff1673c532a15fd",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 85
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 104,
+          "entity_type": "IndicatorState",
+          "exact_quote": "红细胞代偿性增多",
+          "mention_id": "mention:69b588d5941484bc87a9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 96
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 136,
+          "entity_type": "Disease",
+          "exact_quote": "真性红细胞增多症",
+          "mention_id": "mention:50c43c2fcd7dfb8ee066",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 128
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 144,
+          "entity_type": "Disease",
+          "exact_quote": "肾癌",
+          "mention_id": "mention:86f86cc4679436f7d173",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 142
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 149,
+          "entity_type": "Disease",
+          "exact_quote": "肾胚胎瘤",
+          "mention_id": "mention:dd78c205d6466337d6ff",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 145
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 161,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:ff1296c57ef981480c22",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 156
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 167,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:12db4315d4374ed78b3e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 162
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 171,
+          "entity_type": "LabIndicator",
+          "exact_quote": "HCT",
+          "mention_id": "mention:746fe543524e824f7151",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 168
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 180,
+          "entity_type": "LabIndicator",
+          "exact_quote": "红细胞压积",
+          "mention_id": "mention:48fd961d32f9404e0a6d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 175
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 184,
+          "entity_type": "LabIndicator",
+          "exact_quote": "PCV",
+          "mention_id": "mention:6d85dd6625cb1e3ec3e1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 181
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 246,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:e88f01ab31e0f24091b1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 241
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 360,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:721e098ed7af9f09c89b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 355
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 362,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血细胞比容增高",
+          "mention_id": "mention:6f94324b77a3f220db29",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 355
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 375,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血液浓缩",
+          "mention_id": "mention:35e16a40fe3a261fef74",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 371
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 382,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "剧烈呕吐",
+          "mention_id": "mention:7e79f9a0d276fba2ebf0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 378
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 387,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "严重腹泻",
+          "mention_id": "mention:d4056f0a1235551183ac",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 383
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 392,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "大量出汗",
+          "mention_id": "mention:c29766c10790d975faa2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 388
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 409,
+          "entity_type": "IndicatorState",
+          "exact_quote": "红细胞绝对值增多",
+          "mention_id": "mention:93afa922ed1cf25d7f78",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 401
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 420,
+          "entity_type": "Disease",
+          "exact_quote": "真性红细胞增多症",
+          "mention_id": "mention:8195a832a2afd0f529fe",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 412
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 429,
+          "entity_type": "Disease",
+          "exact_quote": "慢性肺源性心脏病",
+          "mention_id": "mention:043368d78c5add26a009",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 421
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 437,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:aa5179c84728383b7dfd",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 432
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 439,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血细胞比容增高",
+          "mention_id": "mention:a541ddba6fadbc53d772",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 432
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 461,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:31e7dfe231d4ba72a366",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 456
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 463,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血细胞比容减少",
+          "mention_id": "mention:c723b1148d6eeeaae6e9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 456
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 471,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:97310ca62fe4448af387",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 469
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 476,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:65e9d15a826555017770",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 474
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 482,
+          "entity_type": "Disease",
+          "exact_quote": "大细胞贫血",
+          "mention_id": "mention:9e4d9de21e1c50aeb987",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 477
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 488,
+          "entity_type": "Disease",
+          "exact_quote": "小细胞贫血",
+          "mention_id": "mention:5959f570a5735f5fc02c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 483
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 499,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:06bfd01c489decbc3bea",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 494
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 501,
+          "entity_type": "IndicatorState",
+          "exact_quote": "血细胞比容减少",
+          "mention_id": "mention:43f1b3e2f03d0861409f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 494
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 506,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:0c04a28115f16bf08011",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 504
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 528,
+          "entity_type": "LabPanel",
+          "exact_quote": "红细胞平均指数",
+          "mention_id": "mention:efb2e0164c505e9e13ad",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 521
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 10,
+          "entity_type": "LabPanel",
+          "exact_quote": "红细胞平均指数",
+          "mention_id": "mention:bab9c20275646ba5fd16",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 3
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 18,
+          "entity_type": "LabIndicator",
+          "exact_quote": "红细胞计数",
+          "mention_id": "mention:856e80ac2dd3a8789716",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 24,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:09ab10608ee10e6bcdc5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 19
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 31,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血红蛋白浓度",
+          "mention_id": "mention:2da364a7c9a16f909527",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 25
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 51,
+          "entity_type": "LabIndicator",
+          "exact_quote": "平均红细胞容积",
+          "mention_id": "mention:3c33f6a6de035fcd24cf",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 44
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 63,
+          "entity_type": "LabIndicator",
+          "exact_quote": "平均红细胞血红蛋白含量",
+          "mention_id": "mention:6dcec5b972696f131b69",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 52
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 75,
+          "entity_type": "LabIndicator",
+          "exact_quote": "平均红细胞血红蛋白浓度",
+          "mention_id": "mention:655ac71ac1940c6f0647",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 64
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 87,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:bc0b0b26ea60f931c582",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 85
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 131,
+          "entity_type": "LabIndicator",
+          "exact_quote": "平均红细胞容积",
+          "mention_id": "mention:f8947d98db6c3b0f0eb7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 124
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 135,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:b5c04859c5a5c28fbbd4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 132
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 157,
+          "entity_type": "LabIndicator",
+          "exact_quote": "平均红细胞血红蛋白含量",
+          "mention_id": "mention:5bd32c9a1b583d6e31fe",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 146
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 161,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCH",
+          "mention_id": "mention:9448895abf68f6cb5299",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 158
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0002",
+      "page_index": 2,
+      "source_path": "pages/cleaned/0002.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 12,
+          "entity_type": "LabIndicator",
+          "exact_quote": "平均红细胞血红蛋白浓度",
+          "mention_id": "mention:d2d136515539a13a0393",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 17,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCHC",
+          "mention_id": "mention:1e68c10f9ba5a55cf0ea",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 45,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:744446a6f0a3cd06f3e2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 42
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 49,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCH",
+          "mention_id": "mention:1160bff79a6d48d1620c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 46
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 54,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCHC",
+          "mention_id": "mention:2ead620e65c8cf10a44e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 50
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 61,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:080a106a2c24a452ddd3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 59
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 98,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:1ba99eed49ceda431032",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 96
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 125,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:372f6a7f1f4d0f3c6367",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 123
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 142,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:8257feeb64efee6c8bec",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 139
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 164,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCH",
+          "mention_id": "mention:924d0b5dfbe02a5955a7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 161
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 186,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCHC",
+          "mention_id": "mention:f39cadd12a8b394c6fd3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 182
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 233,
+          "entity_type": "Disease",
+          "exact_quote": "大细胞性贫血",
+          "mention_id": "mention:907a2deaa50d1f3fbc54",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 227
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 306,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "维生素\\( B_{12} \\)缺乏",
+          "mention_id": "mention:db348ea0ff36853b4d20",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 289
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 315,
+          "entity_type": "Disease",
+          "exact_quote": "巨幼细胞贫血",
+          "mention_id": "mention:685997393a325a0e177f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 309
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 339,
+          "entity_type": "Disease",
+          "exact_quote": "正细胞性贫血",
+          "mention_id": "mention:aa1bc901056c6b9a7257",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 333
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 400,
+          "entity_type": "Disease",
+          "exact_quote": "急性失血性贫血",
+          "mention_id": "mention:62b1941dd7a0aed19cc3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 393
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 408,
+          "entity_type": "Disease",
+          "exact_quote": "急性溶血性贫血",
+          "mention_id": "mention:63742ce997a6d7f2e43b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 401
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 416,
+          "entity_type": "Disease",
+          "exact_quote": "再生障碍性贫血",
+          "mention_id": "mention:b6be591619265bc9bfe0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 409
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 443,
+          "entity_type": "Disease",
+          "exact_quote": "单纯小细胞性贫血",
+          "mention_id": "mention:e425586886d407d17b2a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 435
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 502,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "慢性感染",
+          "mention_id": "mention:63b1cce9d9adb4a335a9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 498
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 505,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "炎症",
+          "mention_id": "mention:7727ddab6cc30ec94350",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 503
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 508,
+          "entity_type": "Disease",
+          "exact_quote": "肝病",
+          "mention_id": "mention:471e6d735c883cc9b008",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 506
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 514,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:a181e2cdf060dd70a109",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 512
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 541,
+          "entity_type": "Disease",
+          "exact_quote": "小细胞低色素性贫血",
+          "mention_id": "mention:7e7ae01fdf96015c1a8f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 532
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 601,
+          "entity_type": "Disease",
+          "exact_quote": "缺铁性贫血",
+          "mention_id": "mention:5f68d9e5a4469463f938",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 596
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 612,
+          "entity_type": "Disease",
+          "exact_quote": "珠蛋白生成障碍性贫血",
+          "mention_id": "mention:65ca6ee4df6b9d5ee259",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 602
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 644,
+          "entity_type": "LabIndicator",
+          "exact_quote": "红细胞容积分布宽度",
+          "mention_id": "mention:50efab7843ef91a0ca1d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 635
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 654,
+          "entity_type": "LabIndicator",
+          "exact_quote": "红细胞容积分布宽度",
+          "mention_id": "mention:329d9694bbe5b4e03fee",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 645
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 658,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:1508c92eeb54ee4e610a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 655
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 741,
+          "entity_type": "LabIndicator",
+          "exact_quote": "变异系数",
+          "mention_id": "mention:f48b04a1d2769e45ea60",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 737
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 748,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW-CV",
+          "mention_id": "mention:55f27467b836803cf8cc",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 742
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 753,
+          "entity_type": "LabIndicator",
+          "exact_quote": "标准差",
+          "mention_id": "mention:4cce7568b7d15e2fbf45",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 750
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 760,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW-SD",
+          "mention_id": "mention:4574986685f42e02915b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 754
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 766,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:b4650a8a03968b67326b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 764
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 772,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:bf37056f28da486a464c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 769
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 781,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:a61cb5ebf4a2bb9a07bb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 778
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 812,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW-CV",
+          "mention_id": "mention:cf169327f70c64c20057",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 806
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 843,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:0f9d0377bb0ad8371130",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 840
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 847,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:77dd1db4d2f10a1a531b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 844
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 861,
+          "entity_type": "Disease",
+          "exact_quote": "贫血",
+          "mention_id": "mention:907694f5a92817888b2c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 859
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0003",
+      "page_index": 3,
+      "source_path": "pages/cleaned/0003.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 12,
+          "entity_type": "Disease",
+          "exact_quote": "小细胞均一性贫血",
+          "mention_id": "mention:d885226584ac16916fec",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 4
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 17,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:306d3d4bf0b18a64178e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 14
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 20,
+          "entity_type": "IndicatorState",
+          "exact_quote": "MCV 减小",
+          "mention_id": "mention:7b777b8374962ab6c03e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 14
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 25,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:70031686524611f806f7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 28,
+          "entity_type": "IndicatorState",
+          "exact_quote": "RDW 正常",
+          "mention_id": "mention:7c124e52ccf280464fa2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 41,
+          "entity_type": "Disease",
+          "exact_quote": "珠蛋白生成障碍性贫血",
+          "mention_id": "mention:d5367fba4c7da3941009",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 31
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 68,
+          "entity_type": "Disease",
+          "exact_quote": "小细胞不均一性贫血",
+          "mention_id": "mention:73d47a31b6c3d8e77d2a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 59
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 73,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:34807b9902a2574ddc39",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 70
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 76,
+          "entity_type": "IndicatorState",
+          "exact_quote": "MCV 减小",
+          "mention_id": "mention:afa276a67b17298db518",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 70
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 81,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:a4b1544cf5b8a6bb3fd0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 78
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 84,
+          "entity_type": "IndicatorState",
+          "exact_quote": "RDW 增大",
+          "mention_id": "mention:87ec4c0f3b948fa0ab5f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 78
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 92,
+          "entity_type": "Disease",
+          "exact_quote": "缺铁性贫血",
+          "mention_id": "mention:18e86158b26982811ca2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 87
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 106,
+          "entity_type": "Disease",
+          "exact_quote": "正细胞均一性贫血",
+          "mention_id": "mention:493d59a1ec3f34d1a078",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 98
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 111,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:8871219e13a4dfeaf61c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 108
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 115,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:c401c3a10d45081ab21a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 112
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 129,
+          "entity_type": "Disease",
+          "exact_quote": "急性失血性贫血",
+          "mention_id": "mention:f75d6556313d4debc920",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 122
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 134,
+          "entity_type": "Disease",
+          "exact_quote": "慢性疾病",
+          "mention_id": "mention:c8c38d28e05a76d9b825",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 130
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 149,
+          "entity_type": "Disease",
+          "exact_quote": "正细胞不均一性贫血",
+          "mention_id": "mention:7bc2ee9544a731c29568",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 140
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 154,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:52710b68f2c2c9c5ccd1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 151
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 157,
+          "entity_type": "IndicatorState",
+          "exact_quote": "MCV 正常",
+          "mention_id": "mention:d68f1630505d9d3bdc9c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 151
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 162,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:a3e5125fe462c8e20b44",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 159
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 165,
+          "entity_type": "IndicatorState",
+          "exact_quote": "RDW 增大",
+          "mention_id": "mention:1dbba5aa7774e0322407",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 159
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 175,
+          "entity_type": "Disease",
+          "exact_quote": "早期缺铁性贫血",
+          "mention_id": "mention:e778773af9541abcd0c5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 168
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 184,
+          "entity_type": "Disease",
+          "exact_quote": "G6PD 缺乏症",
+          "mention_id": "mention:3a638bc6f49696c1e9e7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 176
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 199,
+          "entity_type": "Disease",
+          "exact_quote": "大细胞均一性贫血",
+          "mention_id": "mention:903187b8e134a0d756a7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 191
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 204,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:7f9fffb60b3f98a3ec31",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 201
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 207,
+          "entity_type": "IndicatorState",
+          "exact_quote": "MCV 增大",
+          "mention_id": "mention:33305edfd8ddbbd14d7d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 201
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 212,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:69b99a0d63d6764f79a6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 209
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 215,
+          "entity_type": "IndicatorState",
+          "exact_quote": "RDW 正常",
+          "mention_id": "mention:d619f3b89cfdee83c5b9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 209
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 227,
+          "entity_type": "Disease",
+          "exact_quote": "慢性再生障碍性贫血",
+          "mention_id": "mention:d9bbdf89c531fc9c9f27",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 218
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 242,
+          "entity_type": "Disease",
+          "exact_quote": "大细胞不均一性贫血",
+          "mention_id": "mention:6accbacb948a07761c49",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 233
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 247,
+          "entity_type": "LabIndicator",
+          "exact_quote": "MCV",
+          "mention_id": "mention:73027278306f22850f46",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 244
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 251,
+          "entity_type": "LabIndicator",
+          "exact_quote": "RDW",
+          "mention_id": "mention:a9408017ab2cc651aa3b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 248
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 264,
+          "entity_type": "Disease",
+          "exact_quote": "巨幼细胞贫血",
+          "mention_id": "mention:4e73d8e08cab1f991d03",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 258
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 8,
+          "entity_type": "LabIndicator",
+          "exact_quote": "白细胞计数",
+          "mention_id": "mention:54238d1923fa6d93b5a5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 3
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 16,
+          "entity_type": "LabIndicator",
+          "exact_quote": "WBC",
+          "mention_id": "mention:1f80ae1d74220c9e3b34",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 61,
+          "entity_type": "LabIndicator",
+          "exact_quote": "白细胞计数",
+          "mention_id": "mention:9f1b26011514cb2c5ecf",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 56
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 115,
+          "entity_type": "LabIndicator",
+          "exact_quote": "白细胞计数",
+          "mention_id": "mention:c036b1af485e490b9a5b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 110
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 123,
+          "entity_type": "LabPanel",
+          "exact_quote": "白细胞分类计数",
+          "mention_id": "mention:ba9d1b9bcc17c8e41cca",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 116
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 168,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "成人",
+          "mention_id": "mention:3c21bb6f08493e70a456",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 166
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 233,
+          "entity_type": "LabIndicator",
+          "exact_quote": "白细胞计数",
+          "mention_id": "mention:d9c1676ce1d082d768f5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 228
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 235,
+          "entity_type": "IndicatorState",
+          "exact_quote": "白细胞计数增多",
+          "mention_id": "mention:8b4328bfb41668ad30e9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 228
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 245,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急、慢性感染",
+          "mention_id": "mention:c00d17965fced24a2fe8",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 239
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 255,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "细菌性感染",
+          "mention_id": "mention:2afa5bbccd6ba65983a0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 250
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 260,
+          "entity_type": "Disease",
+          "exact_quote": "肺炎",
+          "mention_id": "mention:5ab25a1e268d167855c4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 258
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 264,
+          "entity_type": "Disease",
+          "exact_quote": "脑膜炎",
+          "mention_id": "mention:ab255211b6de4a55ac06",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 261
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 269,
+          "entity_type": "Disease",
+          "exact_quote": "扁桃体炎",
+          "mention_id": "mention:4208c4f7f8cc72770bb4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 265
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 272,
+          "entity_type": "Disease",
+          "exact_quote": "痢疾",
+          "mention_id": "mention:21c65327a227328038e5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 270
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 276,
+          "entity_type": "Disease",
+          "exact_quote": "猩红热",
+          "mention_id": "mention:106107404034ce2da701",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 273
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 280,
+          "entity_type": "Disease",
+          "exact_quote": "败血症",
+          "mention_id": "mention:22c638dde7bc041b6315",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 277
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 285,
+          "entity_type": "Disease",
+          "exact_quote": "尿路感染",
+          "mention_id": "mention:7c03d2c2adf6443efb5e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 281
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 288,
+          "entity_type": "Disease",
+          "exact_quote": "丹毒",
+          "mention_id": "mention:16ce09ddfafcb213b9c6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 286
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 301,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "广泛的组织损伤",
+          "mention_id": "mention:460f6f15e861a4bbb96f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 294
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 309,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "大面积烧伤",
+          "mention_id": "mention:230673cb069a69d1a447",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 304
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 314,
+          "entity_type": "Disease",
+          "exact_quote": "心肌梗死",
+          "mention_id": "mention:6729ab1859504ec99dc1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 310
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 325,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性大出血",
+          "mention_id": "mention:58ae16f6327e2ce251ac",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 320
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 331,
+          "entity_type": "Disease",
+          "exact_quote": "肝破裂",
+          "mention_id": "mention:1988086424272824ba55",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 328
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 335,
+          "entity_type": "Disease",
+          "exact_quote": "脾破裂",
+          "mention_id": "mention:04295cc8eadcc082fcbb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 332
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 342,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "消化道大出血",
+          "mention_id": "mention:adeff8248db3d7dceb96",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 336
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 346,
+          "entity_type": "Disease",
+          "exact_quote": "宫外孕",
+          "mention_id": "mention:20a41c62b1b482e0ffec",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 343
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 356,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性溶血",
+          "mention_id": "mention:109d8e1b2493529b779b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 352
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 366,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "血型不合的输血",
+          "mention_id": "mention:79510628dea7353587be",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 359
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 384,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性溶血",
+          "mention_id": "mention:b4c35b4ded91f9debffe",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 380
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 393,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性中毒",
+          "mention_id": "mention:80f2b9d3d96bb55d2cb9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 389
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 401,
+          "entity_type": "Disease",
+          "exact_quote": "有机磷中毒",
+          "mention_id": "mention:7391f51871a467a85065",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 396
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 410,
+          "entity_type": "Disease",
+          "exact_quote": "糖尿病酮症酸中毒",
+          "mention_id": "mention:5b1ba1f2fd73e5663a6d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 402
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 414,
+          "entity_type": "Disease",
+          "exact_quote": "尿毒症",
+          "mention_id": "mention:cf5551d491b0de9fbc2d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 411
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 419,
+          "entity_type": "Disease",
+          "exact_quote": "食物中毒",
+          "mention_id": "mention:53aeb73b7ed512b723c2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 415
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 424,
+          "entity_type": "Disease",
+          "exact_quote": "毒蛇咬伤",
+          "mention_id": "mention:cb8ab5362ce8f9d304da",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 420
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 433,
+          "entity_type": "Disease",
+          "exact_quote": "白血病",
+          "mention_id": "mention:94b34cd15ef44630c3dc",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 430
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 468,
+          "entity_type": "IndicatorState",
+          "exact_quote": "白细胞明显增加",
+          "mention_id": "mention:dc0a9c355aec8d8efffb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 461
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0004",
+      "page_index": 4,
+      "source_path": "pages/cleaned/0004.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 23,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "长期接触放射线",
+          "mention_id": "mention:a4f082212288744a50c9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 16
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 43,
+          "entity_type": "IndicatorState",
+          "exact_quote": "白细胞减少",
+          "mention_id": "mention:b8526d53853c129ae497",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 38
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 96,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "磺胺药",
+          "mention_id": "mention:e29e08bba00c048627fe",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 93
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 100,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "氯霉素",
+          "mention_id": "mention:f39a5eedb16efe9198bb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 97
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 105,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "苯妥英钠",
+          "mention_id": "mention:4fbd49fb753832b0dcc8",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 101
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 112,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "抗肿瘤药",
+          "mention_id": "mention:763019ae1f8edb0888c1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 108
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 118,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "环磷酰胺",
+          "mention_id": "mention:a13620668a3ee1794165",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 114
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 123,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "氨甲蝶呤",
+          "mention_id": "mention:b4c6383ed670938a6899",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 119
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 128,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "阿糖胞苷",
+          "mention_id": "mention:4b8e49ee019b437f47c8",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 124
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 147,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "苯",
+          "mention_id": "mention:41bc3d5b060c10ce4f09",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 146
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 149,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "铅",
+          "mention_id": "mention:41c2ec8d228b4ea7149d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 148
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 151,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "汞",
+          "mention_id": "mention:8c898cc870d1e2a1c570",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 150
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 163,
+          "entity_type": "Disease",
+          "exact_quote": "血液系统疾病",
+          "mention_id": "mention:6b0854c2512eeeb1e70a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 157
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 173,
+          "entity_type": "Disease",
+          "exact_quote": "再生障碍性贫血",
+          "mention_id": "mention:b9228951866ba4721c03",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 166
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 180,
+          "entity_type": "Disease",
+          "exact_quote": "粒细胞减少症",
+          "mention_id": "mention:d15df4d2a2e4a3d9e2aa",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 174
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 11,
+          "entity_type": "LabPanel",
+          "exact_quote": "白细胞分类计数",
+          "mention_id": "mention:f3555b882dcb26f79855",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 4
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 19,
+          "entity_type": "LabPanel",
+          "exact_quote": "白细胞分类计数",
+          "mention_id": "mention:bef990846930a1a2c8dd",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 12
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 26,
+          "entity_type": "LabPanel",
+          "exact_quote": "WBC-DC",
+          "mention_id": "mention:5b338712b4351ab135d2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 20
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 42,
+          "entity_type": "LabIndicator",
+          "exact_quote": "中性粒细胞",
+          "mention_id": "mention:7756e37e076ef8d110c4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 37
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 47,
+          "entity_type": "LabIndicator",
+          "exact_quote": "淋巴细胞",
+          "mention_id": "mention:e8de29502b9ffc31f1f5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 43
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 54,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜酸性粒细胞",
+          "mention_id": "mention:85490cd926508dff4731",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 48
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 61,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜碱性粒细胞",
+          "mention_id": "mention:35f82a87774d032a7986",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 55
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 66,
+          "entity_type": "LabIndicator",
+          "exact_quote": "单核细胞",
+          "mention_id": "mention:fee26a144df0fda7679c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 62
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 109,
+          "entity_type": "LabPanel",
+          "exact_quote": "白细胞分类计数",
+          "mention_id": "mention:74deea1df9d2228818b9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 102
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 228,
+          "entity_type": "LabIndicator",
+          "exact_quote": "中性粒细胞",
+          "mention_id": "mention:679ec3c35d009839ef81",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 223
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 283,
+          "entity_type": "LabIndicator",
+          "exact_quote": "淋巴细胞",
+          "mention_id": "mention:78e6bb81d3e38aa0730a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 279
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 338,
+          "entity_type": "LabIndicator",
+          "exact_quote": "单核细胞",
+          "mention_id": "mention:c17c2bc60f0d46e23bc7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 334
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 394,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜酸性粒细胞",
+          "mention_id": "mention:bc696bac6cb7c497bc73",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 388
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 455,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜碱性粒细胞",
+          "mention_id": "mention:c22401b9f38142f0db5b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 449
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 562,
+          "entity_type": "LabIndicator",
+          "exact_quote": "中性粒细胞",
+          "mention_id": "mention:1d9723c264c713362f1d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 557
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 564,
+          "entity_type": "IndicatorState",
+          "exact_quote": "中性粒细胞增多",
+          "mention_id": "mention:04fef988f16531e23e22",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 557
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 588,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "饱食",
+          "mention_id": "mention:984657ee2b9287f8d46d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 586
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 593,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "情绪激动",
+          "mention_id": "mention:da210d8ce9f074db6c04",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 589
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 598,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "剧烈运动",
+          "mention_id": "mention:c0d64ba30f87bf426080",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 594
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 604,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "高温或严寒",
+          "mention_id": "mention:be78a410dc27704f3ee4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 599
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 608,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "新生儿",
+          "mention_id": "mention:df41582597c46078c1cb",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 605
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 618,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "妊娠 5 个月以上",
+          "mention_id": "mention:64316b8abf36e496ad76",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 609
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 623,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "分娩阵痛",
+          "mention_id": "mention:c879c75ae9dc2d497798",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 619
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+          "end": 635,
+          "entity_type": "IndicatorState",
+          "exact_quote": "白细胞一过性增高",
+          "mention_id": "mention:0c44c70332c9f5f87859",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 627
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0005",
+      "page_index": 5,
+      "source_path": "pages/cleaned/0005.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 11,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性感染",
+          "mention_id": "mention:73a377ab38c2537a8619",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 7
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 14,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "炎症",
+          "mention_id": "mention:26ac89120e6f70b7a95f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 12
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 26,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "广泛的组织损伤或坏死",
+          "mention_id": "mention:bb1b333305c9d93a3767",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 16
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 45,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "严重烧伤",
+          "mention_id": "mention:da4f485e0bf72d907ae7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 41
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 50,
+          "entity_type": "Disease",
+          "exact_quote": "心肌梗死",
+          "mention_id": "mention:60f1356c70fdb49ee375",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 46
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 58,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性大出血",
+          "mention_id": "mention:f44fadfd0f19a98271f0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 53
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 64,
+          "entity_type": "Disease",
+          "exact_quote": "脾破裂",
+          "mention_id": "mention:1871cab774bf81963e39",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 61
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 68,
+          "entity_type": "Disease",
+          "exact_quote": "宫外孕",
+          "mention_id": "mention:c4c1d0b4669d5b1f7166",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 65
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 74,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性溶血",
+          "mention_id": "mention:33c91561b21e61762e00",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 70
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 80,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性中毒",
+          "mention_id": "mention:287e82f837242f331197",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 76
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 87,
+          "entity_type": "Disease",
+          "exact_quote": "安眠药中毒",
+          "mention_id": "mention:d1183c0c813a7a0e4021",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 82
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 93,
+          "entity_type": "Disease",
+          "exact_quote": "有机磷中毒",
+          "mention_id": "mention:4966b0b59187f1d2b24f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 88
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 99,
+          "entity_type": "Disease",
+          "exact_quote": "代谢性中毒",
+          "mention_id": "mention:f96c7241b608ae70700f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 94
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 103,
+          "entity_type": "Disease",
+          "exact_quote": "尿毒症",
+          "mention_id": "mention:64755af92ce1d7302fd3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 100
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 112,
+          "entity_type": "Disease",
+          "exact_quote": "糖尿病酮症酸中毒",
+          "mention_id": "mention:096250e7d44a7f406b9d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 104
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 120,
+          "entity_type": "Disease",
+          "exact_quote": "恶性肿瘤",
+          "mention_id": "mention:129bb4a1d68cc2373cd2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 116
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 138,
+          "entity_type": "Disease",
+          "exact_quote": "粒细胞白血病",
+          "mention_id": "mention:2991054fab311cda664d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 132
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 148,
+          "entity_type": "Disease",
+          "exact_quote": "骨髓增殖性疾病",
+          "mention_id": "mention:7f4b154272b05e63479f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 141
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 159,
+          "entity_type": "Disease",
+          "exact_quote": "真性红细胞增多症",
+          "mention_id": "mention:99ed72bd455240308b82",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 151
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 172,
+          "entity_type": "IndicatorState",
+          "exact_quote": "中性粒细胞减少",
+          "mention_id": "mention:3b85daed0734356fb15c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 165
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 193,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "革兰氏阴性杆菌感染",
+          "mention_id": "mention:533e445662cd1ae9680a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 184
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 198,
+          "entity_type": "Disease",
+          "exact_quote": "伤寒",
+          "mention_id": "mention:6dd1a71c6344b4ff1c79",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 196
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 202,
+          "entity_type": "Disease",
+          "exact_quote": "副伤寒",
+          "mention_id": "mention:eec9b30f295202da9f5d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 199
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 210,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "某些病毒感染",
+          "mention_id": "mention:89075d7688d6fa5bfef5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 204
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 215,
+          "entity_type": "Disease",
+          "exact_quote": "流感",
+          "mention_id": "mention:14c5d98bda1e849c9560",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 213
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 218,
+          "entity_type": "Disease",
+          "exact_quote": "水痘",
+          "mention_id": "mention:6f1721a618b90fdd9d1c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 216
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 226,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "某些原虫感染",
+          "mention_id": "mention:7f0da863b8df1f8e06c9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 220
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 231,
+          "entity_type": "Disease",
+          "exact_quote": "疟疾",
+          "mention_id": "mention:4ee091f49fc35c39b727",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 229
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 235,
+          "entity_type": "Disease",
+          "exact_quote": "黑热病",
+          "mention_id": "mention:af7ada7c7a1cb791fafc",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 232
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 257,
+          "entity_type": "Disease",
+          "exact_quote": "再生障碍性贫血",
+          "mention_id": "mention:16ff62ae6ebe614f511b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 250
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 264,
+          "entity_type": "Disease",
+          "exact_quote": "巨幼细胞贫血",
+          "mention_id": "mention:0381da12659f6a457e40",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 258
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 271,
+          "entity_type": "Disease",
+          "exact_quote": "粒细胞减少症",
+          "mention_id": "mention:a1977c179b4aa8a63e22",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 265
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 292,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "长期接触放射线",
+          "mention_id": "mention:e6ed5f2573d877c09d5b",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 285
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 308,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "氯霉素",
+          "mention_id": "mention:b3bae9536ddc10e15665",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 305
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 312,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "磺胺药",
+          "mention_id": "mention:711dc0734e1f618127ff",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 309
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 317,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "抗肿瘤药",
+          "mention_id": "mention:cbc0701173fb785ea9b3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 313
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 329,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "苯",
+          "mention_id": "mention:30353178c8a61e047cd7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 328
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 331,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "铅",
+          "mention_id": "mention:846903b300f0118a47a3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 330
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 333,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "汞",
+          "mention_id": "mention:5db0f3bdbee2e79d2892",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 332
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 346,
+          "entity_type": "Disease",
+          "exact_quote": "自身免疫性疾病",
+          "mention_id": "mention:bc1c4d971518846e5348",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 339
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 356,
+          "entity_type": "Disease",
+          "exact_quote": "系统性红斑狼疮",
+          "mention_id": "mention:c5b0193c0ced8f5ee8a6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 349
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 382,
+          "entity_type": "Disease",
+          "exact_quote": "脾功能亢进",
+          "mention_id": "mention:b5626a440e1dacc64654",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 377
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 389,
+          "entity_type": "Disease",
+          "exact_quote": "类脂质沉积病",
+          "mention_id": "mention:eeb07414c7eef8278581",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 383
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 404,
+          "entity_type": "LabIndicator",
+          "exact_quote": "中性粒细胞绝对值",
+          "mention_id": "mention:07b25c516f75f90bc381",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 396
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 442,
+          "entity_type": "Disease",
+          "exact_quote": "粒细胞减少症",
+          "mention_id": "mention:01ee198560b5af1a2dae",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 436
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 465,
+          "entity_type": "IndicatorState",
+          "exact_quote": "淋巴细胞增多",
+          "mention_id": "mention:8db90432dfc837ca074d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 459
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 493,
+          "entity_type": "LabIndicator",
+          "exact_quote": "淋巴细胞百分率",
+          "mention_id": "mention:37a0a7f6d17466fb5b4a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 486
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 507,
+          "entity_type": "IndicatorState",
+          "exact_quote": "中性粒细胞相对偏低",
+          "mention_id": "mention:c202bb3f1e1fb5904548",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 498
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 8,
+          "entity_type": "Disease",
+          "exact_quote": "病毒感染性疾病",
+          "mention_id": "mention:bd410ab508164ed94c80",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 15,
+          "entity_type": "Disease",
+          "exact_quote": "恶性肿瘤",
+          "mention_id": "mention:afb54612d697c6b9f609",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 11
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 29,
+          "entity_type": "Disease",
+          "exact_quote": "淋巴细胞性白血病",
+          "mention_id": "mention:d818d46e5df5f65cb13a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 21
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 35,
+          "entity_type": "Disease",
+          "exact_quote": "恶性淋巴瘤",
+          "mention_id": "mention:011092a18d12334c6335",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 30
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 42,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "慢性炎症",
+          "mention_id": "mention:66b291610ec1995ed390",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 38
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 52,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性传染病的恢复期",
+          "mention_id": "mention:6e47292a2334db622d91",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 43
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 65,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "器官移植后的排斥反应",
+          "mention_id": "mention:16faa858b6e37e58215d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 55
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 79,
+          "entity_type": "Disease",
+          "exact_quote": "再生障碍性贫血",
+          "mention_id": "mention:9f62fdc5372678909004",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 72
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 86,
+          "entity_type": "Disease",
+          "exact_quote": "粒细胞缺乏症",
+          "mention_id": "mention:d6d14c20c9b2c65d7a1a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 80
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 94,
+          "entity_type": "LabIndicator",
+          "exact_quote": "淋巴细胞比例",
+          "mention_id": "mention:5634f080b283a3055f95",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 88
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 98,
+          "entity_type": "IndicatorState",
+          "exact_quote": "淋巴细胞比例相对增高",
+          "mention_id": "mention:37a3c97bd66ec5947f85",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 88
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 110,
+          "entity_type": "IndicatorState",
+          "exact_quote": "淋巴细胞减少",
+          "mention_id": "mention:b303a3a34567178d2ecc",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 104
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 123,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "长期接触放射线",
+          "mention_id": "mention:46e63ea5dd4c23b266c7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 116
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 133,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "应用肾上腺皮质激素",
+          "mention_id": "mention:33e44938ae8ac300e890",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 124
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 142,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "抗淋巴细胞球蛋白",
+          "mention_id": "mention:8ce27ffc99e3fd5d3269",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 134
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 157,
+          "entity_type": "Disease",
+          "exact_quote": "先天性免疫缺陷病",
+          "mention_id": "mention:1de579c9fcfc055dd9d5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 149
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 161,
+          "entity_type": "Disease",
+          "exact_quote": "艾滋病",
+          "mention_id": "mention:dc979a799012dac2bdef",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 158
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 174,
+          "entity_type": "IndicatorState",
+          "exact_quote": "单核细胞增多",
+          "mention_id": "mention:1ca4a43e8c3d763bf156",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 168
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 189,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "儿童阶段",
+          "mention_id": "mention:9cefd0c4bbca7ea8658a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 185
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0006",
+      "page_index": 6,
+      "source_path": "pages/cleaned/0006.md"
+    },
+    {
+      "closed_world": true,
+      "mentions": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 20,
+          "entity_type": "Disease",
+          "exact_quote": "疟疾",
+          "mention_id": "mention:15350707ea568d18215d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 18
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 24,
+          "entity_type": "Disease",
+          "exact_quote": "黑热病",
+          "mention_id": "mention:fdef0c0b07dead652e3c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 21
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 35,
+          "entity_type": "Disease",
+          "exact_quote": "亚急性感染性心内膜炎",
+          "mention_id": "mention:4f893e6dafe2f1b7aa47",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 25
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 42,
+          "entity_type": "Disease",
+          "exact_quote": "活动性肺结核",
+          "mention_id": "mention:21726f2634ffe3d8cf36",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 36
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 53,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "急性感染的恢复期",
+          "mention_id": "mention:314c52b9baf5c3bb8e61",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 45
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 68,
+          "entity_type": "LabIndicator",
+          "exact_quote": "单核细胞",
+          "mention_id": "mention:6970f976f0af8a0c12ba",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 64
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 71,
+          "entity_type": "Disease",
+          "exact_quote": "单核细胞白血病",
+          "mention_id": "mention:6996bad3bdbd3b9d7712",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 64
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 78,
+          "entity_type": "Disease",
+          "exact_quote": "粒细胞缺乏症",
+          "mention_id": "mention:e210279cb5345b864f43",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 72
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 81,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "恢复期",
+          "mention_id": "mention:af779a1c2c33efe31ec9",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 78
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 89,
+          "entity_type": "Disease",
+          "exact_quote": "恶性组织细胞病",
+          "mention_id": "mention:f23c673b466adc54f3ad",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 82
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 93,
+          "entity_type": "Disease",
+          "exact_quote": "淋巴瘤",
+          "mention_id": "mention:099c805bd8133e70cde6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 90
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 103,
+          "entity_type": "Disease",
+          "exact_quote": "骨髓增生异常综合征",
+          "mention_id": "mention:29a705993f0f829d82a2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 94
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 117,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜酸性粒细胞",
+          "mention_id": "mention:c503ad77579cb4cb6fda",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 111
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 119,
+          "entity_type": "IndicatorState",
+          "exact_quote": "嗜酸性粒细胞增多",
+          "mention_id": "mention:b212c961b635e3810c06",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 111
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 128,
+          "entity_type": "Disease",
+          "exact_quote": "过敏性疾病",
+          "mention_id": "mention:80c6835f3a8ff8dd4ac1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 123
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 136,
+          "entity_type": "Disease",
+          "exact_quote": "支气管哮喘",
+          "mention_id": "mention:206d90da8fd0b017db6c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 131
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 140,
+          "entity_type": "Disease",
+          "exact_quote": "荨麻疹",
+          "mention_id": "mention:6429c098a7adac4faf31",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 137
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 148,
+          "entity_type": "Disease",
+          "exact_quote": "药物和食物过敏",
+          "mention_id": "mention:1bc9b2a6c1862ad3b912",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 141
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 156,
+          "entity_type": "Disease",
+          "exact_quote": "血管神经性水肿",
+          "mention_id": "mention:44ccba05e4d81cb14a23",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 149
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 160,
+          "entity_type": "Disease",
+          "exact_quote": "血清病",
+          "mention_id": "mention:abbe0ad5a88bd05e451a",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 157
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 170,
+          "entity_type": "Disease",
+          "exact_quote": "寄生虫病",
+          "mention_id": "mention:d4a2011fec7b96780ce5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 166
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 179,
+          "entity_type": "Disease",
+          "exact_quote": "钩虫感染",
+          "mention_id": "mention:ea5eaa5ca2fa53a5e6e5",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 175
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 209,
+          "entity_type": "Disease",
+          "exact_quote": "湿疹",
+          "mention_id": "mention:d55f1a2842c7c5b1234e",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 207
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 215,
+          "entity_type": "Disease",
+          "exact_quote": "剥脱性皮炎",
+          "mention_id": "mention:ed4c98d52475e90db712",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 210
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 219,
+          "entity_type": "Disease",
+          "exact_quote": "天疱疮",
+          "mention_id": "mention:9ac51b003a8504eb34b3",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 216
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 223,
+          "entity_type": "Disease",
+          "exact_quote": "银屑病",
+          "mention_id": "mention:aafa235b3ea657e36f5c",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 220
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 241,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜酸性粒细胞",
+          "mention_id": "mention:4824f182a45553efedb1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 235
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 244,
+          "entity_type": "Disease",
+          "exact_quote": "嗜酸性粒细胞白血病",
+          "mention_id": "mention:a0c0bb4241ab67507f15",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 235
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 253,
+          "entity_type": "Disease",
+          "exact_quote": "慢性粒细胞白血病",
+          "mention_id": "mention:c0bf18459ffa91cfa8c1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 245
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 260,
+          "entity_type": "Disease",
+          "exact_quote": "多发性骨髓瘤",
+          "mention_id": "mention:66e168cbd3ca7408451f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 254
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 273,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜酸性粒细胞",
+          "mention_id": "mention:2fb6978c4c5186765ac7",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 267
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 275,
+          "entity_type": "IndicatorState",
+          "exact_quote": "嗜酸性粒细胞减少",
+          "mention_id": "mention:e9a1d1c6c4da51150177",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 267
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 290,
+          "entity_type": "ClinicalContext",
+          "exact_quote": "长期使用肾上腺皮质激素",
+          "mention_id": "mention:0525a1e9736dd11f55c1",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 279
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 302,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜碱性粒细胞",
+          "mention_id": "mention:d7e7a0efa8a2d92e0799",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 296
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 304,
+          "entity_type": "IndicatorState",
+          "exact_quote": "嗜碱性粒细胞增多",
+          "mention_id": "mention:1e01e4dec5f22caf6064",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 296
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 320,
+          "entity_type": "Disease",
+          "exact_quote": "慢性粒细胞白血病",
+          "mention_id": "mention:15b4fa14608b4c37bb66",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 312
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 327,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜碱性粒细胞",
+          "mention_id": "mention:fcb22059f590f94fdf28",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 321
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 330,
+          "entity_type": "Disease",
+          "exact_quote": "嗜碱性粒细胞白血病",
+          "mention_id": "mention:b705bdb89ee8a79b2a59",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 321
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 340,
+          "entity_type": "Disease",
+          "exact_quote": "骨髓纤维化",
+          "mention_id": "mention:dda5ba79b77d760dbe25",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 335
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+          "end": 351,
+          "entity_type": "Disease",
+          "exact_quote": "过敏性疾病",
+          "mention_id": "mention:a99ad3ccebba6e6e8ef0",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 346
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 9,
+          "entity_type": "LabPanel",
+          "exact_quote": "血细胞三分类",
+          "mention_id": "mention:332039d1b223e6b6b44d",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 3
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 101,
+          "entity_type": "LabIndicator",
+          "exact_quote": "淋巴细胞",
+          "mention_id": "mention:eaae4a780bedffbfd6b4",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 97
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 128,
+          "entity_type": "LabIndicator",
+          "exact_quote": "单核细胞",
+          "mention_id": "mention:e609dbc289f47e3de2d6",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 124
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 135,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜酸性粒细胞",
+          "mention_id": "mention:cf5ec79c1128e55ba14f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 129
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 142,
+          "entity_type": "LabIndicator",
+          "exact_quote": "嗜碱性粒细胞",
+          "mention_id": "mention:e5301e4572dccebaba8f",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 136
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 173,
+          "entity_type": "LabIndicator",
+          "exact_quote": "中性分叶核粒细胞",
+          "mention_id": "mention:d9cf5bfe2d921c668cad",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 165
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 180,
+          "entity_type": "LabIndicator",
+          "exact_quote": "杆状核粒细胞",
+          "mention_id": "mention:5a61238f390ed7cde3d2",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 174
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 192,
+          "entity_type": "LabIndicator",
+          "exact_quote": "血小板计数",
+          "mention_id": "mention:191b6495ed90c8224d07",
+          "review_status": "ASSISTANT_PAGE_REVIEWED",
+          "start": 187
+        }
+      ],
+      "page_id": "clinical-hematology:chapter-01:0007",
+      "page_index": 7,
+      "source_path": "pages/cleaned/0007.md"
+    }
+  ],
+  "reviewed_page_range": [
+    0,
+    7
+  ],
+  "schema_version": "medical-kg-reviewed-entity-mentions/v0.7",
+  "source_manifest": "source-packages/canonical/source/chapter-01/manifest.json",
+  "status": "ASSISTANT_REVIEWED_REQUIRES_USER_VALIDATION",
+  "unreviewed_pages_excluded": true
+}

@@ -1,0 +1,529 @@
+{
+  "added_entities": [
+    {
+      "aliases": [
+        "Mono%"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "canonical_name": "单核细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:a5ff372ecde73aaace07"
+      ]
+    },
+    {
+      "aliases": [
+        "Eos%"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:40193e977e31c68f813e",
+      "canonical_name": "嗜酸性粒细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:40193e977e31c68f813e"
+      ]
+    },
+    {
+      "aliases": [
+        "Baso%"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "canonical_name": "嗜碱性粒细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:b450bf6bd2fbb7471b9c"
+      ]
+    }
+  ],
+  "contract": {
+    "book_table_is_rule_authority": true,
+    "disease_relations_are_not_invented": true,
+    "missing_low_states_are_not_invented": true,
+    "neo4j_import_is_idempotent": true,
+    "user_validation_required": false
+  },
+  "panel": {
+    "canonical_id": "entity:ad23247f5b59be602709",
+    "canonical_name": "白细胞分类计数"
+  },
+  "relationships": [
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:1d80474f2947fc32745e",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:bc3c7133016473048781",
+      "target_name": "中性粒细胞比例"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:3495544ea3baea25dfbf",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:f93846a0676f8878842c",
+      "target_name": "中性粒细胞绝对值"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:e5d6450fe24f53c21ec3",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:bfd3854ac831f87af22a",
+      "target_name": "淋巴细胞比例"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:50140798d099d8ebb730",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:435a0c2cddc436e34006",
+      "target_name": "淋巴细胞绝对值"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:636d050951eadf348295",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "target_name": "单核细胞百分数"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:33a0febb01fba3ada222",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:eff5ab36b9195f98015f",
+      "target_name": "单核细胞绝对值"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:f8c5584b9cbf89ecfc19",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "official-lab:40193e977e31c68f813e",
+      "target_name": "嗜酸性粒细胞百分数"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:81cddee97037d023676b",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:5561fe657b7dacdf1b31",
+      "target_name": "嗜酸性粒细胞绝对值"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:bce4c3e4ec789b606768",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "target_name": "嗜碱性粒细胞百分数"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_METRIC",
+      "relationship_id": "wbc-supplement:relationship:1af33a20124bb20d5a55",
+      "source_canonical_id": "entity:ad23247f5b59be602709",
+      "source_name": "白细胞分类计数",
+      "target_canonical_id": "entity:84efa1e72944b6cdb52e",
+      "target_name": "嗜碱性粒细胞绝对值"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:3dd70925c7ad1276c5e3",
+      "source_canonical_id": "entity:bc3c7133016473048781",
+      "source_name": "中性粒细胞比例",
+      "target_canonical_id": "entity:844c153b27537c99b3f7",
+      "target_name": "中性粒细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:28706777e25b9c65fcc0",
+      "source_canonical_id": "entity:bc3c7133016473048781",
+      "source_name": "中性粒细胞比例",
+      "target_canonical_id": "entity:7539ab27014e03e23faf",
+      "target_name": "中性粒细胞减少"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:b7e68af379d8b45a4562",
+      "source_canonical_id": "entity:f93846a0676f8878842c",
+      "source_name": "中性粒细胞绝对值",
+      "target_canonical_id": "entity:844c153b27537c99b3f7",
+      "target_name": "中性粒细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:ab740658e780ab384683",
+      "source_canonical_id": "entity:f93846a0676f8878842c",
+      "source_name": "中性粒细胞绝对值",
+      "target_canonical_id": "entity:7539ab27014e03e23faf",
+      "target_name": "中性粒细胞减少"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:8fc3a4e61980dc656159",
+      "source_canonical_id": "entity:bfd3854ac831f87af22a",
+      "source_name": "淋巴细胞比例",
+      "target_canonical_id": "entity:bd3a7db1717a2f3d95cd",
+      "target_name": "淋巴细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:e0f82cf6a1be362856e4",
+      "source_canonical_id": "entity:bfd3854ac831f87af22a",
+      "source_name": "淋巴细胞比例",
+      "target_canonical_id": "entity:08777b81e0d1bed6d8c7",
+      "target_name": "淋巴细胞减少"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:ee417067e4fb7563cb26",
+      "source_canonical_id": "entity:435a0c2cddc436e34006",
+      "source_name": "淋巴细胞绝对值",
+      "target_canonical_id": "entity:bd3a7db1717a2f3d95cd",
+      "target_name": "淋巴细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:25982fe92d26a9411ff6",
+      "source_canonical_id": "entity:435a0c2cddc436e34006",
+      "source_name": "淋巴细胞绝对值",
+      "target_canonical_id": "entity:08777b81e0d1bed6d8c7",
+      "target_name": "淋巴细胞减少"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:8396a8e01fbc59487655",
+      "source_canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "source_name": "单核细胞百分数",
+      "target_canonical_id": "entity:7238b16293a11f76501f",
+      "target_name": "单核细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:fc7628b51cc47c0b9df1",
+      "source_canonical_id": "entity:eff5ab36b9195f98015f",
+      "source_name": "单核细胞绝对值",
+      "target_canonical_id": "entity:7238b16293a11f76501f",
+      "target_name": "单核细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:66e04e400eda0f36acc5",
+      "source_canonical_id": "official-lab:40193e977e31c68f813e",
+      "source_name": "嗜酸性粒细胞百分数",
+      "target_canonical_id": "entity:e3e0b5d0df419a174793",
+      "target_name": "嗜酸性粒细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:0b910be0651b63ef0736",
+      "source_canonical_id": "official-lab:40193e977e31c68f813e",
+      "source_name": "嗜酸性粒细胞百分数",
+      "target_canonical_id": "entity:e6b7e5440ee149669e61",
+      "target_name": "嗜酸性粒细胞减少"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:3538cf7607f159fec7d0",
+      "source_canonical_id": "entity:5561fe657b7dacdf1b31",
+      "source_name": "嗜酸性粒细胞绝对值",
+      "target_canonical_id": "entity:e3e0b5d0df419a174793",
+      "target_name": "嗜酸性粒细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:bd6e37f30a80ea1a0c6c",
+      "source_canonical_id": "entity:5561fe657b7dacdf1b31",
+      "source_name": "嗜酸性粒细胞绝对值",
+      "target_canonical_id": "entity:e6b7e5440ee149669e61",
+      "target_name": "嗜酸性粒细胞减少"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:f626c82f237f798a60f6",
+      "source_canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "source_name": "嗜碱性粒细胞百分数",
+      "target_canonical_id": "entity:3cf75faf1394eec72f12",
+      "target_name": "嗜碱性粒细胞增多"
+    },
+    {
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "relation_type": "HAS_STATE",
+      "relationship_id": "wbc-supplement:relationship:4ced53890d0a3ea338d8",
+      "source_canonical_id": "entity:84efa1e72944b6cdb52e",
+      "source_name": "嗜碱性粒细胞绝对值",
+      "target_canonical_id": "entity:3cf75faf1394eec72f12",
+      "target_name": "嗜碱性粒细胞增多"
+    }
+  ],
+  "rules": [
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:844c153b27537c99b3f7",
+      "high_state_name": "中性粒细胞增多",
+      "indicator_canonical_id": "entity:bc3c7133016473048781",
+      "indicator_name": "中性粒细胞比例",
+      "low_result_without_state": null,
+      "low_state_id": "entity:7539ab27014e03e23faf",
+      "low_state_name": "中性粒细胞减少",
+      "lower": "40",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:c1657db82b1677106743",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "%",
+      "upper": "75",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:844c153b27537c99b3f7",
+      "high_state_name": "中性粒细胞增多",
+      "indicator_canonical_id": "entity:f93846a0676f8878842c",
+      "indicator_name": "中性粒细胞绝对值",
+      "low_result_without_state": null,
+      "low_state_id": "entity:7539ab27014e03e23faf",
+      "low_state_name": "中性粒细胞减少",
+      "lower": "1.8",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:add9e9284a35a82de6b8",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "x10^9/L",
+      "upper": "6.3",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:bd3a7db1717a2f3d95cd",
+      "high_state_name": "淋巴细胞增多",
+      "indicator_canonical_id": "entity:bfd3854ac831f87af22a",
+      "indicator_name": "淋巴细胞比例",
+      "low_result_without_state": null,
+      "low_state_id": "entity:08777b81e0d1bed6d8c7",
+      "low_state_name": "淋巴细胞减少",
+      "lower": "20",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:79ceb83e95812f73ac2a",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "%",
+      "upper": "50",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:bd3a7db1717a2f3d95cd",
+      "high_state_name": "淋巴细胞增多",
+      "indicator_canonical_id": "entity:435a0c2cddc436e34006",
+      "indicator_name": "淋巴细胞绝对值",
+      "low_result_without_state": null,
+      "low_state_id": "entity:08777b81e0d1bed6d8c7",
+      "low_state_name": "淋巴细胞减少",
+      "lower": "1.1",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:69891377617f61aebae5",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "x10^9/L",
+      "upper": "3.2",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:7238b16293a11f76501f",
+      "high_state_name": "单核细胞增多",
+      "indicator_canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "indicator_name": "单核细胞百分数",
+      "low_result_without_state": "BELOW_REFERENCE",
+      "low_state_id": null,
+      "low_state_name": null,
+      "lower": "3",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:d7b7cf9baecb4a7030f3",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "%",
+      "upper": "10",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:7238b16293a11f76501f",
+      "high_state_name": "单核细胞增多",
+      "indicator_canonical_id": "entity:eff5ab36b9195f98015f",
+      "indicator_name": "单核细胞绝对值",
+      "low_result_without_state": "BELOW_REFERENCE",
+      "low_state_id": null,
+      "low_state_name": null,
+      "lower": "0.1",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:b4d8f5ea1249949640e3",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "x10^9/L",
+      "upper": "0.6",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:e3e0b5d0df419a174793",
+      "high_state_name": "嗜酸性粒细胞增多",
+      "indicator_canonical_id": "official-lab:40193e977e31c68f813e",
+      "indicator_name": "嗜酸性粒细胞百分数",
+      "low_result_without_state": null,
+      "low_state_id": "entity:e6b7e5440ee149669e61",
+      "low_state_name": "嗜酸性粒细胞减少",
+      "lower": "0.4",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:ee8cd8449f7c85a73773",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "%",
+      "upper": "8.0",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:e3e0b5d0df419a174793",
+      "high_state_name": "嗜酸性粒细胞增多",
+      "indicator_canonical_id": "entity:5561fe657b7dacdf1b31",
+      "indicator_name": "嗜酸性粒细胞绝对值",
+      "low_result_without_state": null,
+      "low_state_id": "entity:e6b7e5440ee149669e61",
+      "low_state_name": "嗜酸性粒细胞减少",
+      "lower": "0.02",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:ccd471b3ef5812b802a8",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "x10^9/L",
+      "upper": "0.52",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:3cf75faf1394eec72f12",
+      "high_state_name": "嗜碱性粒细胞增多",
+      "indicator_canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "indicator_name": "嗜碱性粒细胞百分数",
+      "low_result_without_state": "BELOW_REFERENCE",
+      "low_state_id": null,
+      "low_state_name": null,
+      "lower": "0",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:4b27b0a975f94528a9a9",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "%",
+      "upper": "1.0",
+      "upper_inclusive": true
+    },
+    {
+      "automation_status": "AUTO_VALIDATED_BOOK_TABLE",
+      "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+      "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>",
+      "high_state_id": "entity:3cf75faf1394eec72f12",
+      "high_state_name": "嗜碱性粒细胞增多",
+      "indicator_canonical_id": "entity:84efa1e72944b6cdb52e",
+      "indicator_name": "嗜碱性粒细胞绝对值",
+      "low_result_without_state": "BELOW_REFERENCE",
+      "low_state_id": null,
+      "low_state_name": null,
+      "lower": "0",
+      "lower_inclusive": true,
+      "rule_id": "wbc-supplement:rule:96598e0114df4bdd0cfa",
+      "rule_logic": "RANGE_TABLE",
+      "rule_stage": "PREPROCESS",
+      "rule_type": "REFERENCE_RANGE",
+      "unit": "x10^9/L",
+      "upper": "0.06",
+      "upper_inclusive": true
+    }
+  ],
+  "schema_version": "chapter-01-wbc-differential-supplement/v0.1",
+  "sources": {
+    "alignment_path": "knowledge/chapter-01/terminology/official-lab-alignment-v0.1.json",
+    "alignment_sha256": "ce82415d2ad1e64923552dd0bf4981e6f8bc57e6269b4c8b20ed7aa6264aaaca",
+    "base_entity_count": 817,
+    "entity_path": "evaluation/chapter-01/chapter-01-canonical-entities-v0.8.json",
+    "entity_sha256": "8c6b28652c747b1f9ec6bb7cd2c9d0a766c08c3fe2ee29c54acbb2fa8b5e9a3e",
+    "evidence_chunk_id": "clinical-hematology:chapter-01:0005:0001",
+    "evidence_quote": "<table><tr><td>细胞类型</td><td>百分数/%</td><td>绝对值/\\( \\times 10^{9}/L \\)</td></tr><tr><td>中性粒细胞(N)</td><td>40~75</td><td>1.8~6.3</td></tr><tr><td>淋巴细胞(L)</td><td>20~50</td><td>1.1~3.2</td></tr><tr><td>单核细胞(M)</td><td>3~10</td><td>0.1~0.6</td></tr><tr><td>嗜酸性粒细胞(E)</td><td>0.4~8.0</td><td>0.02~0.52</td></tr><tr><td>嗜碱性粒细胞(B)</td><td>0~1.0</td><td>0~0.06</td></tr></table>"
+  },
+  "statistics": {
+    "added_entity_count": 3,
+    "has_metric_count": 10,
+    "has_state_count": 16,
+    "rule_count": 10
+  },
+  "status": "AUTOMATED_VALIDATION_COMPLETE",
+  "supplement_id": "chapter-01-wbc-differential-v0.1"
+}

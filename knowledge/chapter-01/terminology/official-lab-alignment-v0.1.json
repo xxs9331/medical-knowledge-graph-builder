@@ -1,0 +1,5186 @@
+{
+  "aligned_entities": [
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:2bcccdb9d3e065524842",
+      "canonical_name": "A凝集原",
+      "derivations": [
+        "COORDINATION_EXPANSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:d0ca3c6c4f4666a1f68e"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:fda3de388892c5677fd1",
+      "canonical_name": "A型红细胞",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:8510b439d9a9f27f28bc"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:b7ee94695cda52c14db5",
+      "canonical_name": "B凝集原",
+      "derivations": [
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:87e9ea00dedb5352d9ff",
+        "mention:d0ca3c6c4f4666a1f68e"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:cb9240edc6bad8482cc0",
+      "canonical_name": "B型红细胞",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:dfe6b3e1c81c8e9e9d7a"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f1241a3ab34f2802da4f",
+      "canonical_name": "D-二聚体",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:08b53e33aecee2667ebc",
+        "mention:3bb77ae519e2cee3e678",
+        "mention:3cfcdd052d09940f2879",
+        "mention:82b7436b3d6d0c849196",
+        "mention:e035f5ae3f12b8f8a173",
+        "mention:f9876460b1ca15ae54ea"
+      ],
+      "official_term_ids": [
+        "official-lab:e08aab7c3b5c76b805fb"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:0dd5f7f0462383c00439",
+      "canonical_name": "G6PD",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:9e7d5eaa6259cf4f83aa"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:e1887ae122aa56df4e42",
+      "canonical_name": "pH值",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:db421942e3c6e7010cfa"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f3f5fed89df53659bf29",
+      "canonical_name": "PT",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:20271deee1c1abd60011",
+        "mention:3d17661b0fa196d3caf7",
+        "mention:7aff82b2977d07b3541a"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:565ea94b6287c0a98957",
+      "canonical_name": "RDW-CV",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:5f953277db26b6f16795"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:4c67e735753dc3f4d6ba",
+      "canonical_name": "RDW-SD",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:ad974af3e677cb33daa7"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:e2eb5a2c288d5295fbfe",
+      "canonical_name": "β脂蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:41c2c3c36e5745ad19fd"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:a944a44a7d00fa396262",
+      "canonical_name": "中性分叶核粒细胞",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:9906f4d6bb03587a4e30"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:922ef1f7bb2a588f1252",
+      "canonical_name": "中性粒细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0189a826936ad4e0d647",
+        "mention:0805b90c8ee5c97ace9a",
+        "mention:8cab56af87ea1fab1f68",
+        "mention:c9713a51121232741a28"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Neut%",
+        "中性粒细胞百分数"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:bc3c7133016473048781",
+      "canonical_name": "中性粒细胞比例",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0805b90c8ee5c97ace9a",
+        "mention:e21b9b36af56d1b954aa"
+      ],
+      "official_term_ids": [
+        "official-lab:a1127759a0ac0d263704"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Neut#"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f93846a0676f8878842c",
+      "canonical_name": "中性粒细胞绝对值",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:20069410335e695eca3d"
+      ],
+      "official_term_ids": [
+        "official-lab:3bdcc1ffc5ff6cf71261"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:60ea8c74ca9875e8fd3b",
+      "canonical_name": "中间细胞区",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:e97022b33292c466a417"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:9cb70c200e114d3d373e",
+      "canonical_name": "低密度脂蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:52ac89ec6be9476f8d73"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:2077bbb5f3147edd5b83",
+      "canonical_name": "促红细胞生成素",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:b33408e7d2ac71c43167"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:aa8dfa6371cb5545eac6",
+      "canonical_name": "全血还原黏度",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:7b268e5d44091deca19a"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:0b84cc8883e3acaf6094",
+      "canonical_name": "全血还原黏度(低切)",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:ed3e1fbd829fd04bbcc9"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:0ff44b611f6c43fbf3a3",
+      "canonical_name": "全血还原黏度(高切)",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:4b797dff008bf5cd24ba"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:c1ed08808c91ea11d97b",
+      "canonical_name": "全血黏度",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:1ea9e65dae0d478dccd7",
+        "mention:ac2493f5d497d2bbd994",
+        "mention:d221090c9b5e66e81980",
+        "mention:f733a42b43c8d72fb1eb"
+      ],
+      "official_term_ids": [
+        "official-lab:67a9c78491daf63a8119"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:de8aae9a8cca2b3cb610",
+      "canonical_name": "全血黏度(中切)",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:b3cd39a1df3e0b2e43f2"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:793c656a03b5d281623e",
+      "canonical_name": "全血黏度(低切)",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2e95f1877916f94bd161",
+        "mention:77052c60e44b4c4c93ba"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:7893487df87c0aa05415",
+      "canonical_name": "全血黏度(高切)",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:1e362f049c1dd5cf9e36",
+        "mention:2556989e18562991f01a",
+        "mention:84cbbe335825b6a269cd"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:192d41c17b8d3604adcd",
+      "canonical_name": "凝血因子Ⅱ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:192d41c17b8d3604adcd"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:1707d8c2e70a94d764f1",
+      "canonical_name": "凝血因子Ⅸ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:1707d8c2e70a94d764f1"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:bb32cc7d7733c4ac1214",
+      "canonical_name": "凝血因子Ⅷ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:bb32cc7d7733c4ac1214"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:99ede756d1b2c209e649",
+      "canonical_name": "凝血因子Ⅶ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:99ede756d1b2c209e649"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:e850e19c2da6ab6e9ca1",
+      "canonical_name": "凝血因子Ⅴ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:e850e19c2da6ab6e9ca1"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:47244cc9f743d2c64b31",
+      "canonical_name": "凝血因子Ⅻ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:47244cc9f743d2c64b31"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:1f2eaa0e539d851b27dd",
+      "canonical_name": "凝血因子Ⅺ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:1f2eaa0e539d851b27dd"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:b4a38e76b9e5165d9070",
+      "canonical_name": "凝血因子Ⅹ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:b4a38e76b9e5165d9070"
+      ]
+    },
+    {
+      "aliases": [
+        "PTR"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:951299266e2e38b59a91",
+      "canonical_name": "凝血酶原时间比值",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:a702ae24900601d064b5",
+        "mention:cd63219e4fea6f3af315"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:e0ace5d9434cba28f3d2",
+      "canonical_name": "凝血酶时间",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:e0ace5d9434cba28f3d2"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:05c452a992cf921d3701",
+      "canonical_name": "凝集",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:70f0da6cdc30216df9af"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:48d2efb90bd785b4dee9",
+      "canonical_name": "单核细胞",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:5722352fcd33456c3446",
+        "mention:8a849d2e40199316e52c",
+        "mention:8b03695b0729ce697d56"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Mono%"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "canonical_name": "单核细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:a5ff372ecde73aaace07"
+      ]
+    },
+    {
+      "aliases": [
+        "Mono#"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:7e15697fc3d12a698ba0",
+      "canonical_name": "单核细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:7e15697fc3d12a698ba0"
+      ]
+    },
+    {
+      "aliases": [
+        "维生素 B9 测定"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:b28ae64585a6e7e53435",
+      "canonical_name": "叶酸",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0b073027aa3bcc2a8a44"
+      ],
+      "official_term_ids": [
+        "official-lab:cee492c39287727394d7"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:93e8d1e463ffee1a1eea",
+      "canonical_name": "嗜碱性粒细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:5c7f4263f9afe5ef3ded",
+        "mention:d4f7a2fc2e2677f567d1",
+        "mention:d833fd2a9b2718f4b378"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Baso%"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "canonical_name": "嗜碱性粒细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:b450bf6bd2fbb7471b9c"
+      ]
+    },
+    {
+      "aliases": [
+        "Baso#"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:c1d962dc7bbf6813dd02",
+      "canonical_name": "嗜碱性粒细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:c1d962dc7bbf6813dd02"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:7496abaf91060e32c1b2",
+      "canonical_name": "嗜酸性粒细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:6e343dde9af60771fe99",
+        "mention:a55fa6c7023ca695f6a2",
+        "mention:d0a42833ba7f2cf6545d",
+        "mention:d0b7872f869bee1a1eff"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Eos%"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:40193e977e31c68f813e",
+      "canonical_name": "嗜酸性粒细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:40193e977e31c68f813e"
+      ]
+    },
+    {
+      "aliases": [
+        "Eos#"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:464514754f206c95110d",
+      "canonical_name": "嗜酸性粒细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:464514754f206c95110d"
+      ]
+    },
+    {
+      "aliases": [
+        "INR"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:a6965a1cd24b8f54fd98",
+      "canonical_name": "国际标准化比值",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0b3f1e3b8016f492df82",
+        "mention:0e40ff400b000bf1955d",
+        "mention:93f88c3fde2eadf2d97a",
+        "mention:f2e7dacd1968bfe240e0"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:5b41c57222e919984fe0",
+      "canonical_name": "国际灵敏性指数",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:e991592d6c3739d9ec85"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:d4b72a36063724655672",
+      "canonical_name": "外周血细胞形态学",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:d4b72a36063724655672"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:d00ec1f1db3faa4e8060",
+      "canonical_name": "大细胞区",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:ccd77023ca76644bf6c4"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:1cd32f76142695b7563c",
+      "canonical_name": "小细胞区",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:8eb09e7fe0b300de8ebc"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:1e26edb3ebf7d97db516",
+      "canonical_name": "巨球蛋白",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0f8ab669dc9be0dd8ced",
+        "mention:1a793bc5659d3fe4d9a6"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "MCV",
+        "平均红细胞体积测定",
+        "平均红细胞容积(MCV)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:b9182bed81a987122407",
+      "canonical_name": "平均红细胞容积",
+      "derivations": [
+        "ALIAS_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:172ce78342020c11c391",
+        "mention:271ed25a1910f04c84a7",
+        "mention:433b11fbd078af44e578",
+        "mention:6861c34d8acc5eed5213",
+        "mention:b845dd324a2fb9c1a6c4",
+        "mention:cf16c05f8239ba94abbd",
+        "mention:db8221632c6578ad7f59"
+      ],
+      "official_term_ids": [
+        "official-lab:a068b35ca99a12e8ff19"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "MCH",
+        "平均红细胞血红蛋白含量(MCH)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:5b1ac6bfadd542d62542",
+      "canonical_name": "平均红细胞血红蛋白含量",
+      "derivations": [
+        "ALIAS_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0baea865271e9aea8d6a",
+        "mention:73553fc6af7a41f123f7",
+        "mention:86c5b9ee1e896babb998",
+        "mention:9533cfe4f9ba39409fcd",
+        "mention:9ee592c2e4a760b5dd6c",
+        "mention:e5580d56a6ebd19b37a2"
+      ],
+      "official_term_ids": [
+        "official-lab:142a3fc121d9887f71a5"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "MCHC",
+        "平均红细胞血红蛋白浓度(MCHC)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:2f7773b624dbe8b7fad9",
+      "canonical_name": "平均红细胞血红蛋白浓度",
+      "derivations": [
+        "ALIAS_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:35bfd5f01fc1703f1ece",
+        "mention:73553fc6af7a41f123f7",
+        "mention:9533cfe4f9ba39409fcd"
+      ],
+      "official_term_ids": [
+        "official-lab:69bf3447cdadf7212901"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "MPV",
+        "平均血小板体积(MPV)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:591519d1b6acff5a3ee4",
+      "canonical_name": "平均血小板体积",
+      "derivations": [
+        "ALIAS_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2310b6d3a788706f6039",
+        "mention:3808db1c43e946c75e60",
+        "mention:6e10c026117aecfd9740",
+        "mention:aa3d617710cbf5d1ffe6",
+        "mention:cfdeeda207b771671fb8",
+        "mention:d435e752083f4e8c7224",
+        "mention:e3eaeb9f26c10b826d87"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "TIBC"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:eb2b82821ba0e93f1dd1",
+      "canonical_name": "总铁结合力",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:35468bbf85c1eff4e901",
+        "mention:392188bf56993ec9eb4f",
+        "mention:4bd2efc9deaa7d117986",
+        "mention:4d2aa4816a3a83c62c47",
+        "mention:5e7dd625502d914e8f27",
+        "mention:d082c6a2e570a8064730"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:49b0af97b8d585c43cca",
+      "canonical_name": "抗A",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:7712db61f4397967a0fe"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:6f9935d6e0aa7c304437",
+      "canonical_name": "抗A(B型血清)",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:4a4ea9d441402719ea08"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f7a6d3175e12846137ae",
+      "canonical_name": "抗A+抗B",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:7712db61f4397967a0fe"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:4afa69a928bd4d7744cc",
+      "canonical_name": "抗A凝集素",
+      "derivations": [
+        "COORDINATION_EXPANSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:8c533e6dccaeb45c35c8"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:e202af1c9d4a042821ae",
+      "canonical_name": "抗B",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:7712db61f4397967a0fe"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:945a6c736ff0990a732c",
+      "canonical_name": "抗B(A型血清)",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:a2110b123bc9ee2948aa"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:085a111ae693f5dc3016",
+      "canonical_name": "抗B凝集素",
+      "derivations": [
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:8c533e6dccaeb45c35c8",
+        "mention:b37c2202bc36af9a525c"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:8edf5debe628b50bfebd",
+      "canonical_name": "抗凝血因子Ⅹa 活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:8edf5debe628b50bfebd"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:cffd1cd66f74860c61fc",
+      "canonical_name": "抗凝血酶活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:cffd1cd66f74860c61fc"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:031388c8f9198f8cf92d",
+      "canonical_name": "杆状核粒细胞",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:53d3e64ea7e78e1aeb9c"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:843085b71853f4aec898",
+      "canonical_name": "标准红细胞+受检者血清",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:a5b30a62735d3a680b82"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:b4bf521a961c4e2e72a6",
+      "canonical_name": "标准血清+受检者红细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:83688622859e48484dd0"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:f3a8877d87266eb4e50d",
+      "canonical_name": "活化部分凝血活酶时间",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:f3a8877d87266eb4e50d"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:7e70915e2669a0603582",
+      "canonical_name": "淋巴细胞",
+      "derivations": [
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:5a959694ebec68586c8b",
+        "mention:8037d82e0f462a77e328",
+        "mention:85472bfe15b0a40becfe",
+        "mention:fd4d508ca46b46d14b70"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Lymph%",
+        "淋巴细胞百分数"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:bfd3854ac831f87af22a",
+      "canonical_name": "淋巴细胞比例",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:425c84a23e8ac0b7da6e",
+        "mention:e21b9b36af56d1b954aa"
+      ],
+      "official_term_ids": [
+        "official-lab:40a18b8159cf4e31f098"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "Lymph#"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:cdadc0cb62d17662ff35",
+      "canonical_name": "淋巴细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:cdadc0cb62d17662ff35"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:810c158dc4a2d9aca3b9",
+      "canonical_name": "渗透压",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:1d1e063aa7a07e024887"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:3ce05fe10d100521a854",
+      "canonical_name": "球蛋白",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:014a373286d3d7846f7d",
+        "mention:296323d8a855fd5a7d41",
+        "mention:4c0cb8baa928afd63587",
+        "mention:54dea5293cae49a7f291",
+        "mention:932bbf4843d17bf48d68",
+        "mention:b6e517bd2f529c8c3a45",
+        "mention:f8efe587f99c3fe6dcbc"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:ef6858d1ecafd99fdc98",
+      "canonical_name": "球蛋白含量",
+      "derivations": [
+        "COORDINATION_EXPANSION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0c4bc7c4e2ec9fb12d06"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:2000a4d5692d09b6e083",
+      "canonical_name": "甘油三酯",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2138a72d082d4331a594",
+        "mention:e59ee7762db20792ce55"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:bb6a80993938d3d8b4c6",
+      "canonical_name": "甲状腺球蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:766e01f35e47820f764b"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:46888678df32f42da674",
+      "canonical_name": "白细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0b556b4c837bfbba6719",
+        "mention:544d7f8917f27ad1f172",
+        "mention:94be0f188cc852fd58cb",
+        "mention:b43b15528fcf410d7fff",
+        "mention:d26b746ff4b23db8f52b"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:abf9f4ef09d0dd530967",
+      "canonical_name": "白细胞流变性",
+      "derivations": [
+        "COORDINATION_EXPANSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:a346844bf63c8f56d954"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:54433a50d89869eb1a0f",
+      "canonical_name": "白细胞计数",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:544d7f8917f27ad1f172",
+        "mention:78b98aa96a8c196c7619",
+        "mention:a1fec81196d261698884"
+      ],
+      "official_term_ids": [
+        "official-lab:ff30342fbc890426c5fa"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:c76585b6804c1319c9fd",
+      "canonical_name": "白蛋白",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2b721f3ed6ff6bc1b9a7",
+        "mention:30ab0681b5b42fafbf29",
+        "mention:94fc4d356ce4f36d26c8"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:8077a6175e62226d5ffe",
+      "canonical_name": "粒细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:47067e583f183168b5b4",
+        "mention:7696da121e80e29fcff7"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:0967b64aac3bb308de12",
+      "canonical_name": "红细胞",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0baea865271e9aea8d6a",
+        "mention:13c57c7a170251492696",
+        "mention:13d63af04540dbc93fb8",
+        "mention:1aff387185bb55b8f215",
+        "mention:2ed909470ac24959b3fd",
+        "mention:35bfd5f01fc1703f1ece",
+        "mention:5a2a8a94c1ff10565503",
+        "mention:5da539008df1d7e322b1",
+        "mention:6257b016c333e34b56af",
+        "mention:64b02ce13553fec5c858",
+        "mention:6e5949b259384c5a04b6",
+        "mention:73553fc6af7a41f123f7",
+        "mention:7cecdd268590c92b2c2e",
+        "mention:906336efbe74599df188",
+        "mention:92b5b44e82605dbc9c24",
+        "mention:9ee592c2e4a760b5dd6c",
+        "mention:a3e32524d399ebe90f84",
+        "mention:b3eb161aa8777a36ddb1",
+        "mention:bbff95abffcb09ed1106",
+        "mention:d59a8414122c09c1994a",
+        "mention:d742317ad1eac4bae4d1",
+        "mention:e4743bf5e43507200bfa",
+        "mention:f6fc52acf1fcdc30d586",
+        "mention:fa9c46843f8c351c57e9"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:4f0a8be6d9efe0c1795a",
+      "canonical_name": "红细胞ABO血型",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:291848596510fab384e1",
+        "mention:ea885a1a97a61656bf57"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:dd4d746aeee8fa30f1a1",
+      "canonical_name": "红细胞内液黏度",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:a533150d0bfd287da8e3"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:07edb3e8d81a11e0fa2c",
+      "canonical_name": "红细胞内血红蛋白",
+      "derivations": [
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:03fab92951ba105bb8cb",
+        "mention:3a0efb6e3b1f90913fb4",
+        "mention:af25d8ee1e3a7008d5ed"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:6c6c2c77efa9cc1e4bed",
+      "canonical_name": "红细胞几何形状",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:e73a7c0ff2fb96d00e73"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:5eb9ec4ebe7bbee3ea39",
+      "canonical_name": "红细胞刚性",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:5469ad37e165c1fce962",
+        "mention:555e1d24d435de0c6fc3",
+        "mention:9288ad9d9d778a3e085d"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "IR",
+        "红细胞刚性指数(IR)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:2620ebbc9eb42edf72d1",
+      "canonical_name": "红细胞刚性指数",
+      "derivations": [
+        "DIRECT_MENTION",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:1473dba16553a9be6baf",
+        "mention:53fbf7e4b8ff2abbb4f2"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "红细胞的变形性"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:eac3d5525343ab2e3692",
+      "canonical_name": "红细胞变形性",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:4b0a90df99a18e6e2757",
+        "mention:6714244009d0fc3e7f1f",
+        "mention:b7c9fb417e199d9a220a"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "TK",
+        "红细胞变形指数(TK)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:542631380e6ffc05704d",
+      "canonical_name": "红细胞变形指数",
+      "derivations": [
+        "DIRECT_MENTION",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2cf71860a41bd282a412",
+        "mention:fae22508c46902dd3165"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:4a7f1df10af3b43a40eb",
+      "canonical_name": "红细胞变形能力",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0dfad3f3f7b453477790",
+        "mention:361dd741bf6a7d6571b8",
+        "mention:c0a51d39195d37c5dfe3",
+        "mention:d8a18e07f6fac035cc9c"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "RDW",
+        "红细胞容积分布宽度(RDW)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:451ff20179ed8a279d93",
+      "canonical_name": "红细胞容积分布宽度",
+      "derivations": [
+        "ALIAS_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2b32f75037292fb2af1a",
+        "mention:50b4a84c7e89cc34ab28",
+        "mention:64b02ce13553fec5c858",
+        "mention:6d0d77e53320ac2b5650"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "ESR",
+        "血沉"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:5ffafc20717b8483c42b",
+      "canonical_name": "红细胞沉降率",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:19653811e8f7dc204118",
+        "mention:8c0e046f6f3b3572772b",
+        "mention:930813b16b1e93a277eb",
+        "mention:b936173a67514a394d89",
+        "mention:ecdf53adb1ad37dcecb7"
+      ],
+      "official_term_ids": [
+        "official-lab:35a1c1e64d42114fc273"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:15c08f9d8c404e549aa0",
+      "canonical_name": "红细胞流动性",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:82ac0f8c6d878102c683"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "红细胞的浓度"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:5539906f5ebb757b96a0",
+      "canonical_name": "红细胞浓度",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:585b6ba872bf2b95158a",
+        "mention:d44ddcfd77f63bea7fed",
+        "mention:daee079990ead4283466"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "FI",
+        "红细胞滤过指数(FI)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:711aa231245d960588e5",
+      "canonical_name": "红细胞滤过指数",
+      "derivations": [
+        "DIRECT_MENTION",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:6afc84b5330eedab855a",
+        "mention:d00bec76e19fbdeb1045"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:dd4ab1b888fe71481ff0",
+      "canonical_name": "红细胞电泳时间",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:29c4c95686b263445afc",
+        "mention:fa9c46843f8c351c57e9"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:51e01b2af483b6bd365b",
+      "canonical_name": "红细胞聚集性",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0b804fedda99d46b0565",
+        "mention:4b75b997b9ff7c02633f",
+        "mention:4c7a4d35e38febfb1ce5",
+        "mention:5fac7d368422ec46c0d5",
+        "mention:6de889e8209bf0e0601b",
+        "mention:8f1f8e5a467b3bf721a7",
+        "mention:d7be8dad908ef1d428e7"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:fe6944c3e0ae4a987b22",
+      "canonical_name": "红细胞聚集指数",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:1a393787f30dc6812c88"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:db8484441539858f55fb",
+      "canonical_name": "红细胞膜弹性",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:eeea1cab1e4d37f03271"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:b8fe826bdf2174cdf71c",
+      "canonical_name": "红细胞膜表面积",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2ce87f08d9aa5d0b369f"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:c6615333a4231d1c5189",
+      "canonical_name": "红细胞膜表面积/血细胞容积比值",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:2ce87f08d9aa5d0b369f"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:96ef937295bc6d2ead8a",
+      "canonical_name": "红细胞表面电荷密度",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:b892abb967488bf60d29"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:518d428b3a621cc07642",
+      "canonical_name": "红细胞计数",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0646622685351563d00e",
+        "mention:b1b837bb4099d6c7553b",
+        "mention:f22169cfb3c470d047c1"
+      ],
+      "official_term_ids": [
+        "official-lab:f6737c27767de92bdecd"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:be7aad7ef00df7fcb16c",
+      "canonical_name": "纤维蛋白（原）降解产物",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:be7aad7ef00df7fcb16c"
+      ]
+    },
+    {
+      "aliases": [
+        "血浆纤维蛋白原",
+        "血浆纤维蛋白原含量"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f4808c489b3872d3dc20",
+      "canonical_name": "纤维蛋白原",
+      "derivations": [
+        "BOOK_VERIFIED_INTERNAL_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:05d011a6a97dfca95861",
+        "mention:0c4bc7c4e2ec9fb12d06",
+        "mention:406ed6b82bfdf813b7e0",
+        "mention:cabb6b9ce19f563d0551",
+        "mention:ddec60dfdf77fafd9ffd"
+      ],
+      "official_term_ids": [
+        "official-lab:70020313ab0dc2707716"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:ab7b854c9c3040595450",
+      "canonical_name": "细胞浓度",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:dcd80a9448e44e059927",
+        "mention:eab3cb35c3d22ac7c99a"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:296686ab99e4356077f5",
+      "canonical_name": "维生素B12",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:c00aea6d9380559f6f63"
+      ],
+      "official_term_ids": [
+        "official-lab:f4cacbc8d59584c502cb"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:f83ad3a235fab0a5fe0a",
+      "canonical_name": "网织红细胞计数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:f83ad3a235fab0a5fe0a"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:82f016e8a625d6ee4a53",
+      "canonical_name": "聚集性",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:bf71dd38465029d6e106"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:bc6e0342103e2167e2bb",
+      "canonical_name": "胆固醇",
+      "derivations": [
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:20cc338311de8c0a0d97",
+        "mention:2e38900790408c2b8c20",
+        "mention:90f3ca941c5d8fb76cd7",
+        "mention:c190fd4fc572c9d8b9ab",
+        "mention:dce4803347cddae938af"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:580e2214690863ac0452",
+      "canonical_name": "脂蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:59b05f61733aaf813369"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:94c9bfba393b8b4d4f11",
+      "canonical_name": "蛋白 C 活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:94c9bfba393b8b4d4f11"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:6e7850407a10a755b51d",
+      "canonical_name": "蛋白 S 活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:6e7850407a10a755b51d"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:368bf0a1725e9ba41810",
+      "canonical_name": "血压",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:b7f08f7ae23f73a417a8",
+        "mention:ddb59c7755275a67b0dd"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "PLT",
+        "血小板(PLT)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:8fe8667bca0a42bb731b",
+      "canonical_name": "血小板",
+      "derivations": [
+        "ALIAS_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0205dd08423de1b0ed1e",
+        "mention:0fd00667d251b86d70fc",
+        "mention:6d6f1cacbeb2a1ae2580",
+        "mention:ab4b54e3a23f80ea8fab",
+        "mention:c0efecf9fcf6085998ee",
+        "mention:c20c76d8ffdf31fd8dc3",
+        "mention:ea5623dbe0bf2e02be62",
+        "mention:f06de90d70b6cc40f9e4",
+        "mention:f5f0d679fbfc98cc7b43"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "PDW"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:2e59ba402273c030d876",
+      "canonical_name": "血小板体积分布宽度",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:92d9fe5b23868d550050",
+        "mention:9b8643e1e7ca7ac7ba37",
+        "mention:b78592f70120944225f1",
+        "mention:c0f318c926de319e4ce2"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "PCT"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:187349ca244a114354f0",
+      "canonical_name": "血小板压积",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:38ea017d479711a2fb0e",
+        "mention:abfaa0e06580019f2b35",
+        "mention:ca388e14fb3b58155cbb",
+        "mention:f7ff4c3ceb0488416a9b"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "血小板计数"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:511663bb66e17f9ef6ba",
+      "canonical_name": "血小板数量",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:6e9307fc6703b90f2ae9",
+        "mention:a234d0ba0188905088ad"
+      ],
+      "official_term_ids": [
+        "official-lab:f3be3d5242eb7642fcb0"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:5e88861cecd8687b760f",
+      "canonical_name": "血小板流变性",
+      "derivations": [
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:45118e356760e7653790",
+        "mention:a346844bf63c8f56d954"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:7e492ca92507a5476d97",
+      "canonical_name": "血小板聚集性",
+      "derivations": [
+        "COORDINATION_EXPANSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:5fac7d368422ec46c0d5"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "凝血酶原时间检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:789d22495926559ec877",
+      "canonical_name": "血浆凝血酶原时间",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:654cb754c1ca87357815"
+      ],
+      "official_term_ids": [
+        "official-lab:579d0e651fc5473fadb1"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:193d261f5617527df025",
+      "canonical_name": "血浆白蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:be07d6e9d13570c3c6c0"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "PV",
+        "血浆的黏度",
+        "血浆黏度(PV)"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:da1906463404620a31a0",
+      "canonical_name": "血浆黏度",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE",
+        "PARENTHETICAL_ALIAS"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:18c8129081a4c6aa4e7b",
+        "mention:20a18ae2294833362862",
+        "mention:3b8d417b9697b342844d",
+        "mention:3e0068014b58faff69f7",
+        "mention:60fe6147f95dd5c609f0",
+        "mention:748767ad22d5deeda9d6",
+        "mention:bfa25b122e149b3dbfbf",
+        "mention:cd8b1bc1df62b3b5ac73",
+        "mention:e04a9e5fff35e39735a8"
+      ],
+      "official_term_ids": [
+        "official-lab:c093232ba39cc093c743"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:d99b6c4b00ca4a5bdb30",
+      "canonical_name": "血液含氧量",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:f75b9c20f665a5719c95"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:127c77c448632d2734b7",
+      "canonical_name": "血液寄生虫形态学",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:127c77c448632d2734b7"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:3ca870dca85651d1993b",
+      "canonical_name": "血液流动性",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:8e1e26bf933538147ce8"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:db8e61448313596795b6",
+      "canonical_name": "血液的流动",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:17a2c4c13b8d80679a12"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "SI"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:7fd8fb6efa335fd695c3",
+      "canonical_name": "血清铁",
+      "derivations": [
+        "CANONICAL_SYNONYM_MERGE",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:09089b877d93caf0a16c",
+        "mention:3c0aaa90bcc638cb0f37",
+        "mention:5f3dc174e134461d6968",
+        "mention:916a287a5fb75147bb50",
+        "mention:cbd6c9d947f565c88bc4",
+        "mention:cdd820633184aab14701"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:0f16ec99713cf5b5f6e1",
+      "canonical_name": "血管性血友病因子抗原",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:0f16ec99713cf5b5f6e1"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f9566d21c943dc6a92cf",
+      "canonical_name": "血糖",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:fc841317d00a505534fa",
+        "mention:fcd3243516d1a969ad81"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "血红蛋白(女性)",
+        "血红蛋白(男性)",
+        "血红蛋白浓度"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:e41c595f712d98e18e4d",
+      "canonical_name": "血红蛋白",
+      "derivations": [
+        "BOOK_VERIFIED_INTERNAL_MERGE",
+        "CANONICAL_SYNONYM_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "COORDINATION_EXPANSION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:03fab92951ba105bb8cb",
+        "mention:0baea865271e9aea8d6a",
+        "mention:1aff387185bb55b8f215",
+        "mention:35bfd5f01fc1703f1ece",
+        "mention:3a0efb6e3b1f90913fb4",
+        "mention:477306ec553608579507",
+        "mention:56f8463b327ef089206b",
+        "mention:59c54a1fa1b3cbc69be1",
+        "mention:611f41ebec57e63f6cfd",
+        "mention:6f6ac251a3411a4932ef",
+        "mention:73553fc6af7a41f123f7",
+        "mention:768141969ec85522bbe4",
+        "mention:7a05810993b823d2bf61",
+        "mention:7e56b22e59b8f35436d4",
+        "mention:834e6a9aeb59a3db69ea",
+        "mention:92b5b44e82605dbc9c24",
+        "mention:9ee592c2e4a760b5dd6c",
+        "mention:af25d8ee1e3a7008d5ed",
+        "mention:b787c9d3966e60d63e44",
+        "mention:bbff95abffcb09ed1106",
+        "mention:dd7e0b14ee46c93f188f",
+        "mention:e2c0ba392d7a6821ebbb",
+        "mention:e5c7848d6cc39ad166f7",
+        "mention:e9441d3a2df8fdd43cfc",
+        "mention:f3980dee1711c008e3d9",
+        "mention:fececae1e0a2c4cad0f3"
+      ],
+      "official_term_ids": [
+        "official-lab:0d1c6b9b5cc606cd3161"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:64b1aa1ba410dfd02a47",
+      "canonical_name": "血红蛋白 A2",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:64b1aa1ba410dfd02a47"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:bb8b209795de5e3a738c",
+      "canonical_name": "血红蛋白 F",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:bb8b209795de5e3a738c"
+      ]
+    },
+    {
+      "aliases": [
+        "红细胞压积",
+        "血细胞容积"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:b6f1b5f469fb194df40d",
+      "canonical_name": "血细胞比容",
+      "derivations": [
+        "BOOK_VERIFIED_INTERNAL_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:143a97e3e123ec0ca8e8",
+        "mention:21b3bd86d93146b547a1",
+        "mention:2ce87f08d9aa5d0b369f",
+        "mention:59fde4dcdb1d1ebbe327",
+        "mention:7fb9e88b204f2d271754",
+        "mention:eee8851a1b9cb8b9762b",
+        "mention:f0fa32849d8e410adeac"
+      ],
+      "official_term_ids": [
+        "official-lab:5fa3fe0444eadc4185f0"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f8847a1130d86e2ba1d0",
+      "canonical_name": "血细胞浓度",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:0388853fda059455230b",
+        "mention:af41ef4260b2a58eb58a"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:e9023f37d8a35b41b4bb",
+      "canonical_name": "血脂",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:6faaac55412802f2a314",
+        "mention:be8b5691ad8094162b7e"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:8620df7bbc89613eb85e",
+      "canonical_name": "血黏度",
+      "derivations": [
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:09402cd378cb703bb542",
+        "mention:285353302493dabec18a",
+        "mention:45f9e66ffb41ce678712",
+        "mention:cd12677fbc3098516fd1",
+        "mention:ebd31f97f4330d5779f7"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:6437b39496f56492da2a",
+      "canonical_name": "血黏度参数",
+      "derivations": [
+        "CONTEXT_NORMALIZATION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:09402cd378cb703bb542"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:d1a428231bded8bcc13a",
+      "canonical_name": "被鉴定者血型",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:d1ef98b3528ddc75aa71"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "血清转铁蛋白"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:67b7b41fba755103348f",
+      "canonical_name": "转铁蛋白",
+      "derivations": [
+        "BOOK_VERIFIED_INTERNAL_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:08e34f3ab8ba82462e4e",
+        "mention:1a5aabb05ef784522a0c",
+        "mention:1c3a305c26a2514a301e",
+        "mention:36c104b4adc85c78cafd",
+        "mention:77f7084f7287f4f18870",
+        "mention:879b86210e58fc63333c",
+        "mention:8914eef2d5533509c38f",
+        "mention:b760cfe10abd1536bffb",
+        "mention:bb25bc36aefd35fddc69",
+        "mention:d42d0fb322afae457441",
+        "mention:d9ca54bfb75b5ae80aee",
+        "mention:dd651947ad988fd87b42",
+        "mention:de0303145711d4caec83",
+        "mention:e15847cde54153d031c2",
+        "mention:e983933d319ed209305f"
+      ],
+      "official_term_ids": [
+        "official-lab:6390e1b24e5c474d6962"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [
+        "SF",
+        "血清铁蛋白"
+      ],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:ab0f71746689ab6c975e",
+      "canonical_name": "铁蛋白",
+      "derivations": [
+        "BOOK_VERIFIED_INTERNAL_MERGE",
+        "CANONICAL_SYNONYM_MERGE",
+        "CONTEXT_NORMALIZATION",
+        "DIRECT_MENTION",
+        "NESTED_INDICATOR_BASE"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:085972e2d427915189bf",
+        "mention:0ffc984abdfc0716271a",
+        "mention:195b4a5b5b668f1c2feb",
+        "mention:4b4bda0b4edc1595585e",
+        "mention:554d9a11017e5da0f028",
+        "mention:66ff13c261634d32be9b",
+        "mention:888d46049412e7a5b3a2",
+        "mention:b81f47b4eb36f858e98b",
+        "mention:bec43ce70af2520bc3bc",
+        "mention:f5c8d9881e30dafe4634",
+        "mention:f76f954f89af5db46d45"
+      ],
+      "official_term_ids": [
+        "official-lab:5ef28ffe532b41d71a45"
+      ],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:f17d217f726b24f93035",
+      "canonical_name": "铜蓝蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:24e96a6ba111864932e4"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:060afe3182aac9f9c5b2",
+      "canonical_name": "骨髓细胞形态学",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:060afe3182aac9f9c5b2"
+      ]
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:0594168e02e1a5106503",
+      "canonical_name": "高密度脂蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:b4a9848f9bd3ea0fcc17"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:d361cbf380676b12a78f",
+      "canonical_name": "黏度",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:d96e7090ce4cf7abaa2f"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    },
+    {
+      "aliases": [],
+      "automation_status": "AUTO_VALIDATED_EXISTING",
+      "canonical_id": "entity:c2776e2284593535da18",
+      "canonical_name": "黏蛋白",
+      "derivations": [
+        "DIRECT_MENTION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [
+        "mention:c6bed3c8db510da1c3b7"
+      ],
+      "official_term_ids": [],
+      "review_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    }
+  ],
+  "alignments": [
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 8,
+          "exact_quote": "白细胞计数",
+          "mention_id": "mention:544d7f8917f27ad1f172",
+          "start": 3
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+          "end": 235,
+          "exact_quote": "白细胞计数增多",
+          "mention_id": "mention:78b98aa96a8c196c7619",
+          "start": 228
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+          "end": 12,
+          "exact_quote": "白细胞计数减少",
+          "mention_id": "mention:a1fec81196d261698884",
+          "start": 5
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "白细胞计数",
+      "official_term_id": "official-lab:ff30342fbc890426c5fa",
+      "target_canonical_id": "entity:54433a50d89869eb1a0f",
+      "target_name": "白细胞计数"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 409,
+          "exact_quote": "红细胞绝对值增多",
+          "mention_id": "mention:0646622685351563d00e",
+          "start": 401
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 18,
+          "exact_quote": "红细胞计数",
+          "mention_id": "mention:b1b837bb4099d6c7553b",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 505,
+          "exact_quote": "红细胞计数",
+          "mention_id": "mention:f22169cfb3c470d047c1",
+          "start": 500
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "红细胞计数",
+      "official_term_id": "official-lab:f6737c27767de92bdecd",
+      "target_canonical_id": "entity:518d428b3a621cc07642",
+      "target_name": "红细胞计数"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0007:0001",
+          "end": 192,
+          "exact_quote": "血小板计数",
+          "mention_id": "mention:6e9307fc6703b90f2ae9",
+          "start": 187
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+          "end": 82,
+          "exact_quote": "血小板数量",
+          "mention_id": "mention:a234d0ba0188905088ad",
+          "start": 77
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "血小板计数",
+      "official_term_id": "official-lab:f3be3d5242eb7642fcb0",
+      "target_canonical_id": "entity:511663bb66e17f9ef6ba",
+      "target_name": "血小板数量"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 646,
+          "exact_quote": "红细胞膜的结构和红细胞内血红蛋白结构异常",
+          "mention_id": "mention:03fab92951ba105bb8cb",
+          "start": 626
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 162,
+          "exact_quote": "平均红细胞血红蛋白含量(MCH)",
+          "mention_id": "mention:0baea865271e9aea8d6a",
+          "start": 146
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 357,
+          "exact_quote": "红细胞和血红蛋白减少",
+          "mention_id": "mention:1aff387185bb55b8f215",
+          "start": 347
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 75,
+          "exact_quote": "平均红细胞血红蛋白浓度",
+          "mention_id": "mention:35bfd5f01fc1703f1ece",
+          "start": 64
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0000",
+          "end": 17,
+          "exact_quote": "红细胞内血红蛋白",
+          "mention_id": "mention:3a0efb6e3b1f90913fb4",
+          "start": 9
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 149,
+          "exact_quote": "血红蛋白(男性)",
+          "mention_id": "mention:477306ec553608579507",
+          "start": 141
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 314,
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:56f8463b327ef089206b",
+          "start": 310
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0009:0001",
+          "end": 320,
+          "exact_quote": "血红蛋白合成减少",
+          "mention_id": "mention:59c54a1fa1b3cbc69be1",
+          "start": 312
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0000",
+          "end": 19,
+          "exact_quote": "血红蛋白异常",
+          "mention_id": "mention:611f41ebec57e63f6cfd",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0000",
+          "end": 17,
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:6f6ac251a3411a4932ef",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 18,
+          "exact_quote": "平均红细胞血红蛋白浓度(MCHC)",
+          "mention_id": "mention:73553fc6af7a41f123f7",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 245,
+          "exact_quote": "血红蛋白(女性)",
+          "mention_id": "mention:768141969ec85522bbe4",
+          "start": 237
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+          "end": 122,
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:7a05810993b823d2bf61",
+          "start": 118
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+          "end": 106,
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:7e56b22e59b8f35436d4",
+          "start": 102
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 12,
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:834e6a9aeb59a3db69ea",
+          "start": 8
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+          "end": 458,
+          "exact_quote": "红细胞和血红蛋白减少",
+          "mention_id": "mention:92b5b44e82605dbc9c24",
+          "start": 448
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 63,
+          "exact_quote": "平均红细胞血红蛋白含量",
+          "mention_id": "mention:9ee592c2e4a760b5dd6c",
+          "start": 52
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0000",
+          "end": 19,
+          "exact_quote": "红细胞内血红蛋白异常",
+          "mention_id": "mention:af25d8ee1e3a7008d5ed",
+          "start": 9
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 357,
+          "exact_quote": "血红蛋白减少",
+          "mention_id": "mention:b787c9d3966e60d63e44",
+          "start": 351
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 14,
+          "exact_quote": "红细胞和血红蛋白增多",
+          "mention_id": "mention:bbff95abffcb09ed1106",
+          "start": 4
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 646,
+          "exact_quote": "血红蛋白结构异常",
+          "mention_id": "mention:e2c0ba392d7a6821ebbb",
+          "start": 638
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0013:0000",
+          "end": 42,
+          "exact_quote": "血红蛋白合成正常",
+          "mention_id": "mention:e5c7848d6cc39ad166f7",
+          "start": 34
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "end": 5,
+          "exact_quote": "血红蛋白",
+          "mention_id": "mention:e9441d3a2df8fdd43cfc",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+          "end": 14,
+          "exact_quote": "血红蛋白增多",
+          "mention_id": "mention:f3980dee1711c008e3d9",
+          "start": 8
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+          "end": 129,
+          "exact_quote": "血红蛋白 <90g/L",
+          "mention_id": "mention:fececae1e0a2c4cad0f3",
+          "start": 118
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "血红蛋白测定",
+      "official_term_id": "official-lab:0d1c6b9b5cc606cd3161",
+      "target_canonical_id": "entity:e41c595f712d98e18e4d",
+      "target_name": "血红蛋白"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 24,
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:143a97e3e123ec0ca8e8",
+          "start": 19
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 463,
+          "exact_quote": "血细胞比容减少",
+          "mention_id": "mention:21b3bd86d93146b547a1",
+          "start": 456
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 362,
+          "exact_quote": "血细胞比容增高",
+          "mention_id": "mention:59fde4dcdb1d1ebbe327",
+          "start": 355
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+          "end": 161,
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:7fb9e88b204f2d271754",
+          "start": 156
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "end": 440,
+          "exact_quote": "血细胞比容",
+          "mention_id": "mention:eee8851a1b9cb8b9762b",
+          "start": 435
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "血细胞比容测定",
+      "official_term_id": "official-lab:5fa3fe0444eadc4185f0",
+      "target_canonical_id": "entity:b6f1b5f469fb194df40d",
+      "target_name": "血细胞比容"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 135,
+          "exact_quote": "MCV",
+          "mention_id": "mention:172ce78342020c11c391",
+          "start": 132
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 157,
+          "exact_quote": "MCV 正常",
+          "mention_id": "mention:271ed25a1910f04c84a7",
+          "start": 151
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 51,
+          "exact_quote": "平均红细胞容积",
+          "mention_id": "mention:433b11fbd078af44e578",
+          "start": 44
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 136,
+          "exact_quote": "平均红细胞容积(MCV)",
+          "mention_id": "mention:6861c34d8acc5eed5213",
+          "start": 124
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 20,
+          "exact_quote": "MCV 减小",
+          "mention_id": "mention:b845dd324a2fb9c1a6c4",
+          "start": 14
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 45,
+          "exact_quote": "MCV",
+          "mention_id": "mention:cf16c05f8239ba94abbd",
+          "start": 42
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "end": 17,
+          "exact_quote": "MCV",
+          "mention_id": "mention:db8221632c6578ad7f59",
+          "start": 14
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "BOOK_VERIFIED_EQUIVALENCE",
+      "official_name": "平均红细胞体积测定",
+      "official_term_id": "official-lab:a068b35ca99a12e8ff19",
+      "target_canonical_id": "entity:b9182bed81a987122407",
+      "target_name": "平均红细胞容积"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 162,
+          "exact_quote": "平均红细胞血红蛋白含量(MCH)",
+          "mention_id": "mention:0baea865271e9aea8d6a",
+          "start": 146
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 18,
+          "exact_quote": "平均红细胞血红蛋白浓度(MCHC)",
+          "mention_id": "mention:73553fc6af7a41f123f7",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 161,
+          "exact_quote": "MCH",
+          "mention_id": "mention:86c5b9ee1e896babb998",
+          "start": 158
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 17,
+          "exact_quote": "MCHC",
+          "mention_id": "mention:9533cfe4f9ba39409fcd",
+          "start": 13
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 63,
+          "exact_quote": "平均红细胞血红蛋白含量",
+          "mention_id": "mention:9ee592c2e4a760b5dd6c",
+          "start": 52
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 16,
+          "exact_quote": "MCH",
+          "mention_id": "mention:e5580d56a6ebd19b37a2",
+          "start": 13
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "平均红细胞血红蛋白含量测定",
+      "official_term_id": "official-lab:142a3fc121d9887f71a5",
+      "target_canonical_id": "entity:5b1ac6bfadd542d62542",
+      "target_name": "平均红细胞血红蛋白含量"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0002:0001",
+          "end": 75,
+          "exact_quote": "平均红细胞血红蛋白浓度",
+          "mention_id": "mention:35bfd5f01fc1703f1ece",
+          "start": 64
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 18,
+          "exact_quote": "平均红细胞血红蛋白浓度(MCHC)",
+          "mention_id": "mention:73553fc6af7a41f123f7",
+          "start": 1
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+          "end": 17,
+          "exact_quote": "MCHC",
+          "mention_id": "mention:9533cfe4f9ba39409fcd",
+          "start": 13
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "平均红细胞血红蛋白浓度测定",
+      "official_term_id": "official-lab:69bf3447cdadf7212901",
+      "target_canonical_id": "entity:2f7773b624dbe8b7fad9",
+      "target_name": "平均红细胞血红蛋白浓度"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "网织红细胞计数",
+      "official_term_id": "official-lab:f83ad3a235fab0a5fe0a",
+      "target_canonical_id": "official-lab:f83ad3a235fab0a5fe0a",
+      "target_name": "网织红细胞计数"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "外周血细胞形态学检查",
+      "official_term_id": "official-lab:d4b72a36063724655672",
+      "target_canonical_id": "official-lab:d4b72a36063724655672",
+      "target_name": "外周血细胞形态学"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "骨髓细胞形态学检查",
+      "official_term_id": "official-lab:060afe3182aac9f9c5b2",
+      "target_canonical_id": "official-lab:060afe3182aac9f9c5b2",
+      "target_name": "骨髓细胞形态学"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "血液寄生虫形态学检查",
+      "official_term_id": "official-lab:127c77c448632d2734b7",
+      "target_canonical_id": "official-lab:127c77c448632d2734b7",
+      "target_name": "血液寄生虫形态学"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+          "end": 64,
+          "exact_quote": "血沉加快",
+          "mention_id": "mention:19653811e8f7dc204118",
+          "start": 60
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+          "end": 62,
+          "exact_quote": "血沉",
+          "mention_id": "mention:8c0e046f6f3b3572772b",
+          "start": 60
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "end": 11,
+          "exact_quote": "红细胞沉降率",
+          "mention_id": "mention:930813b16b1e93a277eb",
+          "start": 5
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "end": 22,
+          "exact_quote": "ESR",
+          "mention_id": "mention:b936173a67514a394d89",
+          "start": 19
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "end": 310,
+          "exact_quote": "血沉加快",
+          "mention_id": "mention:ecdf53adb1ad37dcecb7",
+          "start": 306
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "红细胞沉降率测定",
+      "official_term_id": "official-lab:35a1c1e64d42114fc273",
+      "target_canonical_id": "entity:5ffafc20717b8483c42b",
+      "target_name": "红细胞沉降率"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "end": 463,
+          "exact_quote": "全血黏度",
+          "mention_id": "mention:1ea9e65dae0d478dccd7",
+          "start": 459
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "end": 399,
+          "exact_quote": "全血黏度升高",
+          "mention_id": "mention:ac2493f5d497d2bbd994",
+          "start": 393
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+          "end": 294,
+          "exact_quote": "全血黏度增高",
+          "mention_id": "mention:d221090c9b5e66e81980",
+          "start": 288
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+          "end": 368,
+          "exact_quote": "全血黏度",
+          "mention_id": "mention:f733a42b43c8d72fb1eb",
+          "start": 364
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "全血黏度测定",
+      "official_term_id": "official-lab:67a9c78491daf63a8119",
+      "target_canonical_id": "entity:c1ed08808c91ea11d97b",
+      "target_name": "全血黏度"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+          "end": 457,
+          "exact_quote": "血浆黏度",
+          "mention_id": "mention:18c8129081a4c6aa4e7b",
+          "start": 453
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "end": 13,
+          "exact_quote": "血浆黏度",
+          "mention_id": "mention:20a18ae2294833362862",
+          "start": 9
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "end": 298,
+          "exact_quote": "血浆黏度升高",
+          "mention_id": "mention:3b8d417b9697b342844d",
+          "start": 292
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "end": 8,
+          "exact_quote": "血浆黏度(PV)",
+          "mention_id": "mention:3e0068014b58faff69f7",
+          "start": 0
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+          "end": 151,
+          "exact_quote": "血浆黏度",
+          "mention_id": "mention:60fe6147f95dd5c609f0",
+          "start": 147
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+          "end": 153,
+          "exact_quote": "血浆黏度增高",
+          "mention_id": "mention:748767ad22d5deeda9d6",
+          "start": 147
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "end": 15,
+          "exact_quote": "血浆黏度增加",
+          "mention_id": "mention:bfa25b122e149b3dbfbf",
+          "start": 9
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "end": 186,
+          "exact_quote": "血浆的黏度增加",
+          "mention_id": "mention:cd8b1bc1df62b3b5ac73",
+          "start": 179
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0015:0000",
+          "end": 184,
+          "exact_quote": "血浆的黏度",
+          "mention_id": "mention:e04a9e5fff35e39735a8",
+          "start": 179
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "血浆黏度测定",
+      "official_term_id": "official-lab:c093232ba39cc093c743",
+      "target_canonical_id": "entity:da1906463404620a31a0",
+      "target_name": "血浆黏度"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "血红蛋白 A2 测定",
+      "official_term_id": "official-lab:64b1aa1ba410dfd02a47",
+      "target_canonical_id": "official-lab:64b1aa1ba410dfd02a47",
+      "target_name": "血红蛋白 A2"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "血红蛋白 F 测定",
+      "official_term_id": "official-lab:bb8b209795de5e3a738c",
+      "target_canonical_id": "official-lab:bb8b209795de5e3a738c",
+      "target_name": "血红蛋白 F"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+          "end": 610,
+          "exact_quote": "血浆凝血酶原时间",
+          "mention_id": "mention:654cb754c1ca87357815",
+          "start": 602
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "BOOK_VERIFIED_EQUIVALENCE",
+      "official_name": "凝血酶原时间检测",
+      "official_term_id": "official-lab:579d0e651fc5473fadb1",
+      "target_canonical_id": "entity:789d22495926559ec877",
+      "target_name": "血浆凝血酶原时间"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "活化部分凝血活酶时间检测",
+      "official_term_id": "official-lab:f3a8877d87266eb4e50d",
+      "target_canonical_id": "official-lab:f3a8877d87266eb4e50d",
+      "target_name": "活化部分凝血活酶时间"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血酶时间检测",
+      "official_term_id": "official-lab:e0ace5d9434cba28f3d2",
+      "target_canonical_id": "official-lab:e0ace5d9434cba28f3d2",
+      "target_name": "凝血酶时间"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "end": 72,
+          "exact_quote": "纤维蛋白原",
+          "mention_id": "mention:05d011a6a97dfca95861",
+          "start": 67
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "end": 150,
+          "exact_quote": "纤维蛋白原",
+          "mention_id": "mention:406ed6b82bfdf813b7e0",
+          "start": 145
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+          "end": 460,
+          "exact_quote": "纤维蛋白原含量增加",
+          "mention_id": "mention:cabb6b9ce19f563d0551",
+          "start": 451
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "纤维蛋白原检测",
+      "official_term_id": "official-lab:70020313ab0dc2707716",
+      "target_canonical_id": "entity:f4808c489b3872d3dc20",
+      "target_name": "纤维蛋白原"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅱ活性检测",
+      "official_term_id": "official-lab:192d41c17b8d3604adcd",
+      "target_canonical_id": "official-lab:192d41c17b8d3604adcd",
+      "target_name": "凝血因子Ⅱ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅴ活性检测",
+      "official_term_id": "official-lab:e850e19c2da6ab6e9ca1",
+      "target_canonical_id": "official-lab:e850e19c2da6ab6e9ca1",
+      "target_name": "凝血因子Ⅴ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅶ活性检测",
+      "official_term_id": "official-lab:99ede756d1b2c209e649",
+      "target_canonical_id": "official-lab:99ede756d1b2c209e649",
+      "target_name": "凝血因子Ⅶ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅷ活性检测",
+      "official_term_id": "official-lab:bb32cc7d7733c4ac1214",
+      "target_canonical_id": "official-lab:bb32cc7d7733c4ac1214",
+      "target_name": "凝血因子Ⅷ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅸ活性检测",
+      "official_term_id": "official-lab:1707d8c2e70a94d764f1",
+      "target_canonical_id": "official-lab:1707d8c2e70a94d764f1",
+      "target_name": "凝血因子Ⅸ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅹ活性检测",
+      "official_term_id": "official-lab:b4a38e76b9e5165d9070",
+      "target_canonical_id": "official-lab:b4a38e76b9e5165d9070",
+      "target_name": "凝血因子Ⅹ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅺ活性检测",
+      "official_term_id": "official-lab:1f2eaa0e539d851b27dd",
+      "target_canonical_id": "official-lab:1f2eaa0e539d851b27dd",
+      "target_name": "凝血因子Ⅺ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "凝血因子Ⅻ活性检测",
+      "official_term_id": "official-lab:47244cc9f743d2c64b31",
+      "target_canonical_id": "official-lab:47244cc9f743d2c64b31",
+      "target_name": "凝血因子Ⅻ活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "抗凝血因子Ⅹa 活性检测",
+      "official_term_id": "official-lab:8edf5debe628b50bfebd",
+      "target_canonical_id": "official-lab:8edf5debe628b50bfebd",
+      "target_name": "抗凝血因子Ⅹa 活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "抗凝血酶活性检测",
+      "official_term_id": "official-lab:cffd1cd66f74860c61fc",
+      "target_canonical_id": "official-lab:cffd1cd66f74860c61fc",
+      "target_name": "抗凝血酶活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "蛋白 C 活性检测",
+      "official_term_id": "official-lab:94c9bfba393b8b4d4f11",
+      "target_canonical_id": "official-lab:94c9bfba393b8b4d4f11",
+      "target_name": "蛋白 C 活性"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "蛋白 S 活性检测",
+      "official_term_id": "official-lab:6e7850407a10a755b51d",
+      "target_canonical_id": "official-lab:6e7850407a10a755b51d",
+      "target_name": "蛋白 S 活性"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "end": 15,
+          "exact_quote": "D-二聚体",
+          "mention_id": "mention:08b53e33aecee2667ebc",
+          "start": 10
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "end": 17,
+          "exact_quote": "D-二聚体阳性",
+          "mention_id": "mention:3bb77ae519e2cee3e678",
+          "start": 10
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "end": 133,
+          "exact_quote": "D-二聚体正常",
+          "mention_id": "mention:3cfcdd052d09940f2879",
+          "start": 126
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "end": 60,
+          "exact_quote": "D-二聚体",
+          "mention_id": "mention:82b7436b3d6d0c849196",
+          "start": 55
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0001",
+          "end": 217,
+          "exact_quote": "D-二聚体",
+          "mention_id": "mention:e035f5ae3f12b8f8a173",
+          "start": 212
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "end": 63,
+          "exact_quote": "D-二聚体为阳性",
+          "mention_id": "mention:f9876460b1ca15ae54ea",
+          "start": 55
+        }
+      ],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "D-二聚体检测",
+      "official_term_id": "official-lab:e08aab7c3b5c76b805fb",
+      "target_canonical_id": "entity:f1241a3ab34f2802da4f",
+      "target_name": "D-二聚体"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "纤维蛋白（原）降解产物检测",
+      "official_term_id": "official-lab:be7aad7ef00df7fcb16c",
+      "target_canonical_id": "official-lab:be7aad7ef00df7fcb16c",
+      "target_name": "纤维蛋白（原）降解产物"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_SECTION_CATEGORY",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "血管性血友病因子抗原检测",
+      "official_term_id": "official-lab:0f16ec99713cf5b5f6e1",
+      "target_canonical_id": "official-lab:0f16ec99713cf5b5f6e1",
+      "target_name": "血管性血友病因子抗原"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "end": 35,
+          "exact_quote": "遗传性转铁蛋白缺乏症",
+          "mention_id": "mention:08e34f3ab8ba82462e4e",
+          "start": 25
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+          "end": 63,
+          "exact_quote": "转铁蛋白升高",
+          "mention_id": "mention:1a5aabb05ef784522a0c",
+          "start": 57
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "end": 22,
+          "exact_quote": "转铁蛋白合成不足",
+          "mention_id": "mention:1c3a305c26a2514a301e",
+          "start": 14
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "end": 133,
+          "exact_quote": "转铁蛋白释放增加",
+          "mention_id": "mention:36c104b4adc85c78cafd",
+          "start": 125
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0000",
+          "end": 18,
+          "exact_quote": "转铁蛋白",
+          "mention_id": "mention:77f7084f7287f4f18870",
+          "start": 14
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "end": 109,
+          "exact_quote": "转铁蛋白合成增加",
+          "mention_id": "mention:879b86210e58fc63333c",
+          "start": 101
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+          "end": 61,
+          "exact_quote": "转铁蛋白",
+          "mention_id": "mention:b760cfe10abd1536bffb",
+          "start": 57
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "end": 330,
+          "exact_quote": "转铁蛋白",
+          "mention_id": "mention:bb25bc36aefd35fddc69",
+          "start": 326
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+          "end": 89,
+          "exact_quote": "血清转铁蛋白降低",
+          "mention_id": "mention:d42d0fb322afae457441",
+          "start": 81
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "end": 330,
+          "exact_quote": "血清转铁蛋白",
+          "mention_id": "mention:dd651947ad988fd87b42",
+          "start": 324
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0000",
+          "end": 22,
+          "exact_quote": "转铁蛋白合成减少",
+          "mention_id": "mention:de0303145711d4caec83",
+          "start": 14
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "end": 51,
+          "exact_quote": "转铁蛋白丢失增加",
+          "mention_id": "mention:e15847cde54153d031c2",
+          "start": 43
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+          "end": 89,
+          "exact_quote": "转铁蛋白降低",
+          "mention_id": "mention:e983933d319ed209305f",
+          "start": 83
+        }
+      ],
+      "book_scope_reason": "BOOK_DIRECT_TEST",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "转铁蛋白测定",
+      "official_term_id": "official-lab:6390e1b24e5c474d6962",
+      "target_canonical_id": "entity:67b7b41fba755103348f",
+      "target_name": "转铁蛋白"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+          "end": 83,
+          "exact_quote": "铁蛋白",
+          "mention_id": "mention:554d9a11017e5da0f028",
+          "start": 80
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "end": 308,
+          "exact_quote": "组织内铁蛋白释放增加",
+          "mention_id": "mention:888d46049412e7a5b3a2",
+          "start": 298
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "end": 258,
+          "exact_quote": "铁蛋白合成增加",
+          "mention_id": "mention:bec43ce70af2520bc3bc",
+          "start": 251
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+          "end": 198,
+          "exact_quote": "肝脏铁蛋白合成减少",
+          "mention_id": "mention:f76f954f89af5db46d45",
+          "start": 189
+        }
+      ],
+      "book_scope_reason": "BOOK_DIRECT_TEST",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "铁蛋白测定",
+      "official_term_id": "official-lab:5ef28ffe532b41d71a45",
+      "target_canonical_id": "entity:ab0f71746689ab6c975e",
+      "target_name": "铁蛋白"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0013:0000",
+          "end": 18,
+          "exact_quote": "叶酸",
+          "mention_id": "mention:0b073027aa3bcc2a8a44",
+          "start": 16
+        }
+      ],
+      "book_scope_reason": "BOOK_DIRECT_TEST",
+      "decision": "BOOK_VERIFIED_EQUIVALENCE",
+      "official_name": "维生素 B9 测定",
+      "official_term_id": "official-lab:cee492c39287727394d7",
+      "target_canonical_id": "entity:b28ae64585a6e7e53435",
+      "target_name": "叶酸"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0013:0000",
+          "end": 141,
+          "exact_quote": "(一) 维生素  \\( B_{12} \\)",
+          "mention_id": "mention:c00aea6d9380559f6f63",
+          "start": 120
+        }
+      ],
+      "book_scope_reason": "BOOK_DIRECT_TEST",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "维生素 B12 测定",
+      "official_term_id": "official-lab:f4cacbc8d59584c502cb",
+      "target_canonical_id": "entity:296686ab99e4356077f5",
+      "target_name": "维生素B12"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 404,
+          "exact_quote": "中性粒细胞绝对值",
+          "mention_id": "mention:20069410335e695eca3d",
+          "start": 396
+        }
+      ],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "NORMALIZED_NAME_MATCH",
+      "official_name": "中性粒细胞绝对值",
+      "official_term_id": "official-lab:3bdcc1ffc5ff6cf71261",
+      "target_canonical_id": "entity:f93846a0676f8878842c",
+      "target_name": "中性粒细胞绝对值"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "淋巴细胞绝对值",
+      "official_term_id": "official-lab:cdadc0cb62d17662ff35",
+      "target_canonical_id": "official-lab:cdadc0cb62d17662ff35",
+      "target_name": "淋巴细胞绝对值"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "单核细胞绝对值",
+      "official_term_id": "official-lab:7e15697fc3d12a698ba0",
+      "target_canonical_id": "official-lab:7e15697fc3d12a698ba0",
+      "target_name": "单核细胞绝对值"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "嗜酸性粒细胞绝对值",
+      "official_term_id": "official-lab:464514754f206c95110d",
+      "target_canonical_id": "official-lab:464514754f206c95110d",
+      "target_name": "嗜酸性粒细胞绝对值"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "嗜碱性粒细胞绝对值",
+      "official_term_id": "official-lab:c1d962dc7bbf6813dd02",
+      "target_canonical_id": "official-lab:c1d962dc7bbf6813dd02",
+      "target_name": "嗜碱性粒细胞绝对值"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 507,
+          "exact_quote": "中性粒细胞相对偏低",
+          "mention_id": "mention:0805b90c8ee5c97ace9a",
+          "start": 498
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 534,
+          "exact_quote": "中性粒细胞比例比淋巴细胞高",
+          "mention_id": "mention:e21b9b36af56d1b954aa",
+          "start": 521
+        }
+      ],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "BOOK_VERIFIED_EQUIVALENCE",
+      "official_name": "中性粒细胞百分数",
+      "official_term_id": "official-lab:a1127759a0ac0d263704",
+      "target_canonical_id": "entity:bc3c7133016473048781",
+      "target_name": "中性粒细胞比例"
+    },
+    {
+      "book_evidence": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+          "end": 98,
+          "exact_quote": "淋巴细胞比例相对增高",
+          "mention_id": "mention:425c84a23e8ac0b7da6e",
+          "start": 88
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+          "end": 534,
+          "exact_quote": "中性粒细胞比例比淋巴细胞高",
+          "mention_id": "mention:e21b9b36af56d1b954aa",
+          "start": 521
+        }
+      ],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "BOOK_VERIFIED_EQUIVALENCE",
+      "official_name": "淋巴细胞百分数",
+      "official_term_id": "official-lab:40a18b8159cf4e31f098",
+      "target_canonical_id": "entity:bfd3854ac831f87af22a",
+      "target_name": "淋巴细胞比例"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "单核细胞百分数",
+      "official_term_id": "official-lab:a5ff372ecde73aaace07",
+      "target_canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "target_name": "单核细胞百分数"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "嗜酸性粒细胞百分数",
+      "official_term_id": "official-lab:40193e977e31c68f813e",
+      "target_canonical_id": "official-lab:40193e977e31c68f813e",
+      "target_name": "嗜酸性粒细胞百分数"
+    },
+    {
+      "book_evidence": [],
+      "book_scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "decision": "OFFICIAL_EXTENSION",
+      "official_name": "嗜碱性粒细胞百分数",
+      "official_term_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "target_canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "target_name": "嗜碱性粒细胞百分数"
+    }
+  ],
+  "conflicts": [],
+  "contract": {
+    "ambiguous_matches_are_quarantined": true,
+    "book_defines_scope_and_equivalence": true,
+    "existing_entities_are_primary": true,
+    "neo4j_updated": false,
+    "specimen_alone_does_not_define_chapter_scope": true,
+    "user_validation_required": false
+  },
+  "internal_merge_redirects": [
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:d49629d54b809ad184cd",
+      "source_name": "血清铁蛋白",
+      "target_canonical_id": "entity:ab0f71746689ab6c975e",
+      "target_name": "铁蛋白"
+    },
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:e0e2d595bfafb0232cdf",
+      "source_name": "血清转铁蛋白",
+      "target_canonical_id": "entity:67b7b41fba755103348f",
+      "target_name": "转铁蛋白"
+    },
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:567e486e8d47bd23bf78",
+      "source_name": "血红蛋白浓度",
+      "target_canonical_id": "entity:e41c595f712d98e18e4d",
+      "target_name": "血红蛋白"
+    },
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:f864302da2cee503aef4",
+      "source_name": "红细胞压积",
+      "target_canonical_id": "entity:b6f1b5f469fb194df40d",
+      "target_name": "血细胞比容"
+    },
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:5299f4a80e918532754b",
+      "source_name": "血细胞容积",
+      "target_canonical_id": "entity:b6f1b5f469fb194df40d",
+      "target_name": "血细胞比容"
+    },
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:f891f204c2ffc9d25715",
+      "source_name": "血浆纤维蛋白原",
+      "target_canonical_id": "entity:f4808c489b3872d3dc20",
+      "target_name": "纤维蛋白原"
+    },
+    {
+      "decision": "BOOK_VERIFIED_INTERNAL_MERGE",
+      "source_canonical_id": "entity:1068a35506176a790f84",
+      "source_name": "血浆纤维蛋白原含量",
+      "target_canonical_id": "entity:f4808c489b3872d3dc20",
+      "target_name": "纤维蛋白原"
+    }
+  ],
+  "official_extensions": [
+    {
+      "aliases": [
+        "网织红细胞计数"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:f83ad3a235fab0a5fe0a",
+      "canonical_name": "网织红细胞计数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:f83ad3a235fab0a5fe0a"
+      ]
+    },
+    {
+      "aliases": [
+        "外周血细胞形态学检查"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:d4b72a36063724655672",
+      "canonical_name": "外周血细胞形态学",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:d4b72a36063724655672"
+      ]
+    },
+    {
+      "aliases": [
+        "骨髓细胞形态学检查"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:060afe3182aac9f9c5b2",
+      "canonical_name": "骨髓细胞形态学",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:060afe3182aac9f9c5b2"
+      ]
+    },
+    {
+      "aliases": [
+        "血液寄生虫形态学检查"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:127c77c448632d2734b7",
+      "canonical_name": "血液寄生虫形态学",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:127c77c448632d2734b7"
+      ]
+    },
+    {
+      "aliases": [
+        "血红蛋白 A2 测定"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:64b1aa1ba410dfd02a47",
+      "canonical_name": "血红蛋白 A2",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:64b1aa1ba410dfd02a47"
+      ]
+    },
+    {
+      "aliases": [
+        "血红蛋白 F 测定"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:bb8b209795de5e3a738c",
+      "canonical_name": "血红蛋白 F",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:bb8b209795de5e3a738c"
+      ]
+    },
+    {
+      "aliases": [
+        "活化部分凝血活酶时间检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:f3a8877d87266eb4e50d",
+      "canonical_name": "活化部分凝血活酶时间",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:f3a8877d87266eb4e50d"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血酶时间检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:e0ace5d9434cba28f3d2",
+      "canonical_name": "凝血酶时间",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:e0ace5d9434cba28f3d2"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅱ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:192d41c17b8d3604adcd",
+      "canonical_name": "凝血因子Ⅱ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:192d41c17b8d3604adcd"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅴ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:e850e19c2da6ab6e9ca1",
+      "canonical_name": "凝血因子Ⅴ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:e850e19c2da6ab6e9ca1"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅶ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:99ede756d1b2c209e649",
+      "canonical_name": "凝血因子Ⅶ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:99ede756d1b2c209e649"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅷ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:bb32cc7d7733c4ac1214",
+      "canonical_name": "凝血因子Ⅷ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:bb32cc7d7733c4ac1214"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅸ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:1707d8c2e70a94d764f1",
+      "canonical_name": "凝血因子Ⅸ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:1707d8c2e70a94d764f1"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅹ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:b4a38e76b9e5165d9070",
+      "canonical_name": "凝血因子Ⅹ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:b4a38e76b9e5165d9070"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅺ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:1f2eaa0e539d851b27dd",
+      "canonical_name": "凝血因子Ⅺ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:1f2eaa0e539d851b27dd"
+      ]
+    },
+    {
+      "aliases": [
+        "凝血因子Ⅻ活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:47244cc9f743d2c64b31",
+      "canonical_name": "凝血因子Ⅻ活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:47244cc9f743d2c64b31"
+      ]
+    },
+    {
+      "aliases": [
+        "抗凝血因子Ⅹa 活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:8edf5debe628b50bfebd",
+      "canonical_name": "抗凝血因子Ⅹa 活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:8edf5debe628b50bfebd"
+      ]
+    },
+    {
+      "aliases": [
+        "抗凝血酶活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:cffd1cd66f74860c61fc",
+      "canonical_name": "抗凝血酶活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:cffd1cd66f74860c61fc"
+      ]
+    },
+    {
+      "aliases": [
+        "蛋白 C 活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:94c9bfba393b8b4d4f11",
+      "canonical_name": "蛋白 C 活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:94c9bfba393b8b4d4f11"
+      ]
+    },
+    {
+      "aliases": [
+        "蛋白 S 活性检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:6e7850407a10a755b51d",
+      "canonical_name": "蛋白 S 活性",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:6e7850407a10a755b51d"
+      ]
+    },
+    {
+      "aliases": [
+        "纤维蛋白（原）降解产物检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:be7aad7ef00df7fcb16c",
+      "canonical_name": "纤维蛋白（原）降解产物",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:be7aad7ef00df7fcb16c"
+      ]
+    },
+    {
+      "aliases": [
+        "血管性血友病因子抗原检测"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:0f16ec99713cf5b5f6e1",
+      "canonical_name": "血管性血友病因子抗原",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:0f16ec99713cf5b5f6e1"
+      ]
+    },
+    {
+      "aliases": [
+        "淋巴细胞绝对值"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:cdadc0cb62d17662ff35",
+      "canonical_name": "淋巴细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:cdadc0cb62d17662ff35"
+      ]
+    },
+    {
+      "aliases": [
+        "单核细胞绝对值"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:7e15697fc3d12a698ba0",
+      "canonical_name": "单核细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:7e15697fc3d12a698ba0"
+      ]
+    },
+    {
+      "aliases": [
+        "嗜酸性粒细胞绝对值"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:464514754f206c95110d",
+      "canonical_name": "嗜酸性粒细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:464514754f206c95110d"
+      ]
+    },
+    {
+      "aliases": [
+        "嗜碱性粒细胞绝对值"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:c1d962dc7bbf6813dd02",
+      "canonical_name": "嗜碱性粒细胞绝对值",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:c1d962dc7bbf6813dd02"
+      ]
+    },
+    {
+      "aliases": [
+        "单核细胞百分数"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:a5ff372ecde73aaace07",
+      "canonical_name": "单核细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:a5ff372ecde73aaace07"
+      ]
+    },
+    {
+      "aliases": [
+        "嗜酸性粒细胞百分数"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:40193e977e31c68f813e",
+      "canonical_name": "嗜酸性粒细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:40193e977e31c68f813e"
+      ]
+    },
+    {
+      "aliases": [
+        "嗜碱性粒细胞百分数"
+      ],
+      "automation_status": "AUTO_VALIDATED_OFFICIAL_EXTENSION",
+      "canonical_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "canonical_name": "嗜碱性粒细胞百分数",
+      "derivations": [
+        "OFFICIAL_SCOPE_EXTENSION"
+      ],
+      "entity_type": "LabIndicator",
+      "mention_ids": [],
+      "official_term_ids": [
+        "official-lab:b450bf6bd2fbb7471b9c"
+      ]
+    }
+  ],
+  "official_terms": [
+    {
+      "abbreviations": [],
+      "analyte": "白细胞（数量）",
+      "category": "血细胞分析",
+      "code": "0100101A",
+      "name": "白细胞计数",
+      "official_term_id": "official-lab:ff30342fbc890426c5fa",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 1,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（数量）",
+      "category": "血细胞分析",
+      "code": "0100201A",
+      "name": "红细胞计数",
+      "official_term_id": "official-lab:f6737c27767de92bdecd",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 2,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "血小板（数量）",
+      "category": "血细胞分析",
+      "code": "0100301A",
+      "name": "血小板计数",
+      "official_term_id": "official-lab:f3be3d5242eb7642fcb0",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 3,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（血红蛋白浓度）",
+      "category": "血细胞分析",
+      "code": "0100401A",
+      "name": "血红蛋白测定",
+      "official_term_id": "official-lab:0d1c6b9b5cc606cd3161",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 4,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（比容）",
+      "category": "血细胞分析",
+      "code": "0100501A",
+      "name": "血细胞比容测定",
+      "official_term_id": "official-lab:5fa3fe0444eadc4185f0",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 5,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（平均体积）",
+      "category": "血细胞分析",
+      "code": "0100601A",
+      "name": "平均红细胞体积测定",
+      "official_term_id": "official-lab:a068b35ca99a12e8ff19",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 6,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（平均血红蛋白含量）",
+      "category": "血细胞分析",
+      "code": "0100701A",
+      "name": "平均红细胞血红蛋白含量测定",
+      "official_term_id": "official-lab:142a3fc121d9887f71a5",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 7,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（平均血红蛋白浓度）",
+      "category": "血细胞分析",
+      "code": "0100801A",
+      "name": "平均红细胞血红蛋白浓度测定",
+      "official_term_id": "official-lab:69bf3447cdadf7212901",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 8,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "网织红细胞（数量）",
+      "category": "血细胞分析",
+      "code": "0100901A",
+      "name": "网织红细胞计数",
+      "official_term_id": "official-lab:f83ad3a235fab0a5fe0a",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 9,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "外周血细胞",
+      "category": "血液形态学检查",
+      "code": "0200101C",
+      "name": "外周血细胞形态学检查",
+      "official_term_id": "official-lab:d4b72a36063724655672",
+      "scale": "定名",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 10,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "骨髓细胞",
+      "category": "血液形态学检查",
+      "code": "0200206C",
+      "name": "骨髓细胞形态学检查",
+      "official_term_id": "official-lab:060afe3182aac9f9c5b2",
+      "scale": "定名",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 11,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "骨髓",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "血液寄生虫",
+      "category": "血液形态学检查",
+      "code": "0200301C",
+      "name": "血液寄生虫形态学检查",
+      "official_term_id": "official-lab:127c77c448632d2734b7",
+      "scale": "定名",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 12,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "红细胞（沉降率）",
+      "category": "血流变学检查",
+      "code": "0300101A",
+      "name": "红细胞沉降率测定",
+      "official_term_id": "official-lab:35a1c1e64d42114fc273",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 13,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "黏度（全血）",
+      "category": "血流变学检查",
+      "code": "0300201A",
+      "name": "全血黏度测定",
+      "official_term_id": "official-lab:67a9c78491daf63a8119",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 14,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "黏度（血浆）",
+      "category": "血流变学检查",
+      "code": "0300303A",
+      "name": "血浆黏度测定",
+      "official_term_id": "official-lab:c093232ba39cc093c743",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 15,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "血红蛋白 A2",
+      "category": "血红蛋白病检测",
+      "code": "0400101A",
+      "name": "血红蛋白 A2 测定",
+      "official_term_id": "official-lab:64b1aa1ba410dfd02a47",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 16,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "血红蛋白 F",
+      "category": "血红蛋白病检测",
+      "code": "0400201A",
+      "name": "血红蛋白 F 测定",
+      "official_term_id": "official-lab:bb8b209795de5e3a738c",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 17,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "全血",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血酶原",
+      "category": "凝血实验",
+      "code": "0500103A",
+      "name": "凝血酶原时间检测",
+      "official_term_id": "official-lab:579d0e651fc5473fadb1",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 18,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血活酶",
+      "category": "凝血实验",
+      "code": "0500203A",
+      "name": "活化部分凝血活酶时间检测",
+      "official_term_id": "official-lab:f3a8877d87266eb4e50d",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 19,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血酶时间",
+      "category": "凝血实验",
+      "code": "0500303A",
+      "name": "凝血酶时间检测",
+      "official_term_id": "official-lab:e0ace5d9434cba28f3d2",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 20,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "纤维蛋白原",
+      "category": "凝血实验",
+      "code": "0500403A",
+      "name": "纤维蛋白原检测",
+      "official_term_id": "official-lab:70020313ab0dc2707716",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 21,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅱ",
+      "category": "凝血实验",
+      "code": "0500503A",
+      "name": "凝血因子Ⅱ活性检测",
+      "official_term_id": "official-lab:192d41c17b8d3604adcd",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 22,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅴ",
+      "category": "凝血实验",
+      "code": "0500603A",
+      "name": "凝血因子Ⅴ活性检测",
+      "official_term_id": "official-lab:e850e19c2da6ab6e9ca1",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 23,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅶ",
+      "category": "凝血实验",
+      "code": "0500703A",
+      "name": "凝血因子Ⅶ活性检测",
+      "official_term_id": "official-lab:99ede756d1b2c209e649",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 24,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅷ",
+      "category": "凝血实验",
+      "code": "0500803A",
+      "name": "凝血因子Ⅷ活性检测",
+      "official_term_id": "official-lab:bb32cc7d7733c4ac1214",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 25,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅸ",
+      "category": "凝血实验",
+      "code": "0500903A",
+      "name": "凝血因子Ⅸ活性检测",
+      "official_term_id": "official-lab:1707d8c2e70a94d764f1",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 26,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅹ",
+      "category": "凝血实验",
+      "code": "0501003A",
+      "name": "凝血因子Ⅹ活性检测",
+      "official_term_id": "official-lab:b4a38e76b9e5165d9070",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 27,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅺ",
+      "category": "凝血实验",
+      "code": "0501103A",
+      "name": "凝血因子Ⅺ活性检测",
+      "official_term_id": "official-lab:1f2eaa0e539d851b27dd",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 28,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "凝血因子Ⅻ",
+      "category": "凝血实验",
+      "code": "0501203A",
+      "name": "凝血因子Ⅻ活性检测",
+      "official_term_id": "official-lab:47244cc9f743d2c64b31",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 29,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "抗凝血因子Ⅹa",
+      "category": "凝血实验",
+      "code": "0501303A",
+      "name": "抗凝血因子Ⅹa 活性检测",
+      "official_term_id": "official-lab:8edf5debe628b50bfebd",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 30,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "抗凝血酶",
+      "category": "凝血实验",
+      "code": "0501403A",
+      "name": "抗凝血酶活性检测",
+      "official_term_id": "official-lab:cffd1cd66f74860c61fc",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 31,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "蛋白 C",
+      "category": "凝血实验",
+      "code": "0501503A",
+      "name": "蛋白 C 活性检测",
+      "official_term_id": "official-lab:94c9bfba393b8b4d4f11",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 32,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "蛋白 S",
+      "category": "凝血实验",
+      "code": "0501603A",
+      "name": "蛋白 S 活性检测",
+      "official_term_id": "official-lab:6e7850407a10a755b51d",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 33,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "D-二聚体",
+      "category": "凝血实验",
+      "code": "0501703A",
+      "name": "D-二聚体检测",
+      "official_term_id": "official-lab:e08aab7c3b5c76b805fb",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 34,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "纤维蛋白（原）降解产物",
+      "category": "凝血实验",
+      "code": "0501803A",
+      "name": "纤维蛋白（原）降解产物检测",
+      "official_term_id": "official-lab:be7aad7ef00df7fcb16c",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 35,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "血管性血友病因子抗原",
+      "category": "凝血实验",
+      "code": "0501903A",
+      "name": "血管性血友病因子抗原检测",
+      "official_term_id": "official-lab:0f16ec99713cf5b5f6e1",
+      "scale": "定量",
+      "scope_reason": "BOOK_SECTION_CATEGORY",
+      "sequence": 36,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "转铁蛋白",
+      "category": "蛋白质及多肽类",
+      "code": "1101304A",
+      "name": "转铁蛋白测定",
+      "official_term_id": "official-lab:6390e1b24e5c474d6962",
+      "scale": "定量",
+      "scope_reason": "BOOK_DIRECT_TEST",
+      "sequence": 82,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血清、血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "铁蛋白",
+      "category": "蛋白质及多肽类",
+      "code": "1102804A",
+      "name": "铁蛋白测定",
+      "official_term_id": "official-lab:5ef28ffe532b41d71a45",
+      "scale": "定量",
+      "scope_reason": "BOOK_DIRECT_TEST",
+      "sequence": 101,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血清、血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "维生素 B9（叶酸）",
+      "category": "维生素类",
+      "code": "1901504A",
+      "name": "维生素 B9 测定",
+      "official_term_id": "official-lab:cee492c39287727394d7",
+      "scale": "定量",
+      "scope_reason": "BOOK_DIRECT_TEST",
+      "sequence": 266,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血清、血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [],
+      "analyte": "维生素 B12",
+      "category": "维生素类",
+      "code": "1901604A",
+      "name": "维生素 B12 测定",
+      "official_term_id": "official-lab:f4cacbc8d59584c502cb",
+      "scale": "定量",
+      "scope_reason": "BOOK_DIRECT_TEST",
+      "sequence": 267,
+      "source_standard": "WS/T 886-2026",
+      "specimen": "血清、血浆",
+      "unit": null
+    },
+    {
+      "abbreviations": [
+        "Neut#"
+      ],
+      "analyte": "中性粒细胞绝对值",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "中性粒细胞绝对值",
+      "official_term_id": "official-lab:3bdcc1ffc5ff6cf71261",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "x10^9/L"
+    },
+    {
+      "abbreviations": [
+        "Lymph#"
+      ],
+      "analyte": "淋巴细胞绝对值",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "淋巴细胞绝对值",
+      "official_term_id": "official-lab:cdadc0cb62d17662ff35",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "x10^9/L"
+    },
+    {
+      "abbreviations": [
+        "Mono#"
+      ],
+      "analyte": "单核细胞绝对值",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "单核细胞绝对值",
+      "official_term_id": "official-lab:7e15697fc3d12a698ba0",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "x10^9/L"
+    },
+    {
+      "abbreviations": [
+        "Eos#"
+      ],
+      "analyte": "嗜酸性粒细胞绝对值",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "嗜酸性粒细胞绝对值",
+      "official_term_id": "official-lab:464514754f206c95110d",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "x10^9/L"
+    },
+    {
+      "abbreviations": [
+        "Baso#"
+      ],
+      "analyte": "嗜碱性粒细胞绝对值",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "嗜碱性粒细胞绝对值",
+      "official_term_id": "official-lab:c1d962dc7bbf6813dd02",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "x10^9/L"
+    },
+    {
+      "abbreviations": [
+        "Neut%"
+      ],
+      "analyte": "中性粒细胞百分数",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "中性粒细胞百分数",
+      "official_term_id": "official-lab:a1127759a0ac0d263704",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "%"
+    },
+    {
+      "abbreviations": [
+        "Lymph%"
+      ],
+      "analyte": "淋巴细胞百分数",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "淋巴细胞百分数",
+      "official_term_id": "official-lab:40a18b8159cf4e31f098",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "%"
+    },
+    {
+      "abbreviations": [
+        "Mono%"
+      ],
+      "analyte": "单核细胞百分数",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "单核细胞百分数",
+      "official_term_id": "official-lab:a5ff372ecde73aaace07",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "%"
+    },
+    {
+      "abbreviations": [
+        "Eos%"
+      ],
+      "analyte": "嗜酸性粒细胞百分数",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "嗜酸性粒细胞百分数",
+      "official_term_id": "official-lab:40193e977e31c68f813e",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "%"
+    },
+    {
+      "abbreviations": [
+        "Baso%"
+      ],
+      "analyte": "嗜碱性粒细胞百分数",
+      "category": "血细胞分析参考区间",
+      "code": null,
+      "name": "嗜碱性粒细胞百分数",
+      "official_term_id": "official-lab:b450bf6bd2fbb7471b9c",
+      "scale": "定量",
+      "scope_reason": "BOOK_TABLE_DIRECT_MATCH",
+      "sequence": null,
+      "source_standard": "WS/T 779-2021",
+      "specimen": "静脉血、末梢血",
+      "unit": "%"
+    }
+  ],
+  "publication_status": "READY_FOR_GRAPH_REBUILD",
+  "schema_version": "chapter-01-official-lab-alignment/v0.1",
+  "sources": [
+    {
+      "effective_date": "2026-11-01",
+      "publication_date": "2026-05-25",
+      "sha256": "4c5c21bd7eb19d42de8ee965e83ccb885db3899d975b50fef158434595d7febc",
+      "source_status": "PUBLISHED_NOT_YET_EFFECTIVE",
+      "standard": "WS/T 886-2026",
+      "url": "https://wjw.fujian.gov.cn/jggk/csxx/jhsyjtfzczcfgc/gzdt_37901/202606/P020260618620448875864.pdf"
+    },
+    {
+      "sha256": "19720f9517695d98c0d320da386b3e5ab26ff87cc5a51c05eed989fd0a516b3e",
+      "source_status": "EFFECTIVE",
+      "standard": "WS/T 779-2021",
+      "url": "https://www.nhc.gov.cn/wjw/s9492/202105/a85d8b64e0384c98aed8f3157860ee44/files/1739781618961_15816.pdf"
+    },
+    {
+      "dataset": "evaluation/chapter-01/chapter-01-canonical-entities-v0.8.json",
+      "sha256": "eadf5c9ea3ea180d251df3674ffa3a2c94fa3ea3de1a3d7288ed47a130e8f74a",
+      "source_status": "ASSISTANT_EXPANDED_REQUIRES_USER_VALIDATION"
+    }
+  ],
+  "statistics": {
+    "aligned_lab_indicator_count": 149,
+    "conflict_count": 0,
+    "decision_counts": {
+      "BOOK_VERIFIED_EQUIVALENCE": 5,
+      "NORMALIZED_NAME_MATCH": 16,
+      "OFFICIAL_EXTENSION": 29
+    },
+    "existing_lab_indicator_count": 127,
+    "internal_merge_count": 7,
+    "official_extension_count": 29,
+    "official_term_count": 50
+  },
+  "status": "AUTOMATED_ALIGNMENT_COMPLETE"
+}

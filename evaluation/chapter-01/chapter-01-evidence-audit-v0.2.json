@@ -1,0 +1,5191 @@
+{
+  "schema_version": "medical-kg-evidence-audit/v0.2",
+  "status": "HUMAN_REVIEW_REQUIRED",
+  "source_graph_dataset": "chapter-01-graph-test-set-v0.2.json",
+  "contract": "该清单用于定位人工审查；AUTO_SURFACE_MATCH 不是语义批准，NEEDS_HUMAN_REVIEW 包含派生、别名、跨句与规则语义；负例和 HELD 规则也必须单独裁决。",
+  "summary": {
+    "total_items": 414,
+    "AUTO_SURFACE_MATCH": 174,
+    "NEEDS_HUMAN_REVIEW": 236,
+    "HELD_EXTERNAL_KNOWLEDGE": 3,
+    "MANUAL_NEGATIVE_RATIONALE_DRAFT": 1
+  },
+  "cases": [
+    {
+      "case_id": "CH01-01",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "血液常规检验"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "start": 194,
+              "end": 200,
+              "exact_quote": "一、血液常规检验"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞计数"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "start": 500,
+              "end": 505,
+              "exact_quote": "红细胞计数: 男性(4.3~5.8)× \\( 10^{12} \\) /L"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "白细胞计数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血小板计数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血红蛋白"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "start": 310,
+              "end": 314,
+              "exact_quote": "（一）红细胞和血红蛋白"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞压积"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+              "start": 175,
+              "end": 180,
+              "exact_quote": "血细胞比容(HCT),又称红细胞压积(PCV),是指将一定量的抗凝全血,置于有刻度的专用玻璃管内,经一定速度离心沉淀后,测定血细胞压缩体积占全血体积的百分比。血细胞比容主要与血液中红细胞的数量和大小有关,是血液中血细胞浓度的指标。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "start": 448,
+              "end": 458,
+              "exact_quote": "红细胞(RBC)是血液中数量最多的一种血细胞,直径为6~9μm,呈双凹圆盘形,里面装有血红蛋白(Hb),起着输送氧气,运出二氧化碳的功能,对维持机体生理活动起着重要作用。红细胞的平均寿命为120天,在各种生理或病理情况下,会引起红细胞数量和血红蛋白含量的减少或增多。红细胞和血红蛋白减少称为贫血,是一种常见病,通过血液常规检验,可以协助诊断(表1-1)。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "start": 4,
+              "end": 14,
+              "exact_quote": "(2) 红细胞和血红蛋白增多"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞压积增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞压积减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "start": 460,
+              "end": 462,
+              "exact_quote": "红细胞(RBC)是血液中数量最多的一种血细胞,直径为6~9μm,呈双凹圆盘形,里面装有血红蛋白(Hb),起着输送氧气,运出二氧化碳的功能,对维持机体生理活动起着重要作用。红细胞的平均寿命为120天,在各种生理或病理情况下,会引起红细胞数量和血红蛋白含量的减少或增多。红细胞和血红蛋白减少称为贫血,是一种常见病,通过血液常规检验,可以协助诊断(表1-1)。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "轻度贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 79,
+              "end": 83,
+              "exact_quote": "<table><tr><td>贫血程度</td><td>轻度贫血</td><td>中度贫血</td><td>重度贫血</td><td>极重度贫血</td></tr><tr><td>血红蛋白(男性)</td><td>90~120g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr><tr><td>血红蛋白(女性)</td><td>90~110g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "中度贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 92,
+              "end": 96,
+              "exact_quote": "<table><tr><td>贫血程度</td><td>轻度贫血</td><td>中度贫血</td><td>重度贫血</td><td>极重度贫血</td></tr><tr><td>血红蛋白(男性)</td><td>90~120g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr><tr><td>血红蛋白(女性)</td><td>90~110g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "重度贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 105,
+              "end": 109,
+              "exact_quote": "<table><tr><td>贫血程度</td><td>轻度贫血</td><td>中度贫血</td><td>重度贫血</td><td>极重度贫血</td></tr><tr><td>血红蛋白(男性)</td><td>90~120g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr><tr><td>血红蛋白(女性)</td><td>90~110g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "极重度贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 118,
+              "end": 123,
+              "exact_quote": "<table><tr><td>贫血程度</td><td>轻度贫血</td><td>中度贫血</td><td>重度贫血</td><td>极重度贫血</td></tr><tr><td>血红蛋白(男性)</td><td>90~120g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr><tr><td>血红蛋白(女性)</td><td>90~110g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "再生障碍性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 480,
+              "end": 487,
+              "exact_quote": "①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "白血病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 514,
+              "end": 517,
+              "exact_quote": "①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "缺铁性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 571,
+              "end": 576,
+              "exact_quote": "②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "巨幼细胞贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 602,
+              "end": 608,
+              "exact_quote": "②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "溶血性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 611,
+              "end": 616,
+              "exact_quote": "③溶血性贫血:由于各种原因引起的红细胞膜的结构和红细胞内血红蛋白结构异常,导致红细胞在血液流动中容易破坏,寿命缩短,引起贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "铁缺乏"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 565,
+              "end": 568,
+              "exact_quote": "②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "叶酸缺乏"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "维生素B12缺乏"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "急性失血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "慢性失血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "start": 678,
+              "end": 682,
+              "exact_quote": "④急性或慢性失血导致的贫血:由于大量血液流失,超过了骨髓造血的补偿能力而引起的贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "血液浓缩"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "start": 32,
+              "end": 36,
+              "exact_quote": "1) 相对性增多: 由于各种原因使血液浓缩, 如连续剧烈呕吐、严重腹泻、大量出汗、发热等, 导致大量水分丢失, 使血液浓缩, 红细胞相对增多, 补充水分后可恢复正常。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "机体缺氧"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "start": 111,
+              "end": 115,
+              "exact_quote": "2) 绝对性增多: 由于机体缺氧导致机体产生促红细胞生成素增高, 使骨髓制造红细胞增多。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "促红细胞生成素增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "start": 121,
+              "end": 130,
+              "exact_quote": "2) 绝对性增多: 由于机体缺氧导致机体产生促红细胞生成素增高, 使骨髓制造红细胞增多。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "高原居民"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "发绀型先天性心脏病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+              "start": 59,
+              "end": 68,
+              "exact_quote": "②病理性增多: 见于发绀型先天性心脏病、后天性肺源性心脏病, 由于他们的血液中含氧量减少, 使红细胞代偿性增多。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "获得性肺源性心脏病"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "真性红细胞增多症"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+              "start": 128,
+              "end": 136,
+              "exact_quote": "③比较少见的红细胞增多可见于一些恶性疾病,如真性红细胞增多症,某些肿瘤如肾癌、肾胚胎瘤等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "肾癌"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0002:0000",
+              "start": 142,
+              "end": 144,
+              "exact_quote": "③比较少见的红细胞增多可见于一些恶性疾病,如真性红细胞增多症,某些肿瘤如肾癌、肾胚胎瘤等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "肾母细胞瘤"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液常规检验",
+            "HAS_METRIC",
+            "红细胞计数"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "exact_quote": "一、血液常规检验\n血液常规检验,包括红细胞、白细胞及血小板参数测定。五分类血细胞计数仪测定可提供22项参数,三分类血细胞计数仪测定可提供18项参数。血液常规检验是最常用的检查项目,可为医生诊断血液系统疾病提供线索和依据。\n（一）红细胞和血红蛋白\n红细胞(RBC)是血液中数量最多的一种血细胞,直径为6~9μm,呈双凹圆盘形,里面装有血红蛋白(Hb),起着输送氧气,运出二氧化碳的功能,对维持机体生理活动起着重要作用。红细胞的平均寿命为120天,在各种生理或病理情况下,会引起红细胞数量和血红蛋白含量的减少或增多。红细胞和血红蛋白减少称为贫血,是一种常见病,通过血液常规检验,可以协助诊断(表1-1)。\n【参考区间】\n红细胞计数: 男性(4.3~5.8)× \\( 10^{12} \\) /L"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液常规检验",
+            "HAS_METRIC",
+            "白细胞计数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液常规检验",
+            "HAS_METRIC",
+            "血小板计数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液常规检验",
+            "HAS_METRIC",
+            "血红蛋白"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "exact_quote": "一、血液常规检验\n血液常规检验,包括红细胞、白细胞及血小板参数测定。五分类血细胞计数仪测定可提供22项参数,三分类血细胞计数仪测定可提供18项参数。血液常规检验是最常用的检查项目,可为医生诊断血液系统疾病提供线索和依据。\n（一）红细胞和血红蛋白"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞计数",
+            "HAS_STATE",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "exact_quote": "红细胞(RBC)是血液中数量最多的一种血细胞,直径为6~9μm,呈双凹圆盘形,里面装有血红蛋白(Hb),起着输送氧气,运出二氧化碳的功能,对维持机体生理活动起着重要作用。红细胞的平均寿命为120天,在各种生理或病理情况下,会引起红细胞数量和血红蛋白含量的减少或增多。红细胞和血红蛋白减少称为贫血,是一种常见病,通过血液常规检验,可以协助诊断(表1-1)。\n【参考区间】\n红细胞计数: 男性(4.3~5.8)× \\( 10^{12} \\) /L"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血红蛋白",
+            "HAS_STATE",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0000:0001",
+              "exact_quote": "（一）红细胞和血红蛋白\n红细胞(RBC)是血液中数量最多的一种血细胞,直径为6~9μm,呈双凹圆盘形,里面装有血红蛋白(Hb),起着输送氧气,运出二氧化碳的功能,对维持机体生理活动起着重要作用。红细胞的平均寿命为120天,在各种生理或病理情况下,会引起红细胞数量和血红蛋白含量的减少或增多。红细胞和血红蛋白减少称为贫血,是一种常见病,通过血液常规检验,可以协助诊断(表1-1)。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞计数",
+            "HAS_STATE",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血红蛋白",
+            "HAS_STATE",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "exact_quote": "(2) 红细胞和血红蛋白增多"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "再生障碍性贫血",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "exact_quote": "(1) 红细胞和血红蛋白减少\n1) 生理性减少: 3 个月的婴儿至 15 岁, 由于生长发育快, 造血原料相对不足; 妊娠中后期的孕妇, 血容量快速增长, 引起血液稀释; 老年人造血功能逐渐减退, 使红细胞和血红蛋白减少。\n2) 病理性减少\n①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白血病",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "exact_quote": "(1) 红细胞和血红蛋白减少\n1) 生理性减少: 3 个月的婴儿至 15 岁, 由于生长发育快, 造血原料相对不足; 妊娠中后期的孕妇, 血容量快速增长, 引起血液稀释; 老年人造血功能逐渐减退, 使红细胞和血红蛋白减少。\n2) 病理性减少\n①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁缺乏",
+            "CAUSES",
+            "缺铁性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "exact_quote": "②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "叶酸缺乏",
+            "CAUSES",
+            "巨幼细胞贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "维生素B12缺乏",
+            "CAUSES",
+            "巨幼细胞贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "溶血性贫血",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "exact_quote": "(1) 红细胞和血红蛋白减少\n1) 生理性减少: 3 个月的婴儿至 15 岁, 由于生长发育快, 造血原料相对不足; 妊娠中后期的孕妇, 血容量快速增长, 引起血液稀释; 老年人造血功能逐渐减退, 使红细胞和血红蛋白减少。\n2) 病理性减少\n①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。\n②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。\n③溶血性贫血:由于各种原因引起的红细胞膜的结构和红细胞内血红蛋白结构异常,导致红细胞在血液流动中容易破坏,寿命缩短,引起贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "急性失血",
+            "CAUSES",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "慢性失血",
+            "CAUSES",
+            "红细胞和血红蛋白减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "exact_quote": "(1) 红细胞和血红蛋白减少\n1) 生理性减少: 3 个月的婴儿至 15 岁, 由于生长发育快, 造血原料相对不足; 妊娠中后期的孕妇, 血容量快速增长, 引起血液稀释; 老年人造血功能逐渐减退, 使红细胞和血红蛋白减少。\n2) 病理性减少\n①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。\n②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。\n③溶血性贫血:由于各种原因引起的红细胞膜的结构和红细胞内血红蛋白结构异常,导致红细胞在血液流动中容易破坏,寿命缩短,引起贫血。\n④急性或慢性失血导致的贫血:由于大量血液流失,超过了骨髓造血的补偿能力而引起的贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液浓缩",
+            "CAUSES",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "exact_quote": "(2) 红细胞和血红蛋白增多\n1) 相对性增多: 由于各种原因使血液浓缩, 如连续剧烈呕吐、严重腹泻、大量出汗、发热等, 导致大量水分丢失, 使血液浓缩, 红细胞相对增多, 补充水分后可恢复正常。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "机体缺氧",
+            "CAUSES",
+            "促红细胞生成素增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "exact_quote": "2) 绝对性增多: 由于机体缺氧导致机体产生促红细胞生成素增高, 使骨髓制造红细胞增多。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "促红细胞生成素增高",
+            "CAUSES",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0001",
+              "exact_quote": "(2) 红细胞和血红蛋白增多\n1) 相对性增多: 由于各种原因使血液浓缩, 如连续剧烈呕吐、严重腹泻、大量出汗、发热等, 导致大量水分丢失, 使血液浓缩, 红细胞相对增多, 补充水分后可恢复正常。\n2) 绝对性增多: 由于机体缺氧导致机体产生促红细胞生成素增高, 使骨髓制造红细胞增多。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "高原居民",
+            "ASSOCIATED_WITH",
+            "机体缺氧"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "发绀型先天性心脏病",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "获得性肺源性心脏病",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "真性红细胞增多症",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "肾癌",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "肾母细胞瘤",
+            "ASSOCIATED_WITH",
+            "红细胞和血红蛋白增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞压积",
+            "HAS_STATE",
+            "红细胞压积增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞压积",
+            "HAS_STATE",
+            "红细胞压积减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液浓缩",
+            "CAUSES",
+            "红细胞压积增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "贫血",
+            "ASSOCIATED_WITH",
+            "红细胞压积减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞计数",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "红细胞计数参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血红蛋白",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "血红蛋白参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血红蛋白",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "轻度贫血",
+              "中度贫血",
+              "重度贫血",
+              "极重度贫血"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+              "exact_quote": "\n血红蛋白: 男性 130~175g/L\n女性 115~150g/L\n表 1-1 贫血程度的诊断标准\n<table><tr><td>贫血程度</td><td>轻度贫血</td><td>中度贫血</td><td>重度贫血</td><td>极重度贫血</td></tr><tr><td>血红蛋白(男性)</td><td>90~120g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr><tr><td>血红蛋白(女性)</td><td>90~110g/L</td><td>60~90g/L</td><td>30~60g/L</td><td>&lt;30g/L</td></tr></table>\n【异常结果解读】\n(1) 红细胞和血红蛋白减少\n1) 生理性减少: 3 个月的婴儿至 15 岁, 由于生长发育快, 造血原料相对不足; 妊娠中后期的孕妇, 血容量快速增长, 引起血液稀释; 老年人造血功能逐渐减退, 使红细胞和血红蛋白减少。\n2) 病理性减少\n①各种血液系统疾病引起的贫血：如再生障碍性贫血，是由于骨髓造血功能受损，制造红细胞减少而产生的；各种白血病引起的贫血是由于骨髓大量制造白细胞以后，制造红细胞的骨髓减少所致。\n②造血原料缺乏所致的贫血：如铁缺乏引起的缺铁性贫血或叶酸、维生素 \\( B_{12} \\) 缺乏引起的巨幼细胞贫血。\n③溶血性贫血:由于各种原因引起的红细胞膜的结构和红细胞内血红蛋白结构异常,导致红细胞在血液流动中容易破坏,寿命缩短,引起贫血。\n④急性或慢性失血导致的贫血:由于大量血液流失,超过了骨髓造血的补偿能力而引起的贫血。\n\n"
+            }
+          ]
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞压积",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "红细胞压积参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-02",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "红细胞平均指数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "MCV"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 42,
+              "end": 45,
+              "exact_quote": "根据 MCV、MCH、MCHC 测定可对贫血进行形态学分类，并对鉴别诊断有一定的意义(表 1-2)。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "MCH"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 13,
+              "end": 16,
+              "exact_quote": "平均红细胞血红蛋白浓度(MCHC)=310~350g/L"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "MCHC"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 13,
+              "end": 17,
+              "exact_quote": "平均红细胞血红蛋白浓度(MCHC)=310~350g/L"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "RDW"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 655,
+              "end": 658,
+              "exact_quote": "红细胞容积分布宽度(RDW)是衡量外周血红细胞体积大小离散程度的指标,即看看红细胞的大小是比较一致,还是差别很大。这个指标是通过自动血液分析仪测量后计算出来的,以测得的红细胞体积大小的变异系数(RDW-CV)或标准差(RDW-SD)表示,贫血患者除MCV发生改变外,RDW也发生改变。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "RDW-CV"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 742,
+              "end": 748,
+              "exact_quote": "红细胞容积分布宽度(RDW)是衡量外周血红细胞体积大小离散程度的指标,即看看红细胞的大小是比较一致,还是差别很大。这个指标是通过自动血液分析仪测量后计算出来的,以测得的红细胞体积大小的变异系数(RDW-CV)或标准差(RDW-SD)表示,贫血患者除MCV发生改变外,RDW也发生改变。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "RDW-SD"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 754,
+              "end": 760,
+              "exact_quote": "红细胞容积分布宽度(RDW)是衡量外周血红细胞体积大小离散程度的指标,即看看红细胞的大小是比较一致,还是差别很大。这个指标是通过自动血液分析仪测量后计算出来的,以测得的红细胞体积大小的变异系数(RDW-CV)或标准差(RDW-SD)表示,贫血患者除MCV发生改变外,RDW也发生改变。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "MCV正常"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "MCV增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "MCV减小"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "RDW正常"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "RDW增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "正细胞均一性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 98,
+              "end": 106,
+              "exact_quote": "(3) 正细胞均一性贫血: MCV、RDW 均正常, 如急性失血性贫血、慢性疾病。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "正细胞不均一性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 140,
+              "end": 149,
+              "exact_quote": "(4) 正细胞不均一性贫血: MCV 正常, RDW 增大, 如早期缺铁性贫血、G6PD 缺乏症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "小细胞均一性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 4,
+              "end": 12,
+              "exact_quote": "(1) 小细胞均一性贫血: MCV 减小, RDW 正常, 如珠蛋白生成障碍性贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "小细胞不均一性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 59,
+              "end": 68,
+              "exact_quote": "(2) 小细胞不均一性贫血: MCV 减小, RDW 增大, 如缺铁性贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "大细胞均一性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 191,
+              "end": 199,
+              "exact_quote": "(5) 大细胞均一性贫血: MCV 增大, RDW 正常, 如慢性再生障碍性贫血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "大细胞不均一性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 233,
+              "end": 242,
+              "exact_quote": "(6) 大细胞不均一性贫血: MCV、RDW 均增大, 如巨幼细胞贫血等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "早期缺铁性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "start": 168,
+              "end": 175,
+              "exact_quote": "(4) 正细胞不均一性贫血: MCV 正常, RDW 增大, 如早期缺铁性贫血、G6PD 缺乏症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "G6PD缺乏症"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "轻型地中海贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "巨幼细胞贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "start": 309,
+              "end": 315,
+              "exact_quote": "<table><tr><td>贫血形态与分类</td><td>MCV(80~100fL)</td><td>MCH(26~32pg)</td><td>MCHC(310~350g/L)</td><td>病因</td></tr><tr><td>大细胞性贫血</td><td>&gt;100</td><td>&gt;32</td><td>310~350</td><td>维生素\\( B_{12} \\)缺乏引起的巨幼细胞贫血</td></tr><tr><td>正细胞性贫血</td><td>80~100</td><td>26~32</td><td>310~350</td><td>急性失血性贫血、急性溶血性贫血、再生障碍性贫血等</td></tr><tr><td>单纯小细胞性贫血</td><td>&lt;80</td><td>&lt;26</td><td>310~350</td><td>慢性感染、炎症、肝病等引起的贫血</td></tr><tr><td>小细胞低色素性贫血</td><td>&lt;80</td><td>&lt;23</td><td>&lt;300</td><td>缺铁性贫血、珠蛋白生成障碍性贫血等</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞平均指数",
+            "HAS_METRIC",
+            "MCV"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞平均指数",
+            "HAS_METRIC",
+            "MCH"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞平均指数",
+            "HAS_METRIC",
+            "MCHC"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞平均指数",
+            "HAS_METRIC",
+            "RDW"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "RDW",
+            "HAS_METRIC",
+            "RDW-CV"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "exact_quote": "红细胞容积分布宽度(RDW)是衡量外周血红细胞体积大小离散程度的指标,即看看红细胞的大小是比较一致,还是差别很大。这个指标是通过自动血液分析仪测量后计算出来的,以测得的红细胞体积大小的变异系数(RDW-CV)或标准差(RDW-SD)表示,贫血患者除MCV发生改变外,RDW也发生改变。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "RDW",
+            "HAS_METRIC",
+            "RDW-SD"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0003:0000",
+              "exact_quote": "红细胞容积分布宽度(RDW)是衡量外周血红细胞体积大小离散程度的指标,即看看红细胞的大小是比较一致,还是差别很大。这个指标是通过自动血液分析仪测量后计算出来的,以测得的红细胞体积大小的变异系数(RDW-CV)或标准差(RDW-SD)表示,贫血患者除MCV发生改变外,RDW也发生改变。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "MCV",
+            "HAS_STATE",
+            "MCV正常"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "MCV",
+            "HAS_STATE",
+            "MCV增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "MCV",
+            "HAS_STATE",
+            "MCV减小"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "RDW",
+            "HAS_STATE",
+            "RDW正常"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "RDW",
+            "HAS_STATE",
+            "RDW增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "正细胞不均一性贫血",
+            "ASSOCIATED_WITH",
+            "早期缺铁性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "exact_quote": "(4) 正细胞不均一性贫血: MCV 正常, RDW 增大, 如早期缺铁性贫血、G6PD 缺乏症等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "正细胞不均一性贫血",
+            "ASSOCIATED_WITH",
+            "G6PD缺乏症"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "小细胞均一性贫血",
+            "ASSOCIATED_WITH",
+            "轻型地中海贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "大细胞不均一性贫血",
+            "ASSOCIATED_WITH",
+            "巨幼细胞贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+              "exact_quote": "(6) 大细胞不均一性贫血: MCV、RDW 均增大, 如巨幼细胞贫血等。"
+            }
+          ]
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MCV正常",
+              "RDW正常"
+            ],
+            "outputs": [
+              "正细胞均一性贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MCV正常",
+              "RDW增大"
+            ],
+            "outputs": [
+              "正细胞不均一性贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MCV减小",
+              "RDW正常"
+            ],
+            "outputs": [
+              "小细胞均一性贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MCV减小",
+              "RDW增大"
+            ],
+            "outputs": [
+              "小细胞不均一性贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MCV增大",
+              "RDW正常"
+            ],
+            "outputs": [
+              "大细胞均一性贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MCV增大",
+              "RDW增大"
+            ],
+            "outputs": [
+              "大细胞不均一性贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "MCV",
+              "MCH",
+              "MCHC"
+            ],
+            "outputs": [
+              "贫血形态分类"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "held_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞计数",
+              "红细胞压积"
+            ],
+            "outputs": [
+              "MCV"
+            ],
+            "logic": "FORMULA",
+            "hold_reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+          },
+          "status": "HELD_EXTERNAL_KNOWLEDGE",
+          "reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+        },
+        {
+          "kind": "held_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞计数",
+              "血红蛋白"
+            ],
+            "outputs": [
+              "MCH"
+            ],
+            "logic": "FORMULA",
+            "hold_reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+          },
+          "status": "HELD_EXTERNAL_KNOWLEDGE",
+          "reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+        },
+        {
+          "kind": "held_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞压积",
+              "血红蛋白"
+            ],
+            "outputs": [
+              "MCHC"
+            ],
+            "logic": "FORMULA",
+            "hold_reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+          },
+          "status": "HELD_EXTERNAL_KNOWLEDGE",
+          "reason": "原文只说按公式计算三种平均指数，未给出具体公式或输入配对。"
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-03",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "白细胞分类计数"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+              "start": 116,
+              "end": 123,
+              "exact_quote": "白细胞(WBC)是人体的忠实卫士,有很强的吞噬细菌的能力,是抵御病原微生物入侵的重要防卫系统。白细胞计数就是测定血液中各类白细胞的总数,在不同病理情况下,可引起各类白细胞的数量和质量发生改变。临床上检查白细胞计数和白细胞分类计数及其形态学改变,对各种疾病的诊断有着重要的参考价值。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "白细胞计数"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+              "start": 3,
+              "end": 8,
+              "exact_quote": "（五）白细胞计数"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "中性粒细胞绝对值"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "start": 396,
+              "end": 404,
+              "exact_quote": "6) 当中性粒细胞绝对值  \\( <1.5 \\times 10^{9}/L \\) ，称为粒细胞减少症，要寻找原因，及时治疗。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "淋巴细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "单核细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "嗜酸性粒细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "嗜碱性粒细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "白细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+              "start": 38,
+              "end": 43,
+              "exact_quote": "1) 长期接触放射线: 可损伤骨髓造血细胞, 引起白细胞减少。因此不要经常做 X 线透视、全身 CT、PET-CT 等接触放射线的检查。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "中性粒细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0005:0001",
+              "start": 557,
+              "end": 564,
+              "exact_quote": "(1) 中性粒细胞增多"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "中性粒细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "start": 165,
+              "end": 172,
+              "exact_quote": "(2) 中性粒细胞减少"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "淋巴细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "start": 459,
+              "end": 465,
+              "exact_quote": "(3) 淋巴细胞增多"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "淋巴细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+              "start": 104,
+              "end": 110,
+              "exact_quote": "(4) 淋巴细胞减少: 主要见于长期接触放射线、应用肾上腺皮质激素、抗淋巴细胞球蛋白等治疗, 以及先天性免疫缺陷病、艾滋病等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "单核细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0001",
+              "start": 168,
+              "end": 174,
+              "exact_quote": "(5) 单核细胞增多"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "嗜酸性粒细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "start": 111,
+              "end": 119,
+              "exact_quote": "(6) 嗜酸性粒细胞增多"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "嗜酸性粒细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "start": 267,
+              "end": 275,
+              "exact_quote": "(7) 嗜酸性粒细胞减少: 见于长期使用肾上腺皮质激素。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "嗜碱性粒细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "start": 296,
+              "end": 304,
+              "exact_quote": "(8) 嗜碱性粒细胞增多: 很少见, 如慢性粒细胞白血病、嗜碱性粒细胞白血病(罕见)、骨髓纤维化、某些严重的过敏性疾病等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "急性感染"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "start": 7,
+              "end": 11,
+              "exact_quote": "反应性增多:①急性感染或炎症;②广泛的组织损伤或坏死,如"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "组织损伤"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+              "start": 297,
+              "end": 301,
+              "exact_quote": "2) 广泛的组织损伤: 如大面积烧伤、心肌梗死等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "急性出血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "急性溶血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+              "start": 352,
+              "end": 356,
+              "exact_quote": "4) 急性溶血: 如血型不合的输血, 导致大量红细胞破坏引起的急性溶血。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "长期放射线照射"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "药物影响"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "白血病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0004:0001",
+              "start": 430,
+              "end": 433,
+              "exact_quote": "6) 白血病: 由于骨髓内白细胞大量增殖, 并释放进入外周血液, 使白细胞明显增加, 还可见到大量幼稚细胞。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "再生障碍性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+              "start": 166,
+              "end": 173,
+              "exact_quote": "4) 血液系统疾病: 如再生障碍性贫血、粒细胞减少症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "粒细胞减少症"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+              "start": 174,
+              "end": 180,
+              "exact_quote": "4) 血液系统疾病: 如再生障碍性贫血、粒细胞减少症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "病毒感染"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "start": 206,
+              "end": 210,
+              "exact_quote": "1) 感染性疾病: 革兰氏阴性杆菌感染, 如伤寒、副伤寒; 某些病毒感染, 如流感、水痘; 某些原虫感染, 如疟疾、黑热病等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "寄生虫病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "start": 166,
+              "end": 170,
+              "exact_quote": "2) 寄生虫病：如蛔虫、钩虫感染、血吸虫、肺吸虫、丝虫、包囊虫等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "过敏性疾病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "start": 123,
+              "end": 128,
+              "exact_quote": "1) 过敏性疾病: 如支气管哮喘、荨麻疹、药物和食物过敏、血管神经性水肿、血清病等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞分类计数",
+            "HAS_METRIC",
+            "中性粒细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞分类计数",
+            "HAS_METRIC",
+            "淋巴细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞分类计数",
+            "HAS_METRIC",
+            "单核细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞分类计数",
+            "HAS_METRIC",
+            "嗜酸性粒细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞分类计数",
+            "HAS_METRIC",
+            "嗜碱性粒细胞绝对值"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞计数",
+            "HAS_STATE",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白细胞计数",
+            "HAS_STATE",
+            "白细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+              "exact_quote": "(2) 白细胞计数减少\n1) 长期接触放射线: 可损伤骨髓造血细胞, 引起白细胞减少。因此不要经常做 X 线透视、全身 CT、PET-CT 等接触放射线的检查。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "中性粒细胞绝对值",
+            "HAS_STATE",
+            "中性粒细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "中性粒细胞绝对值",
+            "HAS_STATE",
+            "中性粒细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "exact_quote": "(2) 中性粒细胞减少\n\n1) 感染性疾病: 革兰氏阴性杆菌感染, 如伤寒、副伤寒; 某些病毒感染, 如流感、水痘; 某些原虫感染, 如疟疾、黑热病等。\n2) 血液系统疾病: 如再生障碍性贫血、巨幼细胞贫血、粒细胞减少症等。\n3) 慢性理化损伤: 长期接触放射线; 应用某些化学药物, 如氯霉素、磺胺药、抗肿瘤药; 某些化学物质, 如苯、铅、汞等。\n4) 自身免疫性疾病: 如系统性红斑狼疮等。\n5) 单核巨噬细胞系统功能亢进: 如脾功能亢进、类脂质沉积病等。\n6) 当中性粒细胞绝对值  \\( <1.5 \\times 10^{9}/L \\) ，称为粒细胞减少症，要寻找原因，及时治疗。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "淋巴细胞绝对值",
+            "HAS_STATE",
+            "淋巴细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "淋巴细胞绝对值",
+            "HAS_STATE",
+            "淋巴细胞减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "单核细胞绝对值",
+            "HAS_STATE",
+            "单核细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "嗜酸性粒细胞绝对值",
+            "HAS_STATE",
+            "嗜酸性粒细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "嗜酸性粒细胞绝对值",
+            "HAS_STATE",
+            "嗜酸性粒细胞减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "嗜碱性粒细胞绝对值",
+            "HAS_STATE",
+            "嗜碱性粒细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "急性感染",
+            "ASSOCIATED_WITH",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "组织损伤",
+            "ASSOCIATED_WITH",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "急性出血",
+            "ASSOCIATED_WITH",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "急性溶血",
+            "ASSOCIATED_WITH",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白血病",
+            "ASSOCIATED_WITH",
+            "白细胞增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "长期放射线照射",
+            "CAUSES",
+            "白细胞减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "药物影响",
+            "CAUSES",
+            "白细胞减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "再生障碍性贫血",
+            "ASSOCIATED_WITH",
+            "白细胞减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0005:0000",
+              "exact_quote": "1) 长期接触放射线: 可损伤骨髓造血细胞, 引起白细胞减少。因此不要经常做 X 线透视、全身 CT、PET-CT 等接触放射线的检查。\n2) 应用某些药物：如磺胺药、氯霉素、苯妥英钠，以及抗肿瘤药，如环磷酰胺、氨甲蝶呤、阿糖胞苷等。\n3) 某些有毒有害化学物质：如苯、铅、汞等。\n4) 血液系统疾病: 如再生障碍性贫血、粒细胞减少症等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "病毒感染",
+            "ASSOCIATED_WITH",
+            "淋巴细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "exact_quote": "1) 感染性疾病: 革兰氏阴性杆菌感染, 如伤寒、副伤寒; 某些病毒感染, 如流感、水痘; 某些原虫感染, 如疟疾、黑热病等。\n2) 血液系统疾病: 如再生障碍性贫血、巨幼细胞贫血、粒细胞减少症等。\n3) 慢性理化损伤: 长期接触放射线; 应用某些化学药物, 如氯霉素、磺胺药、抗肿瘤药; 某些化学物质, 如苯、铅、汞等。\n4) 自身免疫性疾病: 如系统性红斑狼疮等。\n5) 单核巨噬细胞系统功能亢进: 如脾功能亢进、类脂质沉积病等。\n6) 当中性粒细胞绝对值  \\( <1.5 \\times 10^{9}/L \\) ，称为粒细胞减少症，要寻找原因，及时治疗。\n(3) 淋巴细胞增多"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "寄生虫病",
+            "ASSOCIATED_WITH",
+            "嗜酸性粒细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "exact_quote": "(6) 嗜酸性粒细胞增多\n1) 过敏性疾病: 如支气管哮喘、荨麻疹、药物和食物过敏、血管神经性水肿、血清病等。\n2) 寄生虫病：如蛔虫、钩虫感染、血吸虫、肺吸虫、丝虫、包囊虫等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "过敏性疾病",
+            "ASSOCIATED_WITH",
+            "嗜酸性粒细胞增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0007:0000",
+              "exact_quote": "(6) 嗜酸性粒细胞增多\n1) 过敏性疾病: 如支气管哮喘、荨麻疹、药物和食物过敏、血管神经性水肿、血清病等。"
+            }
+          ]
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "白细胞计数",
+              "年龄",
+              "单位"
+            ],
+            "outputs": [
+              "白细胞计数参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "白细胞分类计数",
+              "年龄",
+              "单位"
+            ],
+            "outputs": [
+              "白细胞分类参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "中性粒细胞绝对值",
+              "单位"
+            ],
+            "outputs": [
+              "粒细胞减少症"
+            ],
+            "logic": "THRESHOLD"
+          },
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0006:0000",
+              "exact_quote": "反应性增多:①急性感染或炎症;②广泛的组织损伤或坏死,如\n\n第一章 临床血液检验\n严重烧伤、心肌梗死等；③急性大出血，见于脾破裂、宫外孕；④急性溶血；⑤急性中毒，如安眠药中毒、有机磷中毒及代谢性中毒（尿毒症、糖尿病酮症酸中毒）等；⑥恶性肿瘤。\n异常增生性增多: ①粒细胞白血病; ②骨髓增殖性疾病, 如真性红细胞增多症。\n(2) 中性粒细胞减少\n\n1) 感染性疾病: 革兰氏阴性杆菌感染, 如伤寒、副伤寒; 某些病毒感染, 如流感、水痘; 某些原虫感染, 如疟疾、黑热病等。\n2) 血液系统疾病: 如再生障碍性贫血、巨幼细胞贫血、粒细胞减少症等。\n3) 慢性理化损伤: 长期接触放射线; 应用某些化学药物, 如氯霉素、磺胺药、抗肿瘤药; 某些化学物质, 如苯、铅、汞等。\n4) 自身免疫性疾病: 如系统性红斑狼疮等。\n5) 单核巨噬细胞系统功能亢进: 如脾功能亢进、类脂质沉积病等。\n6) 当中性粒细胞绝对值  \\( <1.5 \\times 10^{9}/L \\) ，称为粒细胞减少症，要寻找原因，及时治疗。\n(3) 淋巴细胞增多\n1) 生理性增多: 6~7 岁以前的儿童淋巴细胞百分率偏高, 而中性粒细胞相对偏低, 7 岁以后与成人一样, 中性粒细胞比例比淋巴细胞高。\n2) 病理性增多\n\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-04",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "血小板参数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血小板计数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "MPV"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 668,
+              "end": 671,
+              "exact_quote": "平均血小板体积(MPV)是指单个血小板的平均大小。平均血小板体积的临床意义要结合血小板数量的变化才有意义,在常规体检中意义不大。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "PCT"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0009:0000",
+              "start": 17,
+              "end": 20,
+              "exact_quote": "血小板压积(PCT),又称血小板比容,指抗凝全血经离心沉淀后,测得下沉的血小板在全血中所占容积的百分比值。血小板压积在常规体检中意义不大。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "PDW"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血小板减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 66,
+              "end": 71,
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血小板增多"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 121,
+              "end": 126,
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "MPV增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "MPV减小"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "MPV持续下降"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血小板数量持续下降"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "PDW增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "出血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 77,
+              "end": 79,
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "血栓形成"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 620,
+              "end": 624,
+              "exact_quote": "3) 血小板  \\( >600 \\times 10^{9}/L \\)  时血液容易凝固，可导致血管内血栓形成，包括深静脉血栓或脑血栓，以及血栓性并发症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "骨髓造血功能衰竭"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+              "start": 92,
+              "end": 100,
+              "exact_quote": "(2) 平均血小板体积减低: 见于骨髓造血功能不良, 血小板生成减少者。MPV 随血小板数量同时持续下降, 提示骨髓造血功能衰竭。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "骨髓造血功能恢复"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "再生障碍性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 257,
+              "end": 264,
+              "exact_quote": "1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "白血病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 280,
+              "end": 283,
+              "exact_quote": "1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "巨幼细胞贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "start": 271,
+              "end": 277,
+              "exact_quote": "1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板参数",
+            "HAS_METRIC",
+            "血小板计数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板参数",
+            "HAS_METRIC",
+            "MPV"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板参数",
+            "HAS_METRIC",
+            "PCT"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板参数",
+            "HAS_METRIC",
+            "PDW"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板计数",
+            "HAS_STATE",
+            "血小板减少"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板计数",
+            "HAS_STATE",
+            "血小板增多"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "MPV",
+            "HAS_STATE",
+            "MPV增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "MPV",
+            "HAS_STATE",
+            "MPV减小"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "MPV",
+            "HAS_STATE",
+            "MPV持续下降"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板计数",
+            "HAS_STATE",
+            "血小板数量持续下降"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "PDW",
+            "HAS_STATE",
+            "PDW增大"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板减少",
+            "CAUSES",
+            "出血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血小板增多",
+            "CAUSES",
+            "血栓形成"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。\n\n第一章 临床血液检验\n【参考区间】\n成人(125~350)×10\\( ^{9} \\)/L\n【异常结果解读】\n\n(1) 血小板减少: PLT<100 × 10^9/L 为血小板减少, 见于:\n1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。\n2) 血小板破坏或消耗过多: 如原发性血小板减少性紫癜(ITP)、弥散性血管内凝血(DIC)、进行体外循环手术等。\n3) 血小板分布异常: 如脾肿大、脾功能亢进等, 导致大量血小板积聚在脾脏内, 使外周血液中减少。\n4) 血小板  \\( <20 \\times 10^{9}/L \\)  时可发生自发性内脏出血，如发生在脑部将导致死亡，值得注意。\n(2) 血小板增多: PLT>400 × 10^9/L 为血小板增多, 见于:\n\n1) 原发性增多: 如原发性血小板增多症、真性红细胞增多症、慢性粒细胞白血病等。\n2) 反应性增多: 如急性感染、急性大出血、急性溶血等。\n3) 血小板  \\( >600 \\times 10^{9}/L \\)  时血液容易凝固，可导致血管内血栓形成，包括深静脉血栓或脑血栓，以及血栓性并发症等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "再生障碍性贫血",
+            "ASSOCIATED_WITH",
+            "血小板减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。\n\n第一章 临床血液检验\n【参考区间】\n成人(125~350)×10\\( ^{9} \\)/L\n【异常结果解读】\n\n(1) 血小板减少: PLT<100 × 10^9/L 为血小板减少, 见于:\n1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "白血病",
+            "ASSOCIATED_WITH",
+            "血小板减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。\n\n第一章 临床血液检验\n【参考区间】\n成人(125~350)×10\\( ^{9} \\)/L\n【异常结果解读】\n\n(1) 血小板减少: PLT<100 × 10^9/L 为血小板减少, 见于:\n1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "巨幼细胞贫血",
+            "ASSOCIATED_WITH",
+            "血小板减少"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0008:0000",
+              "exact_quote": "血小板(PLT)是无核细胞,由骨髓中的成熟巨核细胞产生,直径2~4μm,寿命10天左右。血小板的数量和质量与止血和凝血功能密切相关。血小板减少容易发生各种出血,包括鼻出血、牙龈出血、皮肤紫癜、瘀斑等,严重者可出现呕血,甚至内脏出血而危及生命;血小板增多容易发生血栓,导致深静脉血栓或脑血栓等。\n\n第一章 临床血液检验\n【参考区间】\n成人(125~350)×10\\( ^{9} \\)/L\n【异常结果解读】\n\n(1) 血小板减少: PLT<100 × 10^9/L 为血小板减少, 见于:\n1) 骨髓造血功能受损: 如再生障碍性贫血、放射性损伤、巨幼细胞贫血、急性白血病等。"
+            }
+          ]
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "MPV持续下降",
+              "血小板数量持续下降"
+            ],
+            "outputs": [
+              "骨髓造血功能衰竭"
+            ],
+            "logic": "ALL_SAME_WINDOW"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血小板计数",
+              "单位"
+            ],
+            "outputs": [
+              "血小板减少",
+              "血小板增多",
+              "出血高风险",
+              "血栓形成高风险"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "MPV",
+              "单位"
+            ],
+            "outputs": [
+              "MPV参考范围判定"
+            ],
+            "logic": "RANGE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "PCT",
+              "单位"
+            ],
+            "outputs": [
+              "PCT参考范围判定"
+            ],
+            "logic": "RANGE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "MPV时间序列"
+            ],
+            "outputs": [
+              "MPV持续下降"
+            ],
+            "logic": "TREND"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血小板数量时间序列"
+            ],
+            "outputs": [
+              "血小板数量持续下降"
+            ],
+            "logic": "TREND"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-05",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "铁代谢检查"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血清铁"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+              "start": 85,
+              "end": 88,
+              "exact_quote": "(一) 血清铁"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血清铁蛋白"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0001",
+              "start": 96,
+              "end": 101,
+              "exact_quote": "(二) 血清铁蛋白"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "转铁蛋白"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+              "start": 326,
+              "end": 330,
+              "exact_quote": "（三）血清转铁蛋白"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "TIBC"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0000",
+              "start": 83,
+              "end": 87,
+              "exact_quote": "总铁结合力(TIBC)是指血清中的转铁蛋白所能结合铁的最大能力。血液中的铁要与转铁蛋白结合,才能进行铁的转运。正常情况下血清铁仅能与1/3的转铁蛋白结合。凡能与100mL血清中全部转铁蛋白结合的最大铁量称为总铁结合力。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血清维生素B12"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血清叶酸"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血清铁降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+              "start": 366,
+              "end": 371,
+              "exact_quote": "(1) 血清铁降低"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血清铁增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血清铁蛋白降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+              "start": 150,
+              "end": 157,
+              "exact_quote": "(1) 血清铁蛋白降低"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血清铁蛋白增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "转铁蛋白降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+              "start": 83,
+              "end": 89,
+              "exact_quote": "(2) 血清转铁蛋白降低"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "TIBC增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "TIBC降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "维生素B12降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "叶酸降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "慢性失血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+              "start": 399,
+              "end": 403,
+              "exact_quote": "2) 慢性失血: 如胃、十二指肠溃疡出血, 钩虫病, 月经过多等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "铁吸收不良"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 298,
+              "end": 303,
+              "exact_quote": "<table><tr><td>血清铁</td><td>TIBC</td><td>原因</td></tr><tr><td>↓</td><td>↑</td><td>缺铁性贫血,铁吸收不良。痔、消化性溃疡出血、月经过多引起的慢性失血。妊娠、婴幼儿生长发育需铁量增加</td></tr><tr><td>↓</td><td>↓</td><td>慢性感染、肝硬变、尿毒症、肾病综合征、恶性肿瘤</td></tr><tr><td>↑</td><td>↓</td><td>铁剂治疗过量、溶血性贫血、再生障碍性贫血、巨幼细胞贫血、地中海贫血等</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "需铁量增加"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 336,
+              "end": 341,
+              "exact_quote": "<table><tr><td>血清铁</td><td>TIBC</td><td>原因</td></tr><tr><td>↓</td><td>↑</td><td>缺铁性贫血,铁吸收不良。痔、消化性溃疡出血、月经过多引起的慢性失血。妊娠、婴幼儿生长发育需铁量增加</td></tr><tr><td>↓</td><td>↓</td><td>慢性感染、肝硬变、尿毒症、肾病综合征、恶性肿瘤</td></tr><tr><td>↑</td><td>↓</td><td>铁剂治疗过量、溶血性贫血、再生障碍性贫血、巨幼细胞贫血、地中海贫血等</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "铁利用障碍"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "红细胞大量破坏"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "缺铁性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0009:0001",
+              "start": 273,
+              "end": 278,
+              "exact_quote": "二、缺铁性贫血检验"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "巨幼细胞贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0009:0001",
+              "start": 238,
+              "end": 244,
+              "exact_quote": "血小板体积分布宽度增高表明血小板体积大小相差悬殊,主要见于巨幼细胞贫血、急性白血病化疗后、慢性粒细胞白血病、血栓性疾病等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "再生障碍性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0009:0001",
+              "start": 51,
+              "end": 58,
+              "exact_quote": "(2) 血小板压积减低: 见于再生障碍性贫血、血小板减少症、化疗以后。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "溶血性贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0001",
+              "start": 13,
+              "end": 18,
+              "exact_quote": "1) 红细胞破坏过多: 如溶血性贫血, 铁从血红蛋白中释放出来。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "肝硬变"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 384,
+              "end": 387,
+              "exact_quote": "<table><tr><td>血清铁</td><td>TIBC</td><td>原因</td></tr><tr><td>↓</td><td>↑</td><td>缺铁性贫血,铁吸收不良。痔、消化性溃疡出血、月经过多引起的慢性失血。妊娠、婴幼儿生长发育需铁量增加</td></tr><tr><td>↓</td><td>↓</td><td>慢性感染、肝硬变、尿毒症、肾病综合征、恶性肿瘤</td></tr><tr><td>↑</td><td>↓</td><td>铁剂治疗过量、溶血性贫血、再生障碍性贫血、巨幼细胞贫血、地中海贫血等</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "尿毒症"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 60,
+              "end": 63,
+              "exact_quote": "(1) 总铁结合力降低: ①转铁蛋白合成不足, 如遗传性转铁蛋白缺乏症、肝硬化等; ②转铁蛋白丢失增加, 如肾病综合征、尿毒症; ③肿瘤、慢性感染、珠蛋白合成障碍性贫血等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "肾病综合征"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0000",
+              "start": 39,
+              "end": 44,
+              "exact_quote": "2) 肾病综合征时, 大量蛋白质从尿液丢失, 使转铁蛋白减少。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "恶性肿瘤"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+              "start": 490,
+              "end": 494,
+              "exact_quote": "4) 其他: 严重感染、恶性肿瘤、肝硬化等, 由于食欲降低、机体代谢障碍等引起。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "恶性贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "慢性感染"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 69,
+              "end": 73,
+              "exact_quote": "(1) 总铁结合力降低: ①转铁蛋白合成不足, 如遗传性转铁蛋白缺乏症、肝硬化等; ②转铁蛋白丢失增加, 如肾病综合征、尿毒症; ③肿瘤、慢性感染、珠蛋白合成障碍性贫血等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "铁剂治疗过量"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 440,
+              "end": 446,
+              "exact_quote": "<table><tr><td>血清铁</td><td>TIBC</td><td>原因</td></tr><tr><td>↓</td><td>↑</td><td>缺铁性贫血,铁吸收不良。痔、消化性溃疡出血、月经过多引起的慢性失血。妊娠、婴幼儿生长发育需铁量增加</td></tr><tr><td>↓</td><td>↓</td><td>慢性感染、肝硬变、尿毒症、肾病综合征、恶性肿瘤</td></tr><tr><td>↑</td><td>↓</td><td>铁剂治疗过量、溶血性贫血、再生障碍性贫血、巨幼细胞贫血、地中海贫血等</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "地中海贫血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+              "start": 468,
+              "end": 473,
+              "exact_quote": "<table><tr><td>血清铁</td><td>TIBC</td><td>原因</td></tr><tr><td>↓</td><td>↑</td><td>缺铁性贫血,铁吸收不良。痔、消化性溃疡出血、月经过多引起的慢性失血。妊娠、婴幼儿生长发育需铁量增加</td></tr><tr><td>↓</td><td>↓</td><td>慢性感染、肝硬变、尿毒症、肾病综合征、恶性肿瘤</td></tr><tr><td>↑</td><td>↓</td><td>铁剂治疗过量、溶血性贫血、再生障碍性贫血、巨幼细胞贫血、地中海贫血等</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁代谢检查",
+            "HAS_METRIC",
+            "血清铁"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁代谢检查",
+            "HAS_METRIC",
+            "血清铁蛋白"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁代谢检查",
+            "HAS_METRIC",
+            "转铁蛋白"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁代谢检查",
+            "HAS_METRIC",
+            "TIBC"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血清铁",
+            "HAS_STATE",
+            "血清铁降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+              "exact_quote": "(一) 血清铁\n铁是造血的重要原料,是构成血红蛋白的必要成分,没有铁就不能合成血红蛋白,氧就无法输送,生命也就无法存活。血清中的铁一部分与运铁蛋白结合,另一部分呈游离状态,检测后者的含量即为血清铁(SI)。\n人体内的铁 70% 存在于血红蛋白和肌红蛋白中, 25% 分布于肝、肾、骨髓等组织中。铁含量较多的食物为蛋黄、动物肝脏、瘦肉、血豆腐、鱼类等。在饮食中的铁主要在十二指肠和空肠上段被吸收, 成人每天的铁需要量约为 25mg。\n【参考区间】\n亚铁嗪比色法: 成年男性 11.6~31.3μmol/L\n成年女性 9.0~30.4μmol/L\n【异常结果解读】\n(1) 血清铁降低"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血清铁",
+            "HAS_STATE",
+            "血清铁增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血清铁蛋白",
+            "HAS_STATE",
+            "血清铁蛋白降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+              "exact_quote": "肝是合成铁蛋白的主要场所。在机体缺铁时血清铁蛋白水平降低，铁过多时血清铁蛋白水平升高。对缺铁性贫血的敏感性为90%，特异性为85%。铁蛋白还是一种急性期时相反应蛋白，在某些肿瘤可见升高。\n【参考区间】\n放射免疫法: 男性 15~200μg/L\n女性 12~150μg/L\n【异常结果解读】\n(1) 血清铁蛋白降低"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血清铁蛋白",
+            "HAS_STATE",
+            "血清铁蛋白增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "转铁蛋白",
+            "HAS_STATE",
+            "转铁蛋白降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0011:0001",
+              "exact_quote": "2) 妊娠中、后期，由于胎儿生长发育的需要导致孕妇贫血，此时转铁蛋白升高。长期口服避孕药也可升高。\n(2) 血清转铁蛋白降低"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "TIBC",
+            "HAS_STATE",
+            "TIBC增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "TIBC",
+            "HAS_STATE",
+            "TIBC降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血清维生素B12",
+            "HAS_STATE",
+            "维生素B12降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血清叶酸",
+            "HAS_STATE",
+            "叶酸降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "慢性失血",
+            "CAUSES",
+            "血清铁降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+              "exact_quote": "(1) 血清铁降低\n\n1) 摄入不足: 缺铁性饮食或肠道吸收不良。\n2) 慢性失血: 如胃、十二指肠溃疡出血, 钩虫病, 月经过多等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁吸收不良",
+            "CAUSES",
+            "血清铁降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "需铁量增加",
+            "CAUSES",
+            "血清铁降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞大量破坏",
+            "CAUSES",
+            "血清铁增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "铁利用障碍",
+            "CAUSES",
+            "血清铁增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "缺铁性贫血",
+            "ASSOCIATED_WITH",
+            "血清铁蛋白降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0011:0000",
+              "exact_quote": "肝是合成铁蛋白的主要场所。在机体缺铁时血清铁蛋白水平降低，铁过多时血清铁蛋白水平升高。对缺铁性贫血的敏感性为90%，特异性为85%。铁蛋白还是一种急性期时相反应蛋白，在某些肿瘤可见升高。\n【参考区间】\n放射免疫法: 男性 15~200μg/L\n女性 12~150μg/L\n【异常结果解读】\n(1) 血清铁蛋白降低"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "恶性肿瘤",
+            "ASSOCIATED_WITH",
+            "血清铁蛋白增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "肝硬变",
+            "CAUSES",
+            "转铁蛋白降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "肾病综合征",
+            "CAUSES",
+            "转铁蛋白降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "维生素B12降低",
+            "CAUSES",
+            "巨幼细胞贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "叶酸降低",
+            "CAUSES",
+            "巨幼细胞贫血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "恶性贫血",
+            "ASSOCIATED_WITH",
+            "维生素B12降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "血清铁降低",
+              "TIBC增高"
+            ],
+            "outputs": [
+              "缺铁性贫血",
+              "铁吸收不良",
+              "慢性失血",
+              "需铁量增加"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "血清铁降低",
+              "TIBC降低"
+            ],
+            "outputs": [
+              "慢性感染",
+              "肝硬变",
+              "尿毒症",
+              "肾病综合征",
+              "恶性肿瘤"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "graph_rule",
+          "target": {
+            "rule_stage": "GRAPH_COMPOSITE",
+            "inputs": [
+              "血清铁增高",
+              "TIBC降低"
+            ],
+            "outputs": [
+              "铁剂治疗过量",
+              "溶血性贫血",
+              "再生障碍性贫血",
+              "巨幼细胞贫血",
+              "地中海贫血"
+            ],
+            "logic": "ALL"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血清铁",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "血清铁参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血清铁蛋白",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "血清铁蛋白参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "TIBC",
+              "单位"
+            ],
+            "outputs": [
+              "TIBC增高",
+              "TIBC降低"
+            ],
+            "logic": "RANGE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血清维生素B12",
+              "单位"
+            ],
+            "outputs": [
+              "维生素B12降低"
+            ],
+            "logic": "RANGE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血清叶酸",
+              "单位"
+            ],
+            "outputs": [
+              "叶酸降低"
+            ],
+            "logic": "RANGE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-06",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "血液流变学检查"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+              "start": 317,
+              "end": 324,
+              "exact_quote": "生命的维持离不开正常的血液循环，当血液流变性发生异常时可导致血液循环与微循环障碍，使组织和脏器缺血、缺氧、血栓形成，从而出现脑卒中、心肌梗死、深静脉血栓等疾病；反之，有些疾病本身也可引起血液流变学的异常，如高脂血症、糖尿病、冠心病、血液病等。因此，血液流变学检查对许多疾病的病因和发病机制研究、诊断、预防、疗效观察等都有一定的意义。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "全血高切黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "全血中切黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "全血低切黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血浆黏度"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+              "start": 453,
+              "end": 457,
+              "exact_quote": "全血黏度是衡量血液流动时摩擦力或流动阻力的指标。血黏度愈高，流动性愈小，形成血栓的危险性愈高。由于血液是由红细胞、白细胞、血小板和血浆组成的特殊悬浮液，因此，全血黏度是血浆黏度、血细胞浓度、红细胞聚集性、红细胞变形性，以及白细胞和血小板流变性的综合性指标。其中红细胞浓度是影响全血黏度最重要的因素。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "还原全血黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞变形指数IR"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞变形指数TK"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞变形指数FI"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞聚集指数"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "start": 112,
+              "end": 119,
+              "exact_quote": "（五）红细胞聚集指数"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞电泳时间"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "start": 381,
+              "end": 388,
+              "exact_quote": "（六）红细胞电泳时间"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "全血黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "start": 288,
+              "end": 294,
+              "exact_quote": "红细胞聚集性增高,表示红细胞聚集性增强,全血黏度增高。凡能引起血浆纤维蛋白原和球蛋白含量增高,红细胞表面电荷密度降低的病理过程,均可引起红细胞聚集性增高,可见于急性心肌梗死、脑血栓、高脂血症,以及周围血管深静脉血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "全血黏度降低"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "血浆黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+              "start": 147,
+              "end": 153,
+              "exact_quote": "4) 血浆黏度增高: 如高脂血症、高血压、多发性骨髓瘤、原发性巨球蛋白血症、免疫球蛋白增多症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞变形能力降低"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+              "start": 98,
+              "end": 107,
+              "exact_quote": "3) 红细胞变形能力降低: 如缺氧、酸中毒、遗传性球形红细胞增多症、遗传性椭圆形红细胞增多症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞聚集指数增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞电泳时间延长"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "start": 479,
+              "end": 488,
+              "exact_quote": "红细胞表面带有负电荷，在直流电的电场中，红细胞从阴极向阳极泳动，红细胞泳动一定距离所需的时间叫红细胞电泳时间。影响电泳时间的因素主要与血浆中血脂、球蛋白、纤维蛋白原和血浆黏度有关。红细胞电泳时间延长，红细胞聚集性增强，全血黏度高。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "红细胞聚集性增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "start": 268,
+              "end": 276,
+              "exact_quote": "红细胞聚集性增高,表示红细胞聚集性增强,全血黏度增高。凡能引起血浆纤维蛋白原和球蛋白含量增高,红细胞表面电荷密度降低的病理过程,均可引起红细胞聚集性增高,可见于急性心肌梗死、脑血栓、高脂血症,以及周围血管深静脉血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞压积增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "血浆蛋白增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "血栓形成"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+              "start": 246,
+              "end": 250,
+              "exact_quote": "生命的维持离不开正常的血液循环，当血液流变性发生异常时可导致血液循环与微循环障碍，使组织和脏器缺血、缺氧、血栓形成，从而出现脑卒中、心肌梗死、深静脉血栓等疾病；反之，有些疾病本身也可引起血液流变学的异常，如高脂血症、糖尿病、冠心病、血液病等。因此，血液流变学检查对许多疾病的病因和发病机制研究、诊断、预防、疗效观察等都有一定的意义。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "冠心病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+              "start": 305,
+              "end": 308,
+              "exact_quote": "生命的维持离不开正常的血液循环，当血液流变性发生异常时可导致血液循环与微循环障碍，使组织和脏器缺血、缺氧、血栓形成，从而出现脑卒中、心肌梗死、深静脉血栓等疾病；反之，有些疾病本身也可引起血液流变学的异常，如高脂血症、糖尿病、冠心病、血液病等。因此，血液流变学检查对许多疾病的病因和发病机制研究、诊断、预防、疗效观察等都有一定的意义。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "糖尿病"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+              "start": 301,
+              "end": 304,
+              "exact_quote": "生命的维持离不开正常的血液循环，当血液流变性发生异常时可导致血液循环与微循环障碍，使组织和脏器缺血、缺氧、血栓形成，从而出现脑卒中、心肌梗死、深静脉血栓等疾病；反之，有些疾病本身也可引起血液流变学的异常，如高脂血症、糖尿病、冠心病、血液病等。因此，血液流变学检查对许多疾病的病因和发病机制研究、诊断、预防、疗效观察等都有一定的意义。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "高血压"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+              "start": 161,
+              "end": 164,
+              "exact_quote": "4) 血浆黏度增高: 如高脂血症、高血压、多发性骨髓瘤、原发性巨球蛋白血症、免疫球蛋白增多症等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "脑梗死"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0016:0000",
+              "start": 366,
+              "end": 369,
+              "exact_quote": "2) 血浆纤维蛋白原增高的疾病: 如肝硬化、急性心肌梗死、急性脑梗死。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "全血高切黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "全血中切黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "全血低切黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "血浆黏度"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0014:0001",
+              "exact_quote": "生命的维持离不开正常的血液循环，当血液流变性发生异常时可导致血液循环与微循环障碍，使组织和脏器缺血、缺氧、血栓形成，从而出现脑卒中、心肌梗死、深静脉血栓等疾病；反之，有些疾病本身也可引起血液流变学的异常，如高脂血症、糖尿病、冠心病、血液病等。因此，血液流变学检查对许多疾病的病因和发病机制研究、诊断、预防、疗效观察等都有一定的意义。\n(一) 全血黏度\n全血黏度是衡量血液流动时摩擦力或流动阻力的指标。血黏度愈高，流动性愈小，形成血栓的危险性愈高。由于血液是由红细胞、白细胞、血小板和血浆组成的特殊悬浮液，因此，全血黏度是血浆黏度、血细胞浓度、红细胞聚集性、红细胞变形性，以及白细胞和血小板流变性的综合性指标。其中红细胞浓度是影响全血黏度最重要的因素。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "还原全血黏度"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "红细胞变形指数IR"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "红细胞变形指数TK"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "红细胞变形指数FI"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "红细胞聚集指数"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血液流变学检查",
+            "HAS_METRIC",
+            "红细胞电泳时间"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "全血高切黏度",
+            "HAS_STATE",
+            "全血黏度增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "全血低切黏度",
+            "HAS_STATE",
+            "全血黏度增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血浆黏度",
+            "HAS_STATE",
+            "血浆黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0015:0001",
+              "exact_quote": "4) 血浆黏度增高: 如高脂血症、高血压、多发性骨髓瘤、原发性巨球蛋白血症、免疫球蛋白增多症等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞聚集指数",
+            "HAS_STATE",
+            "红细胞聚集指数增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞电泳时间",
+            "HAS_STATE",
+            "红细胞电泳时间延长"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "exact_quote": "（六）红细胞电泳时间\n红细胞表面带有负电荷，在直流电的电场中，红细胞从阴极向阳极泳动，红细胞泳动一定距离所需的时间叫红细胞电泳时间。影响电泳时间的因素主要与血浆中血脂、球蛋白、纤维蛋白原和血浆黏度有关。红细胞电泳时间延长，红细胞聚集性增强，全血黏度高。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞聚集性增高",
+            "CAUSES",
+            "全血黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "exact_quote": "红细胞聚集性增高,表示红细胞聚集性增强,全血黏度增高。凡能引起血浆纤维蛋白原和球蛋白含量增高,红细胞表面电荷密度降低的病理过程,均可引起红细胞聚集性增高,可见于急性心肌梗死、脑血栓、高脂血症,以及周围血管深静脉血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞压积增高",
+            "CAUSES",
+            "全血黏度增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "血浆蛋白增高",
+            "CAUSES",
+            "血浆黏度增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞变形能力降低",
+            "CAUSES",
+            "全血黏度增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "全血黏度增高",
+            "ASSOCIATED_WITH",
+            "血栓形成"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "冠心病",
+            "ASSOCIATED_WITH",
+            "全血黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "exact_quote": "2) 其他疾患：高脂血症、糖尿病、血管栓塞性疾病（如脑血栓、心肌梗死、冠心病和创伤等），以及原发性和继发性红细胞增多症（法洛四联症、肺心病等）。\n（五）红细胞聚集指数\n正常红细胞膜表面带负电荷，使红细胞相互排斥，分散悬浮于血液中，不容易发生聚集。红细胞聚集指数(RAI)是指血液的切变力降低到一定程度时，红细胞互相聚集、相叠成串形成所谓“缗钱状”聚集物的能力，是反映红细胞聚集性的一个客观指标。\n【参考区间】\n红细胞聚集指数：1.44~3.62\n【异常结果解读】\n红细胞聚集性增高,表示红细胞聚集性增强,全血黏度增高。凡能引起血浆纤维蛋白原和球蛋白含量增高,红细胞表面电荷密度降低的病理过程,均可引起红细胞聚集性增高,可见于急性心肌梗死、脑血栓、高脂血症,以及周围血管深静脉血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "糖尿病",
+            "ASSOCIATED_WITH",
+            "全血黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "exact_quote": "2) 其他疾患：高脂血症、糖尿病、血管栓塞性疾病（如脑血栓、心肌梗死、冠心病和创伤等），以及原发性和继发性红细胞增多症（法洛四联症、肺心病等）。\n（五）红细胞聚集指数\n正常红细胞膜表面带负电荷，使红细胞相互排斥，分散悬浮于血液中，不容易发生聚集。红细胞聚集指数(RAI)是指血液的切变力降低到一定程度时，红细胞互相聚集、相叠成串形成所谓“缗钱状”聚集物的能力，是反映红细胞聚集性的一个客观指标。\n【参考区间】\n红细胞聚集指数：1.44~3.62\n【异常结果解读】\n红细胞聚集性增高,表示红细胞聚集性增强,全血黏度增高。凡能引起血浆纤维蛋白原和球蛋白含量增高,红细胞表面电荷密度降低的病理过程,均可引起红细胞聚集性增高,可见于急性心肌梗死、脑血栓、高脂血症,以及周围血管深静脉血栓等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "高血压",
+            "ASSOCIATED_WITH",
+            "全血黏度增高"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0018:0001",
+              "exact_quote": "红细胞聚集性增高,表示红细胞聚集性增强,全血黏度增高。凡能引起血浆纤维蛋白原和球蛋白含量增高,红细胞表面电荷密度降低的病理过程,均可引起红细胞聚集性增高,可见于急性心肌梗死、脑血栓、高脂血症,以及周围血管深静脉血栓等。\n（六）红细胞电泳时间\n红细胞表面带有负电荷，在直流电的电场中，红细胞从阴极向阳极泳动，红细胞泳动一定距离所需的时间叫红细胞电泳时间。影响电泳时间的因素主要与血浆中血脂、球蛋白、纤维蛋白原和血浆黏度有关。红细胞电泳时间延长，红细胞聚集性增强，全血黏度高。\n【参考区间】\n红细胞电泳时间：15.02~17.32s\n【异常结果解读】\n电泳时间延长 见于缺血性脑卒中、冠心病、肺心病、心肌梗死、高血压及系统性红斑狼疮等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "脑梗死",
+            "ASSOCIATED_WITH",
+            "全血黏度增高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "全血高切黏度",
+              "全血中切黏度",
+              "全血低切黏度",
+              "性别",
+              "单位"
+            ],
+            "outputs": [
+              "全血黏度参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "血浆黏度",
+              "单位"
+            ],
+            "outputs": [
+              "血浆黏度参考范围判定"
+            ],
+            "logic": "RANGE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "全血黏度",
+              "血浆黏度",
+              "红细胞压积"
+            ],
+            "outputs": [
+              "还原全血黏度"
+            ],
+            "logic": "FORMULA"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "变形后红细胞长轴",
+              "变形后红细胞短轴"
+            ],
+            "outputs": [
+              "红细胞变形指数IR"
+            ],
+            "logic": "FORMULA"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "全血黏度",
+              "血浆黏度",
+              "红细胞压积"
+            ],
+            "outputs": [
+              "红细胞变形指数TK"
+            ],
+            "logic": "FORMULA"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "悬浮介质黏度",
+              "红细胞悬液黏度",
+              "红细胞压积"
+            ],
+            "outputs": [
+              "红细胞变形指数FI"
+            ],
+            "logic": "FORMULA"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-07",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞沉降率"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+              "start": 5,
+              "end": 11,
+              "exact_quote": "(七) 红细胞沉降率"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "红细胞沉降率减慢"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "妊娠"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+              "start": 426,
+              "end": 428,
+              "exact_quote": "(1) 生理性增快: 妇女月经期血沉增快, 可能与子宫内膜破损及出血有关。妊娠 3 个月以后血沉加快, 这可能与生理性贫血及纤维蛋白原含量增加有关。60 岁以上的老年人因血浆纤维蛋白原含量增加而使血沉加快。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "月经期"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+              "start": 402,
+              "end": 405,
+              "exact_quote": "(1) 生理性增快: 妇女月经期血沉增快, 可能与子宫内膜破损及出血有关。妊娠 3 个月以后血沉加快, 这可能与生理性贫血及纤维蛋白原含量增加有关。60 岁以上的老年人因血浆纤维蛋白原含量增加而使血沉加快。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "组织损伤"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+              "start": 554,
+              "end": 558,
+              "exact_quote": "2) 组织损伤及坏死: 较大面积的组织损伤如心肌梗死、肺梗死或手术创伤可使血沉加快。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "炎症"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+              "start": 506,
+              "end": 508,
+              "exact_quote": "1) 炎症性疾病: 急性细菌性感染、风湿热活动期、肺结核活动期血沉加快, 病情好转时血沉减慢。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "恶性肿瘤"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0019:0000",
+              "start": 597,
+              "end": 601,
+              "exact_quote": "3) 恶性肿瘤: 增长迅速的恶性肿瘤, 可能因为血中球蛋白增加, 肿瘤组织坏死、贫血等使血沉加快。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "结核病"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "多发性骨髓瘤"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0020:0000",
+              "start": 25,
+              "end": 31,
+              "exact_quote": "4) 各种原因所致的高球蛋白血症: 如恶性淋巴瘤、多发性骨髓瘤、系统性红斑狼疮、类风湿关节炎、亚急性感染性心内膜炎等可使血沉加快。慢性肾炎、肝硬化时, 白蛋白减少, 球蛋白增加, 血沉也明显加快。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "ABO血型鉴定"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "红细胞凝集反应"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "血清凝集反应"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "A型血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0021:0000",
+              "start": 165,
+              "end": 168,
+              "exact_quote": "<table><tr><td colspan=\"2\">标准血清+受检者红细胞</td><td colspan=\"3\">标准红细胞+受检者血清</td><td rowspan=\"2\">被鉴定者血型</td></tr><tr><td>抗A(B型血清)</td><td>抗B(A型血清)</td><td>抗A+抗B(O型血清)</td><td>A型红细胞</td><td>B型红细胞</td></tr><tr><td>+</td><td>-</td><td>+</td><td>-</td><td>+</td><td>-</td></tr><tr><td>-</td><td>+</td><td>+</td><td>+</td><td>-</td><td>B型</td></tr><tr><td>-</td><td>-</td><td>-</td><td>+</td><td>+</td><td>-</td></tr><tr><td>+</td><td>+</td><td>+</td><td>-</td><td>-</td><td>AB型</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "B型血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0021:0000",
+              "start": 148,
+              "end": 151,
+              "exact_quote": "<table><tr><td colspan=\"2\">标准血清+受检者红细胞</td><td colspan=\"3\">标准红细胞+受检者血清</td><td rowspan=\"2\">被鉴定者血型</td></tr><tr><td>抗A(B型血清)</td><td>抗B(A型血清)</td><td>抗A+抗B(O型血清)</td><td>A型红细胞</td><td>B型红细胞</td></tr><tr><td>+</td><td>-</td><td>+</td><td>-</td><td>+</td><td>-</td></tr><tr><td>-</td><td>+</td><td>+</td><td>+</td><td>-</td><td>B型</td></tr><tr><td>-</td><td>-</td><td>-</td><td>+</td><td>+</td><td>-</td></tr><tr><td>+</td><td>+</td><td>+</td><td>-</td><td>-</td><td>AB型</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "AB型血"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "O型血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0021:0000",
+              "start": 185,
+              "end": 188,
+              "exact_quote": "<table><tr><td colspan=\"2\">标准血清+受检者红细胞</td><td colspan=\"3\">标准红细胞+受检者血清</td><td rowspan=\"2\">被鉴定者血型</td></tr><tr><td>抗A(B型血清)</td><td>抗B(A型血清)</td><td>抗A+抗B(O型血清)</td><td>A型红细胞</td><td>B型红细胞</td></tr><tr><td>+</td><td>-</td><td>+</td><td>-</td><td>+</td><td>-</td></tr><tr><td>-</td><td>+</td><td>+</td><td>+</td><td>-</td><td>B型</td></tr><tr><td>-</td><td>-</td><td>-</td><td>+</td><td>+</td><td>-</td></tr><tr><td>+</td><td>+</td><td>+</td><td>-</td><td>-</td><td>AB型</td></tr></table>"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabPanel",
+            "凝血酶原时间检查"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "PT"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+              "start": 668,
+              "end": 670,
+              "exact_quote": "在被检者血浆中加入  \\( Ca^{2+} \\)  和组织凝血活酶, 观测血浆凝固的时间, 即血浆凝血酶原时间 (PT)。它是外源性凝血系统较为灵敏和最常用的筛查试验。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "PTR"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+              "start": 752,
+              "end": 755,
+              "exact_quote": "(2) 凝血酶原时间比值 (PTR) = 受检血浆 PT(秒)/正常人血浆 PT(秒), 参考区间为 0.86~1.15。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "INR"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+              "start": 813,
+              "end": 816,
+              "exact_quote": "(3) 国际标准化比值 (INR) = PTR \\( ^{[S1]} \\) ，参考区间为 0.9~1.3。ISI 为国际灵敏性指数，ISI 越小，组织凝血活酶的灵敏性越高。因此做 PT 检测时必须用标有 ISI 值的组织凝血活酶。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "PT延长"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "PT缩短"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "肝脏疾病"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "维生素K缺乏"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "口服抗凝剂治疗"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞沉降率",
+            "HAS_STATE",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "红细胞沉降率",
+            "HAS_STATE",
+            "红细胞沉降率减慢"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "妊娠",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "月经期",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "组织损伤",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "炎症",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "恶性肿瘤",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "结核病",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "多发性骨髓瘤",
+            "ASSOCIATED_WITH",
+            "红细胞沉降率增快"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "ABO血型鉴定",
+            "HAS_METRIC",
+            "红细胞凝集反应"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "ABO血型鉴定",
+            "HAS_METRIC",
+            "血清凝集反应"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "凝血酶原时间检查",
+            "HAS_METRIC",
+            "PT"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "凝血酶原时间检查",
+            "HAS_METRIC",
+            "PTR"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "凝血酶原时间检查",
+            "HAS_METRIC",
+            "INR"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "PT",
+            "HAS_STATE",
+            "PT延长"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "PT",
+            "HAS_STATE",
+            "PT缩短"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "肝脏疾病",
+            "ASSOCIATED_WITH",
+            "PT延长"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "维生素K缺乏",
+            "ASSOCIATED_WITH",
+            "PT延长"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "口服抗凝剂治疗",
+            "ASSOCIATED_WITH",
+            "PT延长"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞沉降率",
+              "性别",
+              "年龄",
+              "单位"
+            ],
+            "outputs": [
+              "红细胞沉降率参考范围判定"
+            ],
+            "logic": "RANGE_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "红细胞凝集反应",
+              "血清凝集反应"
+            ],
+            "outputs": [
+              "A型血",
+              "B型血",
+              "AB型血",
+              "O型血"
+            ],
+            "logic": "LOOKUP_TABLE"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "受检血浆PT",
+              "正常人血浆PT"
+            ],
+            "outputs": [
+              "PTR"
+            ],
+            "logic": "FORMULA"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "PTR",
+              "ISI"
+            ],
+            "outputs": [
+              "INR"
+            ],
+            "logic": "FORMULA"
+          },
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+              "exact_quote": "<table><tr><td>父母血型</td><td>子女可能的血型</td><td>子女不可能的血型</td></tr><tr><td>O+O</td><td>O</td><td>A,B,AB</td></tr><tr><td>A+O(或O+A)</td><td>A,O</td><td>B,AB</td></tr><tr><td>B+O(或O+B)</td><td>B,O</td><td>A,AB</td></tr><tr><td>AB+O(或O+AB)</td><td>A,B</td><td>O,AB</td></tr><tr><td>A+A</td><td>A,O</td><td>B,AB</td></tr><tr><td>B+B</td><td>B,O</td><td>A,AB</td></tr><tr><td>AB+AB</td><td>A,B,AB</td><td>O</td></tr><tr><td>A+B(或B+A)</td><td>A,B,AB,O</td><td>无</td></tr><tr><td>A+AB(或AB+A)</td><td>A,B,AB</td><td>O</td></tr><tr><td>B+AB(或AB+B)</td><td>A,B,AB</td><td>O</td></tr></table>\n\n第一章 临床血液检验\n六、出血和血栓检验\n（一）血浆凝血酶原时间\n在被检者血浆中加入  \\( Ca^{2+} \\)  和组织凝血活酶, 观测血浆凝固的时间, 即血浆凝血酶原时间 (PT)。它是外源性凝血系统较为灵敏和最常用的筛查试验。\n【参考区间】\n\n(1) 仪器法: 11~13 秒, 超过正常对照值 3 秒为异常。\n(2) 凝血酶原时间比值 (PTR) = 受检血浆 PT(秒)/正常人血浆 PT(秒), 参考区间为 0.86~1.15。\n(3) 国际标准化比值 (INR) = PTR \\( ^{[S1]} \\) ，参考区间为 0.9~1.3。ISI 为国际灵敏性指数，ISI 越小，组织凝血活酶的灵敏性越高。因此做 PT 检测时必须用标有 ISI 值的组织凝血活酶。\n【异常结果解读】\n\n"
+            }
+          ]
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "PT",
+              "正常对照PT",
+              "单位"
+            ],
+            "outputs": [
+              "PT延长",
+              "PT缩短"
+            ],
+            "logic": "DELTA_THRESHOLD"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        }
+      ]
+    },
+    {
+      "case_id": "CH01-08",
+      "items": [
+        {
+          "kind": "entity",
+          "target": [
+            "LabIndicator",
+            "D-二聚体"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0001",
+              "start": 212,
+              "end": 217,
+              "exact_quote": "(二) D-二聚体"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "D-二聚体阳性"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+              "start": 10,
+              "end": 17,
+              "exact_quote": "D-二聚体阳性见于："
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "D-二聚体阴性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "D-二聚体不升高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "IndicatorState",
+            "D-二聚体正常"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 126,
+              "end": 133,
+              "exact_quote": "3) D-二聚体是溶栓治疗的监测指标之一。D-二聚体正常，对排除深静脉血栓(DVT)有重要价值。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "心肌梗死"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0001",
+              "start": 184,
+              "end": 188,
+              "exact_quote": "(3) PT 缩短: 见于血液高凝状态, 如 DIC 早期、心肌梗死、脑血栓、深静脉血栓 (DVT) 等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "脑梗死"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 8,
+              "end": 11,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "肺栓塞"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 12,
+              "end": 15,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "深静脉血栓形成"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "弥散性血管内凝血"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0022:0001",
+              "start": 117,
+              "end": 125,
+              "exact_quote": "(2) PT 延长: ①先天性凝血因子 I、II、V、VII、X 缺乏; ②获得性凝血因子缺乏, 如严重肝病、维生素 K 缺乏、纤溶亢进、弥散性血管内凝血 (DIC)、口服抗凝药物和血液循环中有异常抗凝血物质。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "Disease",
+            "恶性肿瘤"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 16,
+              "end": 20,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "外科手术"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 21,
+              "end": 25,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "炎症"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 26,
+              "end": 28,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "感染"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 29,
+              "end": 31,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "entity",
+          "target": [
+            "ClinicalContext",
+            "妊娠"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "start": 32,
+              "end": 34,
+              "exact_quote": "1) 心肌梗死、脑梗死、肺栓塞、恶性肿瘤、外科手术、炎症、感染、妊娠等。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "D-二聚体",
+            "HAS_STATE",
+            "D-二聚体阳性"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+              "exact_quote": "D-二聚体阳性见于："
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "D-二聚体",
+            "HAS_STATE",
+            "D-二聚体阴性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "D-二聚体",
+            "HAS_STATE",
+            "D-二聚体不升高"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "D-二聚体",
+            "HAS_STATE",
+            "D-二聚体正常"
+          ],
+          "status": "AUTO_SURFACE_MATCH",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "exact_quote": "2) 继发性纤溶症(如 DIC), D-二聚体为阳性; 而原发性纤溶症, D-二聚体为阴性或不升高, 此检测是两者鉴别的重要指标之一。\n3) D-二聚体是溶栓治疗的监测指标之一。D-二聚体正常，对排除深静脉血栓(DVT)有重要价值。"
+            }
+          ]
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "心肌梗死",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "脑梗死",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "肺栓塞",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "弥散性血管内凝血",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "恶性肿瘤",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "外科手术",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "炎症",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "感染",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "relationship",
+          "target": [
+            "妊娠",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "executor_rule",
+          "target": {
+            "rule_stage": "PREPROCESS",
+            "inputs": [
+              "D-二聚体",
+              "试剂参考上限",
+              "单位"
+            ],
+            "outputs": [
+              "D-二聚体阳性",
+              "D-二聚体阴性"
+            ],
+            "logic": "THRESHOLD"
+          },
+          "status": "NEEDS_HUMAN_REVIEW"
+        },
+        {
+          "kind": "forbidden_relationship",
+          "target": [
+            "深静脉血栓形成",
+            "ASSOCIATED_WITH",
+            "D-二聚体阳性"
+          ],
+          "status": "MANUAL_NEGATIVE_RATIONALE_DRAFT",
+          "evidence": [
+            {
+              "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+              "exact_quote": "D-二聚体正常，对排除深静脉血栓(DVT)有重要价值。"
+            }
+          ],
+          "reason": "原文表达排除诊断，不直接支持深静脉血栓形成与 D-二聚体阳性的正向关系。"
+        }
+      ]
+    }
+  ]
+}

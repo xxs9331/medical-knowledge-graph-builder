@@ -1,17 +1,732 @@
 {
-  "schema_version": "medical-kg-relationship-test-set/v0.1",
-  "status": "HUMAN_VALIDATED",
+  "schema_version": "medical-kg-relationship-test-set/v0.2",
+  "status": "HUMAN_REVIEW_REQUIRED",
   "source_graph_dataset": "typical-cases-v0.1.json",
-  "identity": ["source_mention", "relation_type", "target_mention"],
-  "notes": ["expected 为应抽取正例。forbidden 为原文不支持或会破坏联合条件的负例。"],
+  "annotation_method": "SCOPED_CLOSED_WORLD_POOLED_DRAFT",
+  "scope_contract": "每个案例只评价 evaluation_scopes 内有完整证据的候选；范围内未匹配预测记 FP，未匹配金标记 FN。",
+  "identity": [
+    "source_mention",
+    "relation_type",
+    "target_mention"
+  ],
+  "notes": [
+    "expected 是应抽取正例；forbidden 是范围内不支持或会破坏联合条件的负例。"
+  ],
   "cases": [
-    {"case_id":"TC-01","chunk_ids":["clinical-hematology:chapter-01:0010:0000"],"expected":[["血清铁","HAS_STATE","血清铁降低"],["慢性失血","CAUSES","血清铁降低"],["胃、十二指肠溃疡出血","CAUSES","慢性失血"],["钩虫病","CAUSES","慢性失血"],["月经过多","CAUSES","慢性失血"]],"forbidden":[["钩虫病","CAUSES","血清铁降低"],["月经过多","CAUSES","血清铁降低"]]},
-    {"case_id":"TC-02","chunk_ids":["clinical-hematology:chapter-01:0004:0000"],"expected":[["MCV","HAS_STATE","MCV 正常"],["RDW","HAS_STATE","RDW 增大"],["正细胞不均一性贫血","ASSOCIATED_WITH","早期缺铁性贫血"],["正细胞不均一性贫血","ASSOCIATED_WITH","G6PD 缺乏症"]],"forbidden":[["MCV 正常","INDICATES","缺铁性贫血"],["RDW 增大","INDICATES","G6PD 缺乏症"]]},
-    {"case_id":"TC-03","chunk_ids":["clinical-hematology:chapter-01:0012:0001"],"expected":[["血清铁","HAS_STATE","血清铁降低"],["血清铁","HAS_STATE","血清铁增高"],["TIBC","HAS_STATE","TIBC增高"],["TIBC","HAS_STATE","TIBC降低"],["痔","CAUSES","慢性失血"],["消化性溃疡出血","CAUSES","慢性失血"],["月经过多","CAUSES","慢性失血"],["妊娠","CAUSES","需铁量增加"],["婴幼儿生长发育","CAUSES","需铁量增加"]],"forbidden":[["血清铁降低","INDICATES","缺铁性贫血"],["TIBC增高","INDICATES","缺铁性贫血"]]},
-    {"case_id":"TC-04","chunk_ids":["clinical-hematology:chapter-01:0023:0000","clinical-hematology:chapter-01:0023:0001"],"expected":[["D-二聚体","HAS_STATE","D-二聚体阳性"],["D-二聚体","HAS_STATE","D-二聚体阴性"],["D-二聚体","HAS_STATE","D-二聚体不升高"],["D-二聚体","HAS_STATE","D-二聚体正常"],["D-二聚体阳性","ASSOCIATED_WITH","心肌梗死"],["D-二聚体阳性","ASSOCIATED_WITH","脑梗死"],["D-二聚体阳性","ASSOCIATED_WITH","肺栓塞"],["D-二聚体阳性","ASSOCIATED_WITH","恶性肿瘤"],["D-二聚体阳性","ASSOCIATED_WITH","外科手术"],["D-二聚体阳性","ASSOCIATED_WITH","炎症"],["D-二聚体阳性","ASSOCIATED_WITH","感染"],["D-二聚体阳性","ASSOCIATED_WITH","妊娠"]],"forbidden":[["D-二聚体正常","INDICATES","已排除深静脉血栓"]],"held_semantics":["鉴别原发性纤溶症","排除深静脉血栓","溶栓治疗监测"]},
-    {"case_id":"TC-05","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[["铁缺乏","CAUSES","缺铁性贫血"],["叶酸缺乏","CAUSES","巨幼细胞贫血"],["维生素 B12 缺乏","CAUSES","巨幼细胞贫血"],["铁缺乏","IS_A","造血原料缺乏"],["叶酸缺乏","IS_A","造血原料缺乏"],["维生素 B12 缺乏","IS_A","造血原料缺乏"],["造血原料缺乏","CAUSES","贫血"]],"forbidden":[]},
-    {"case_id":"TC-06","chunk_ids":["clinical-hematology:chapter-01:0001:0000"],"expected":[["轻度贫血","IS_A","贫血"],["中度贫血","IS_A","贫血"],["重度贫血","IS_A","贫血"],["极重度贫血","IS_A","贫血"]],"forbidden":[]},
-    {"case_id":"TC-07","chunk_ids":["clinical-hematology:chapter-01:0008:0001"],"expected":[],"forbidden":[["MPV 持续下降","INDICATES","骨髓造血功能衰竭"],["血小板数量持续下降","INDICATES","骨髓造血功能衰竭"]]},
-    {"case_id":"TC-08","chunk_ids":["clinical-hematology:chapter-01:0022:0000"],"expected":[],"forbidden":[["PTR","CAUSES","INR"]]}
+    {
+      "case_id": "TC-01",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0010:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0010:0000",
+          "start": 81,
+          "end": 528
+        }
+      ],
+      "expected": [
+        [
+          "血清铁",
+          "HAS_STATE",
+          "血清铁降低"
+        ],
+        [
+          "血清铁",
+          "HAS_STATE",
+          "血清铁升高"
+        ],
+        [
+          "缺铁性饮食",
+          "CAUSES",
+          "摄入不足"
+        ],
+        [
+          "肠道吸收不良",
+          "CAUSES",
+          "摄入不足"
+        ],
+        [
+          "摄入不足",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "胃、十二指肠溃疡出血",
+          "CAUSES",
+          "慢性失血"
+        ],
+        [
+          "钩虫病",
+          "CAUSES",
+          "慢性失血"
+        ],
+        [
+          "月经过多",
+          "CAUSES",
+          "慢性失血"
+        ],
+        [
+          "慢性失血",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "妊娠期",
+          "CAUSES",
+          "铁缺乏"
+        ],
+        [
+          "哺乳期妇女",
+          "CAUSES",
+          "铁缺乏"
+        ],
+        [
+          "婴幼儿时期",
+          "CAUSES",
+          "铁缺乏"
+        ],
+        [
+          "生长发育的需要量多",
+          "CAUSES",
+          "铁缺乏"
+        ],
+        [
+          "铁缺乏",
+          "CAUSES",
+          "缺铁性贫血"
+        ],
+        [
+          "铁缺乏",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "严重感染",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "恶性肿瘤",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "肝硬化",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "食欲降低",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "机体代谢障碍",
+          "CAUSES",
+          "血清铁降低"
+        ]
+      ],
+      "forbidden": [
+        [
+          "钩虫病",
+          "CAUSES",
+          "血清铁降低"
+        ],
+        [
+          "月经过多",
+          "CAUSES",
+          "血清铁降低"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-02",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0004:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0004:0000",
+          "start": 0,
+          "end": 268
+        }
+      ],
+      "expected": [
+        [
+          "MCV",
+          "HAS_STATE",
+          "MCV 减小"
+        ],
+        [
+          "MCV",
+          "HAS_STATE",
+          "MCV 正常"
+        ],
+        [
+          "MCV",
+          "HAS_STATE",
+          "MCV 增大"
+        ],
+        [
+          "RDW",
+          "HAS_STATE",
+          "RDW 正常"
+        ],
+        [
+          "RDW",
+          "HAS_STATE",
+          "RDW 增大"
+        ],
+        [
+          "珠蛋白生成障碍性贫血",
+          "ASSOCIATED_WITH",
+          "小细胞均一性贫血"
+        ],
+        [
+          "缺铁性贫血",
+          "ASSOCIATED_WITH",
+          "小细胞不均一性贫血"
+        ],
+        [
+          "急性失血性贫血",
+          "ASSOCIATED_WITH",
+          "正细胞均一性贫血"
+        ],
+        [
+          "慢性疾病",
+          "ASSOCIATED_WITH",
+          "正细胞均一性贫血"
+        ],
+        [
+          "早期缺铁性贫血",
+          "ASSOCIATED_WITH",
+          "正细胞不均一性贫血"
+        ],
+        [
+          "G6PD 缺乏症",
+          "ASSOCIATED_WITH",
+          "正细胞不均一性贫血"
+        ],
+        [
+          "慢性再生障碍性贫血",
+          "ASSOCIATED_WITH",
+          "大细胞均一性贫血"
+        ],
+        [
+          "巨幼细胞贫血",
+          "ASSOCIATED_WITH",
+          "大细胞不均一性贫血"
+        ]
+      ],
+      "forbidden": [
+        [
+          "MCV 正常",
+          "INDICATES",
+          "正细胞不均一性贫血"
+        ],
+        [
+          "RDW 增大",
+          "INDICATES",
+          "正细胞不均一性贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-03",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0012:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0012:0001",
+          "start": 0,
+          "end": 493
+        }
+      ],
+      "expected": [
+        [
+          "总铁结合力",
+          "HAS_STATE",
+          "总铁结合力降低"
+        ],
+        [
+          "总铁结合力",
+          "HAS_STATE",
+          "总铁结合力增高"
+        ],
+        [
+          "血清铁",
+          "HAS_STATE",
+          "血清铁降低"
+        ],
+        [
+          "血清铁",
+          "HAS_STATE",
+          "血清铁增高"
+        ],
+        [
+          "TIBC",
+          "HAS_STATE",
+          "TIBC增高"
+        ],
+        [
+          "TIBC",
+          "HAS_STATE",
+          "TIBC降低"
+        ],
+        [
+          "转铁蛋白合成不足",
+          "CAUSES",
+          "总铁结合力降低"
+        ],
+        [
+          "遗传性转铁蛋白缺乏症",
+          "CAUSES",
+          "转铁蛋白合成不足"
+        ],
+        [
+          "肝硬化",
+          "CAUSES",
+          "转铁蛋白合成不足"
+        ],
+        [
+          "转铁蛋白丢失增加",
+          "CAUSES",
+          "总铁结合力降低"
+        ],
+        [
+          "肾病综合征",
+          "CAUSES",
+          "转铁蛋白丢失增加"
+        ],
+        [
+          "尿毒症",
+          "CAUSES",
+          "转铁蛋白丢失增加"
+        ],
+        [
+          "肿瘤",
+          "CAUSES",
+          "总铁结合力降低"
+        ],
+        [
+          "慢性感染",
+          "CAUSES",
+          "总铁结合力降低"
+        ],
+        [
+          "珠蛋白合成障碍性贫血",
+          "CAUSES",
+          "总铁结合力降低"
+        ],
+        [
+          "转铁蛋白合成增加",
+          "CAUSES",
+          "总铁结合力增高"
+        ],
+        [
+          "缺铁性贫血",
+          "CAUSES",
+          "转铁蛋白合成增加"
+        ],
+        [
+          "妊娠后期",
+          "CAUSES",
+          "转铁蛋白合成增加"
+        ],
+        [
+          "转铁蛋白释放增加",
+          "CAUSES",
+          "总铁结合力增高"
+        ],
+        [
+          "急性肝炎",
+          "CAUSES",
+          "转铁蛋白释放增加"
+        ],
+        [
+          "肝细胞坏死",
+          "CAUSES",
+          "转铁蛋白释放增加"
+        ],
+        [
+          "痔",
+          "CAUSES",
+          "慢性失血"
+        ],
+        [
+          "消化性溃疡出血",
+          "CAUSES",
+          "慢性失血"
+        ],
+        [
+          "月经过多",
+          "CAUSES",
+          "慢性失血"
+        ],
+        [
+          "妊娠",
+          "CAUSES",
+          "需铁量增加"
+        ],
+        [
+          "婴幼儿生长发育",
+          "CAUSES",
+          "需铁量增加"
+        ]
+      ],
+      "forbidden": [
+        [
+          "血清铁降低",
+          "INDICATES",
+          "缺铁性贫血"
+        ],
+        [
+          "TIBC增高",
+          "INDICATES",
+          "缺铁性贫血"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-04",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0023:0000",
+        "clinical-hematology:chapter-01:0023:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0000",
+          "start": 0,
+          "end": 22
+        },
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0023:0001",
+          "start": 0,
+          "end": 154
+        }
+      ],
+      "expected": [
+        [
+          "D-二聚体",
+          "HAS_STATE",
+          "D-二聚体阳性"
+        ],
+        [
+          "D-二聚体",
+          "HAS_STATE",
+          "D-二聚体阴性"
+        ],
+        [
+          "D-二聚体",
+          "HAS_STATE",
+          "D-二聚体不升高"
+        ],
+        [
+          "D-二聚体",
+          "HAS_STATE",
+          "D-二聚体正常"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "心肌梗死"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "脑梗死"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "肺栓塞"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "恶性肿瘤"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "外科手术"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "炎症"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "感染"
+        ],
+        [
+          "D-二聚体阳性",
+          "ASSOCIATED_WITH",
+          "妊娠"
+        ],
+        [
+          "DIC",
+          "IS_A",
+          "继发性纤溶症"
+        ],
+        [
+          "继发性纤溶症",
+          "ASSOCIATED_WITH",
+          "D-二聚体阳性"
+        ],
+        [
+          "原发性纤溶症",
+          "ASSOCIATED_WITH",
+          "D-二聚体阴性"
+        ],
+        [
+          "原发性纤溶症",
+          "ASSOCIATED_WITH",
+          "D-二聚体不升高"
+        ],
+        [
+          "D-二聚体",
+          "ASSOCIATED_WITH",
+          "溶栓治疗"
+        ]
+      ],
+      "forbidden": [
+        [
+          "D-二聚体正常",
+          "INDICATES",
+          "已排除深静脉血栓"
+        ],
+        [
+          "D-二聚体正常",
+          "ASSOCIATED_WITH",
+          "深静脉血栓"
+        ]
+      ],
+      "held_semantics": [
+        "鉴别原发性纤溶症",
+        "排除深静脉血栓",
+        "溶栓治疗监测"
+      ]
+    },
+    {
+      "case_id": "TC-05",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0001:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 551,
+          "end": 610
+        }
+      ],
+      "expected": [
+        [
+          "铁缺乏",
+          "CAUSES",
+          "缺铁性贫血"
+        ],
+        [
+          "叶酸缺乏",
+          "CAUSES",
+          "巨幼细胞贫血"
+        ],
+        [
+          "维生素 B12 缺乏",
+          "CAUSES",
+          "巨幼细胞贫血"
+        ],
+        [
+          "铁缺乏",
+          "IS_A",
+          "造血原料缺乏"
+        ],
+        [
+          "叶酸缺乏",
+          "IS_A",
+          "造血原料缺乏"
+        ],
+        [
+          "维生素 B12 缺乏",
+          "IS_A",
+          "造血原料缺乏"
+        ],
+        [
+          "造血原料缺乏",
+          "CAUSES",
+          "贫血"
+        ]
+      ],
+      "forbidden": []
+    },
+    {
+      "case_id": "TC-06",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0001:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0001:0000",
+          "start": 0,
+          "end": 334
+        }
+      ],
+      "expected": [
+        [
+          "血红蛋白",
+          "HAS_STATE",
+          "血红蛋白正常"
+        ],
+        [
+          "血红蛋白",
+          "HAS_STATE",
+          "血红蛋白降低"
+        ],
+        [
+          "轻度贫血",
+          "IS_A",
+          "贫血"
+        ],
+        [
+          "中度贫血",
+          "IS_A",
+          "贫血"
+        ],
+        [
+          "重度贫血",
+          "IS_A",
+          "贫血"
+        ],
+        [
+          "极重度贫血",
+          "IS_A",
+          "贫血"
+        ]
+      ],
+      "forbidden": []
+    },
+    {
+      "case_id": "TC-07",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0008:0001"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0008:0001",
+          "start": 0,
+          "end": 102
+        }
+      ],
+      "expected": [
+        [
+          "平均血小板体积",
+          "HAS_STATE",
+          "平均血小板体积增高"
+        ],
+        [
+          "平均血小板体积",
+          "HAS_STATE",
+          "平均血小板体积减低"
+        ],
+        [
+          "MPV",
+          "HAS_STATE",
+          "MPV 持续下降"
+        ],
+        [
+          "血小板数量",
+          "HAS_STATE",
+          "血小板数量持续下降"
+        ],
+        [
+          "平均血小板体积增高",
+          "ASSOCIATED_WITH",
+          "血小板破坏增多"
+        ],
+        [
+          "平均血小板体积增高",
+          "ASSOCIATED_WITH",
+          "骨髓代偿功能良好"
+        ],
+        [
+          "平均血小板体积减低",
+          "ASSOCIATED_WITH",
+          "骨髓造血功能不良"
+        ],
+        [
+          "平均血小板体积减低",
+          "ASSOCIATED_WITH",
+          "血小板生成减少"
+        ]
+      ],
+      "forbidden": [
+        [
+          "MPV 持续下降",
+          "INDICATES",
+          "骨髓造血功能衰竭"
+        ],
+        [
+          "血小板数量持续下降",
+          "INDICATES",
+          "骨髓造血功能衰竭"
+        ]
+      ]
+    },
+    {
+      "case_id": "TC-08",
+      "chunk_ids": [
+        "clinical-hematology:chapter-01:0022:0000"
+      ],
+      "evaluation_scopes": [
+        {
+          "chunk_id": "clinical-hematology:chapter-01:0022:0000",
+          "start": 589,
+          "end": 926
+        }
+      ],
+      "expected": [
+        [
+          "PT",
+          "HAS_STATE",
+          "PT正常"
+        ],
+        [
+          "PT",
+          "HAS_STATE",
+          "PT异常"
+        ],
+        [
+          "PTR",
+          "HAS_STATE",
+          "PTR正常"
+        ],
+        [
+          "INR",
+          "HAS_STATE",
+          "INR正常"
+        ]
+      ],
+      "forbidden": [
+        [
+          "PTR",
+          "CAUSES",
+          "INR"
+        ],
+        [
+          "血浆凝血酶原时间",
+          "HAS_STATE",
+          "PT"
+        ],
+        [
+          "PT",
+          "HAS_STATE",
+          "血浆凝血酶原时间"
+        ]
+      ]
+    }
   ]
 }
