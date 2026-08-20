@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>医学知识图谱审查工作台</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><div class="eyebrow">MEDICAL KG / REVIEW</div><h1>候选图审查工作台</h1></div>
+    <div id="runMeta" class="run-meta">加载运行信息...</div>
+  </header>
+  <main>
+    <section id="summary" class="summary-grid"></section>
+    <nav class="tabs" aria-label="审查视图">
+      <button class="tab active" data-view="facts">事实结果</button>
+      <button class="tab" data-view="issues">问题簇</button>
+      <button class="tab" data-view="decisions">人工决定</button>
+    </nav>
+    <section id="factsView" class="view">
+      <div class="toolbar"><input id="factSearch" placeholder="搜索实体、关系或端点"><select id="factKind"><option value="">全部类型</option><option>Entity</option><option>Relation</option></select><select id="factType"><option value="">全部关系</option></select><button id="refreshFacts">刷新</button></div>
+      <div class="table-wrap"><table><thead><tr><th>类型</th><th>候选结果</th><th>关系/实体类型</th><th>chunk</th><th>审查</th></tr></thead><tbody id="factsBody"></tbody></table></div>
+    </section>
+    <section id="issuesView" class="view hidden"><div id="issuesList" class="issue-list"></div></section>
+    <section id="decisionsView" class="view hidden"><div id="decisionsList" class="decision-list"></div></section>
+  </main>
+  <dialog id="detailDialog"><button class="close" id="closeDialog">关闭</button><div id="detail"></div></dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
