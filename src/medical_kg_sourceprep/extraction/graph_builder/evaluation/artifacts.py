@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from ..contract import GraphBuilderConfigurationError
+from ..contract import CANDIDATE_RUN_VERSION
 
 
 def load_json_object(path: Path) -> dict[str, Any]:
@@ -38,6 +39,11 @@ def first_extraction_is_usable(output_dir: Path) -> bool:
     review_path = output_dir / "review-queue.json"
     if not graph_path.is_file() or not review_path.is_file():
         return False
+    manifest_path = output_dir / "run-manifest.json"
+    if manifest_path.is_file():
+        manifest = load_json_object(manifest_path)
+        if manifest.get("schema_version") != CANDIDATE_RUN_VERSION:
+            return False
     items = load_json_object(review_path).get("items", [])
     # 首轮任一模型阶段失败都会造成基线不完整，必须重新抽取。
     return isinstance(items, list) and not any(

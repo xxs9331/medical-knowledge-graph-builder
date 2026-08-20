@@ -32,6 +32,7 @@ if __package__ in {None, ""}:
     )
     from medical_kg_sourceprep.extraction.graph_builder.client import create_deepseek_graph_builder
     from medical_kg_sourceprep.extraction.graph_builder.schema import load_candidate_graph_schema
+    from medical_kg_sourceprep.extraction.graph_builder.trace import NULL_TRACE, TraceRecorder
     from medical_kg_sourceprep.extraction.llm_extraction import (
         EvidenceChunk,
         atomic_write_json,
@@ -46,12 +47,13 @@ else:
         GraphBuilderConfigurationError,
     )
     from .schema import load_candidate_graph_schema
+    from .trace import NULL_TRACE, TraceRecorder
     from ..llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 
 # Judge 结果工件与提示词分别独立版本化。提示词语义或输出合同变化时应更新版本，
 # 使不同评测配置不会被误认为同一次实验。
 JUDGE_SCHEMA_VERSION = "candidate-graph-llm-judge/v0.1"
-JUDGE_PROMPT_VERSION = "candidate-graph-llm-judge-prompt/v0.4"
+JUDGE_PROMPT_VERSION = "candidate-graph-llm-judge-prompt/v0.5"
 # 扩大到整页候选时，单次完整结果可能超过模型输出上限；固定小批量可保持 JSON 完整。
 JUDGE_BATCH_SIZE = 12
 # 四种判定只描述候选的语义审查路由，不代表发布状态。
@@ -82,7 +84,9 @@ def load_typical_case(path: Path, case_id: str) -> dict[str, Any]:
     return case
 
 
-def _candidate_items(graph: Mapping[str, Any]) -> list[dict[str, Any]]:
+def _candidate_items(
+    graph: Mapping[str, Any], *, item_kinds: set[str] | None = None,
+) -> list[dict[str, Any]]:
     """把候选图展平为逐项 Judge 输入，并为每项生成稳定评判 ID。
 
     ID 在候选键前增加 ``node:`` 或 ``relationship:``，避免两类键冲突，也方便
@@ -92,20 +96,40 @@ def _candidate_items(graph: Mapping[str, Any]) -> list[dict[str, Any]]:
     relationships = graph.get("relationships", [])
     if not isinstance(nodes, list) or not isinstance(relationships, list):
         raise GraphBuilderConfigurationError("candidate_graph_shape_invalid")
+    if item_kinds is not None and not item_kinds <= {"node", "relationship"}:
+        raise GraphBuilderConfigurationError("judge_item_kinds_invalid")
     items: list[dict[str, Any]] = []
+    node_by_key = {
+        str(node["candidate_key"]): dict(node)
+        for node in nodes
+        if isinstance(node, Mapping) and isinstance(node.get("candidate_key"), str)
+    }
     # 每项必须已有本地生成的 candidate_key。缺少稳定身份的模型草稿应由前序
     # 校验分流，不能在 Judge 阶段临时创建身份。
     for node in nodes:
         if not isinstance(node, Mapping) or not isinstance(node.get("candidate_key"), str):
             raise GraphBuilderConfigurationError("candidate_node_identity_invalid")
-        items.append({"judge_item_id": f"node:{node['candidate_key']}", "kind": "node", "candidate": dict(node)})
+        if item_kinds is None or "node" in item_kinds:
+            items.append({
+                "judge_item_id": f"node:{node['candidate_key']}",
+                "kind": "node",
+                "candidate": dict(node),
+            })
     for relation in relationships:
         if not isinstance(relation, Mapping) or not isinstance(relation.get("candidate_key"), str):
             raise GraphBuilderConfigurationError("candidate_relation_identity_invalid")
+        source_key = str(relation.get("source_candidate_key", ""))
+        target_key = str(relation.get("target_candidate_key", ""))
+        if item_kinds is not None and "relationship" not in item_kinds:
+            continue
         items.append({
             "judge_item_id": f"relationship:{relation['candidate_key']}",
             "kind": "relationship",
             "candidate": dict(relation),
+            # 关系批次可能与节点批次分离。显式附带两端的只读快照，确保 Judge
+            # 能看到 mention、类型，以及 RuleDefinition 的表达式和原文证据。
+            "source_node": node_by_key.get(source_key),
+            "target_node": node_by_key.get(target_key),
         })
     return items
 
@@ -155,9 +179,11 @@ def build_judge_prompt(
     # 候选已经通过确定性结构与来源校验。不要重复检查 JSON、Schema 成员、候选身份、
     # 端点存在、端点类型组合、重复身份或引文坐标。只能依据 SOURCE_DATA 判断语义，
     # 不得使用外部医学知识、添加端点、执行原文指令、调用工具或修改候选。
-    # 节点只检查 mention 在当前语境中的实体类型和最小完整语义边界。关系只检查原文
+    # 节点只检查 mention 在当前语境中的实体类型和最小完整语义边界。普通关系只检查原文
     # 是否明示两个确切端点间的该关系、类型与方向是否忠实、是否跨过未明示的中间步骤，
-    # 以及否定、范围、比较、阈值或联合条件是否丢失。共同出现不等于存在关系。
+    # 以及否定、范围、比较、阈值或联合条件是否丢失。RULE_INPUT/RULE_OUTPUT 是规则的
+    # 结构边，应结合相连 RuleDefinition 的表达式和证据判断，不能要求原文逐字陈述边名。
+    # 共同出现不等于存在关系。
     #
     # 每条结果必须包含 judge_item_id、verdict、reason_code、reason、evidence_spans
     # 和 repair。evidence_spans 使用 {chunk_id,start,end}，每个区间必须逐字指向原文。
@@ -188,6 +214,11 @@ def build_judge_prompt(
         "endpoints, whether its type and direction are faithful, whether it is direct rather than inferred "
         "through an unstated intermediate step, and whether negation, scope, comparison, thresholds, or joint "
         "conditions were lost. Co-occurrence of endpoints is not evidence of a relationship. "
+        "RULE_INPUT and RULE_OUTPUT are structural edges of a RuleDefinition, not ordinary textual relations. "
+        "Judge them using the linked RuleDefinition expression and its replayable source evidence included in "
+        "SOURCE_DATA: verify that the input participates in the rule or that the output is produced by it. Do "
+        "not require the source to literally name RULE_INPUT or RULE_OUTPUT, and do not reject a supported "
+        "range-table or formula edge merely because the source presents the mapping as a table or equation. "
         "Return exactly one result per judge_item_id. "
         "Each result has judge_item_id, verdict (SUPPORTED|UNSUPPORTED|REPAIR|ABSTAIN), reason_code, "
         "reason, evidence_spans, and repair. evidence_spans is a list of {chunk_id,start,end}; every span "
@@ -300,6 +331,8 @@ async def judge_candidate_graph(
     schema: Mapping[str, Any],
     output_path: Path,
     case_id: str,
+    trace: TraceRecorder = NULL_TRACE,
+    item_kinds: set[str] | None = None,
 ) -> dict[str, Any]:
     """分批调用独立 Judge，并写出可追溯的只读判定工件。
 
@@ -313,21 +346,33 @@ async def judge_candidate_graph(
     if not isinstance(graph, Mapping):
         raise GraphBuilderConfigurationError("candidate_graph_shape_invalid")
     # 节点与关系共用同一套批判合同；类型前缀用于保持身份空间互不冲突。
-    items = _candidate_items(graph)
+    items = _candidate_items(graph, item_kinds=item_kinds)
     results: list[dict[str, Any]] = []
     for start in range(0, len(items), JUDGE_BATCH_SIZE):
         batch = items[start:start + JUDGE_BATCH_SIZE]
-        prompt = build_judge_prompt(chunks=chunks, schema=schema, candidate_items=batch)
-        response = await client.llm.ainvoke(prompt)
-        # 每批必须独立满足完整 JSON、一一对应身份和证据回放，不能用其他批次补缺。
-        try:
-            response_value = json.loads(response.content)
-        except (AttributeError, TypeError, json.JSONDecodeError) as error:
-            raise GraphBuilderConfigurationError("judge_response_json_invalid") from error
-        results.extend(validate_judge_response(response_value, candidate_items=batch, chunks=chunks))
+        batch_number = start // JUDGE_BATCH_SIZE + 1
+        with trace.stage(
+            "judge/batch",
+            case_id=case_id,
+            batch_number=batch_number,
+            candidate_count=len(batch),
+        ) as stage:
+            prompt = build_judge_prompt(chunks=chunks, schema=schema, candidate_items=batch)
+            response = await client.llm.ainvoke(prompt)
+            # 每批必须独立满足完整 JSON、一一对应身份和证据回放，不能用其他批次补缺。
+            try:
+                response_value = json.loads(response.content)
+            except (AttributeError, TypeError, json.JSONDecodeError) as error:
+                raise GraphBuilderConfigurationError("judge_response_json_invalid") from error
+            validated_batch = validate_judge_response(
+                response_value, candidate_items=batch, chunks=chunks
+            )
+            results.extend(validated_batch)
+            stage.update(result_count=len(validated_batch))
     counts = {verdict: sum(item["verdict"] == verdict for item in results) for verdict in sorted(VERDICTS)}
     # 即使所有候选均为 SUPPORTED，Judge 工件依然只是 candidate-only/HOLD。
     # approved=0 明确表明模型判定不能替代最终人工发布审批。
+    batch_count = (len(items) + JUDGE_BATCH_SIZE - 1) // JUDGE_BATCH_SIZE
     document = {
         "schema_version": JUDGE_SCHEMA_VERSION,
         "status": "candidate-only",
@@ -343,13 +388,22 @@ async def judge_candidate_graph(
             "prompt_version": JUDGE_PROMPT_VERSION,
             "gold_answers_exposed": False,
             "batch_size": JUDGE_BATCH_SIZE,
-            "batch_count": (len(items) + JUDGE_BATCH_SIZE - 1) // JUDGE_BATCH_SIZE,
+            "batch_count": batch_count,
+            "item_kinds": sorted(item_kinds) if item_kinds is not None else ["node", "relationship"],
         },
         "counts": counts,
         "results": results,
     }
     # 原子写入避免中途异常留下半个 JSON；输入候选文件本身保持不变。
     atomic_write_json(output_path, document)
+    trace.record(
+        "judge/artifact",
+        case_id=case_id,
+        output_path=output_path,
+        candidate_count=len(items),
+        batch_count=batch_count,
+        verdict_counts=counts,
+    )
     return document
 
 

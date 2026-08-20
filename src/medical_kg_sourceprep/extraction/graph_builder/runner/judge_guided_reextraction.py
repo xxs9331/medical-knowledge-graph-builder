@@ -28,7 +28,7 @@ from ..evaluation.artifacts import (
     load_json_object,
     second_extraction_is_usable,
 )
-from ..evaluation.aggregation import aggregate_case_scores
+from ..evaluation.aggregation import aggregate_case_scores, aggregate_supervised_prf1
 from ..evaluation.coverage import audit_extraction_coverage
 from ..evaluation.scoring import merge_candidate_graphs, score_candidate_graph
 from ..judge import judge_candidate_graph
@@ -39,7 +39,7 @@ def compact_candidate_graph(graph: Mapping[str, Any]) -> dict[str, Any]:
     """保留二次抽取所需身份和语义字段，省略原文中已有的冗长证据。"""
     node_fields = {
         "candidate_key", "entity_type", "mention", "rule_stage_candidate",
-        "rule_expression", "rule_name", "extraction_status",
+        "rule_inputs", "rule_outputs", "rule_expression", "rule_name", "extraction_status",
     }
     relation_fields = {
         "candidate_key", "relation_type", "source_candidate_key", "target_candidate_key",
@@ -258,7 +258,10 @@ async def run_typical_cases_experiment(
         })
 
     aggregates = {
-        phase: aggregate_case_scores(case_results, phase)
+        phase: {
+            **aggregate_case_scores(case_results, phase),
+            "prf1": aggregate_supervised_prf1(case_results, phase),
+        }
         for phase in ("first", "second", "union")
     }
     result = {

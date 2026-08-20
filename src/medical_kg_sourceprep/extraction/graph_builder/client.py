@@ -8,12 +8,14 @@ import os
 from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Callable
 
 import httpx
 from dotenv import load_dotenv
 from neo4j_graphrag.llm import OpenAILLM
+from openai import AsyncOpenAI
 
 from .contract import (
     DEFAULT_TIMEOUT_SECONDS,
@@ -35,6 +37,17 @@ def _without_proxy_environment():
         os.environ.update(saved)
 
 
+@contextmanager
+def _without_all_proxy_environment():
+    """让 httpx 使用 HTTPS_PROXY，避免因未安装 socksio 而误选 ALL_PROXY。"""
+    names = ("ALL_PROXY", "all_proxy")
+    saved = {name: os.environ.pop(name) for name in names if name in os.environ}
+    try:
+        yield
+    finally:
+        os.environ.update(saved)
+
+
 @dataclass(slots=True)
 class DeepSeekGraphBuilderClient:
     """Own the GraphRAG LLM and its no-proxy asynchronous HTTP client."""
@@ -49,6 +62,50 @@ class DeepSeekGraphBuilderClient:
             close = getattr(self.http_client, "aclose", None)
             if close is not None:
                 await close()
+
+
+class _OpenCodeLunaLLM:
+    """把 OpenCode Go Responses API 适配为 GraphRAG 的 ``ainvoke`` 接口。"""
+
+    def __init__(self, *, client: Any, model_name: str, reasoning_effort: str) -> None:
+        self.client = client
+        self.model_name: str = model_name
+        self.reasoning_effort: str = reasoning_effort
+
+    async def ainvoke(self, prompt: str, **_kwargs: Any) -> SimpleNamespace:
+        response = await self.client.responses.create(
+            model=self.model_name,
+            input=prompt,
+            reasoning={"effort": self.reasoning_effort},
+        )
+        content = getattr(response, "output_text", "")
+        if not isinstance(content, str) or not content.strip():
+            raise GraphBuilderConfigurationError("opencode_luna_text_missing")
+        response_usage = getattr(response, "usage", None)
+        usage = None
+        if response_usage is not None:
+            usage = SimpleNamespace(
+                request_tokens=getattr(response_usage, "input_tokens", 0),
+                response_tokens=getattr(response_usage, "output_tokens", 0),
+                total_tokens=getattr(response_usage, "total_tokens", 0),
+            )
+        return SimpleNamespace(
+            content=content,
+            usage=usage,
+        )
+
+    async def aclose(self) -> None:
+        await self.client.close()
+
+
+@dataclass(slots=True)
+class OpenCodeGraphBuilderClient:
+    """持有 OpenCode Go Luna 适配器，与现有关系分类客户端接口一致。"""
+
+    llm: _OpenCodeLunaLLM
+
+    async def aclose(self) -> None:
+        await self.llm.aclose()
 
 
 class _GraphRagIdCompletingLLM:
@@ -96,27 +153,61 @@ class _GraphRagIdCompletingLLM:
                 for field in (
                     "mention", "extraction_reason", "canonical_name_candidate", "exact_quote",
                     "exact_quote_occurrence_index", "mention_occurrence_index", "source_char_start",
-                    "source_char_end", "bound_indicator_mention", "rule_stage_candidate",
-                    "rule_expression", "rule_name", "rule_evidence_json", "table_state_evidence_json",
+                    "source_char_end", "bound_indicator_mention", "rule_stage_candidate", "rule_logic_candidate",
+                    "rule_inputs_json", "rule_outputs_json", "rule_excluded_outputs_json",
+                    "rule_expression", "rule_name",
+                    "rule_evidence_json", "table_state_evidence_json",
+                    "derived_entity_evidence_json",
                 ):
                     if field in node and field not in properties:
                         properties[field] = node.pop(field)
                         changed = True
                 table_evidence = properties.get("table_state_evidence_json")
+                if table_evidence == "":
+                    properties.pop("table_state_evidence_json")
+                    table_evidence = None
+                    changed = True
                 if isinstance(table_evidence, (dict, list)):
                     # GraphRAG 的节点属性只能是标量；模型常把该字段当嵌套 JSON 返回。
                     properties["table_state_evidence_json"] = json.dumps(
                         table_evidence, ensure_ascii=False, separators=(",", ":")
                     )
                     changed = True
+                derived_evidence = properties.get("derived_entity_evidence_json")
+                if derived_evidence == "":
+                    properties.pop("derived_entity_evidence_json")
+                    derived_evidence = None
+                    changed = True
+                if isinstance(derived_evidence, (dict, list)):
+                    # 与表格证据相同，GraphRAG 节点属性只能保存 JSON 编码后的标量字符串。
+                    properties["derived_entity_evidence_json"] = json.dumps(
+                        derived_evidence, ensure_ascii=False, separators=(",", ":")
+                    )
+                    changed = True
+                for field in (
+                    "rule_inputs_json", "rule_outputs_json", "rule_excluded_outputs_json",
+                ):
+                    endpoint_value = properties.get(field)
+                    if isinstance(endpoint_value, list):
+                        # GraphRAG 节点属性是标量；结构化端点数组统一编码一次后交给硬校验解析。
+                        properties[field] = json.dumps(
+                            endpoint_value, ensure_ascii=False, separators=(",", ":")
+                        )
+                        changed = True
             relationships = payload.get("relationships")
             if isinstance(relationships, list):
                 for relationship in relationships:
                     if not isinstance(relationship, dict):
                         continue
+                    # Neo4jRelationship 没有关系 id 字段；联合抽取时模型常为边生成
+                    # 仅供响应内部展示的 rel_1 等瞬时 ID。该值不参与候选身份，移除后
+                    # 仍由端点、类型和证据生成稳定 relation key。
+                    if "id" in relationship:
+                        relationship.pop("id")
+                        changed = True
                     for canonical_field, aliases in {
-                        "start_node_id": ("source", "source_node_id"),
-                        "end_node_id": ("target", "target_node_id"),
+                        "start_node_id": ("source", "source_node_id", "source_node"),
+                        "end_node_id": ("target", "target_node_id", "target_node"),
                         "type": ("label", "relationship_type"),
                     }.items():
                         if canonical_field in relationship:
@@ -140,6 +231,7 @@ class _GraphRagIdCompletingLLM:
                         "source_char_start",
                         "source_char_end",
                         "rule_evidence_role",
+                        "relation_evidence_json",
                     ):
                         if properties.get(field) is None and field in properties:
                             properties.pop(field)
@@ -150,6 +242,12 @@ class _GraphRagIdCompletingLLM:
                         if field in relationship:
                             properties.setdefault(field, relationship.pop(field))
                             changed = True
+                    relation_evidence = properties.get("relation_evidence_json")
+                    if isinstance(relation_evidence, (dict, list)):
+                        properties["relation_evidence_json"] = json.dumps(
+                            relation_evidence, ensure_ascii=False, separators=(",", ":")
+                        )
+                        changed = True
             if changed:
                 return SimpleNamespace(content=json.dumps(payload, ensure_ascii=False), usage=usage)
         except (AttributeError, TypeError, json.JSONDecodeError):
@@ -224,6 +322,50 @@ def load_deepseek_api_key(*, env: Mapping[str, str] | None = None) -> str:
     return key
 
 
+def load_sub2api_api_key(*, env: Mapping[str, str] | None = None) -> str:
+    """从环境变量读取 Sub2API Key，不允许通过命令行参数传入密钥。"""
+    environment = os.environ if env is None else env
+    key = environment.get("SUB2API_API_KEY", "").strip()
+    if not key:
+        raise GraphBuilderConfigurationError("SUB2API_API_KEY is required")
+    return key
+
+
+def load_dashscope_api_key(*, env: Mapping[str, str] | None = None) -> str:
+    """默认从根目录 .env 加载百炼 Key，不允许通过命令行或工件传入。"""
+    environment = env
+    if environment is None:
+        load_dotenv(PROJECT_ROOT / ".env", override=False)
+        environment = os.environ
+    key = environment.get("DASHSCOPE_API_KEY", "").strip()
+    if not key:
+        raise GraphBuilderConfigurationError("DASHSCOPE_API_KEY is required")
+    return key
+
+
+def load_opencode_go_api_key(*, auth_path: Path | None = None) -> str:
+    """读取 OpenCode Go 本机认证；密钥不得写入运行工件。"""
+    path = auth_path or Path.home() / ".local/share/opencode/auth.json"
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise GraphBuilderConfigurationError(f"invalid_opencode_auth:{path}") from exc
+    credential = payload.get("opencode-go") if isinstance(payload, Mapping) else None
+    if not isinstance(credential, Mapping):
+        raise GraphBuilderConfigurationError(f"opencode_go_credential_missing:{path}")
+    key = next(
+        (
+            credential.get(name)
+            for name in ("apiKey", "api_key", "key")
+            if isinstance(credential.get(name), str) and credential.get(name)
+        ),
+        None,
+    )
+    if not isinstance(key, str):
+        raise GraphBuilderConfigurationError(f"opencode_go_key_missing:{path}")
+    return key
+
+
 def create_deepseek_graph_builder(
     *,
     env: Mapping[str, str] | None = None,
@@ -250,3 +392,97 @@ def create_deepseek_graph_builder(
             http_client=http_client,
         )
     return DeepSeekGraphBuilderClient(llm=llm, http_client=http_client)
+
+
+def create_luna_graph_builder(
+    *,
+    env: Mapping[str, str] | None = None,
+    base_url: str = "https://api.swlyes.top/v1",
+    model_name: str = "gpt-5.6-luna",
+    reasoning_effort: str = "high",
+    timeout_seconds: float = 120.0,
+    http_client_factory: Callable[..., httpx.AsyncClient] = httpx.AsyncClient,
+    llm_factory: Callable[..., OpenAILLM] = OpenAILLM,
+    api_key_loader: Callable[..., str] = load_sub2api_api_key,
+) -> DeepSeekGraphBuilderClient:
+    """创建通过 Sub2API 调用 Luna 的 GraphRAG 客户端。"""
+    key = api_key_loader(env=env)
+    http_client = http_client_factory(
+        trust_env=False,
+        timeout=httpx.Timeout(timeout_seconds),
+    )
+    with _without_proxy_environment():
+        llm = llm_factory(
+            model_name=model_name,
+            model_params={"reasoning_effort": reasoning_effort},
+            api_key=key,
+            base_url=base_url,
+            http_client=http_client,
+        )
+    return DeepSeekGraphBuilderClient(llm=llm, http_client=http_client)
+
+
+def create_qwen_flash_graph_builder(
+    *,
+    env: Mapping[str, str] | None = None,
+    base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    model_name: str = "qwen-flash",
+    timeout_seconds: float = 120.0,
+    http_client_factory: Callable[..., httpx.AsyncClient] = httpx.AsyncClient,
+    llm_factory: Callable[..., OpenAILLM] = OpenAILLM,
+    api_key_loader: Callable[..., str] = load_dashscope_api_key,
+) -> DeepSeekGraphBuilderClient:
+    """创建百炼 qwen-flash 非思考 JSON Mode 客户端。"""
+    key = api_key_loader(env=env)
+    http_client = http_client_factory(
+        trust_env=False,
+        timeout=httpx.Timeout(timeout_seconds),
+    )
+    with _without_proxy_environment():
+        llm = llm_factory(
+            model_name=model_name,
+            model_params={
+                "temperature": 0,
+                "response_format": {"type": "json_object"},
+                "extra_body": {"enable_thinking": False},
+            },
+            api_key=key,
+            base_url=base_url,
+            http_client=http_client,
+        )
+    return DeepSeekGraphBuilderClient(llm=llm, http_client=http_client)
+
+
+def create_opencode_luna_graph_builder(
+    *,
+    model_name: str = "gpt-5.6-luna",
+    reasoning_effort: str = "high",
+    base_url: str = "https://opencode.ai/zen/go/v1",
+    timeout_seconds: float = 180.0,
+    auth_path: Path | None = None,
+    http_client_factory: Callable[..., httpx.AsyncClient] = httpx.AsyncClient,
+    openai_client_factory: Callable[..., Any] = AsyncOpenAI,
+    api_key_loader: Callable[..., str] = load_opencode_go_api_key,
+) -> OpenCodeGraphBuilderClient:
+    """通过 OpenCode Go Responses API 创建无状态 Luna 客户端。"""
+    key = api_key_loader(auth_path=auth_path)
+    # OpenCode Go 经 HTTPS_PROXY 访问；屏蔽 SOCKS ALL_PROXY，避免要求额外的 socksio。
+    with _without_all_proxy_environment():
+        http_client = http_client_factory(
+            trust_env=True,
+            timeout=httpx.Timeout(timeout_seconds),
+        )
+    client = openai_client_factory(
+        api_key=key,
+        base_url=base_url,
+        default_headers={"User-Agent": "opencode-ai/1.0"},
+        http_client=http_client,
+        max_retries=0,
+    )
+    return OpenCodeGraphBuilderClient(
+        llm=_OpenCodeLunaLLM(
+            client=client,
+            model_name=model_name,
+            reasoning_effort=reasoning_effort,
+        )
+    )

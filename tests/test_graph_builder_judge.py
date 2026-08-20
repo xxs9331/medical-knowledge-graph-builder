@@ -13,7 +13,8 @@ from medical_kg_sourceprep.extraction.graph_builder.judge import (
     load_typical_case,
     validate_judge_response,
 )
-from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
+from medical_kg_sourceprep.extraction.graph_builder.contract import DEFAULT_CHUNK_MANIFEST
+from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk, load_chunk_manifest
 
 
 class GraphBuilderJudgeTests(unittest.TestCase):
@@ -65,7 +66,7 @@ class GraphBuilderJudgeTests(unittest.TestCase):
         self.assertEqual(result[0]["evidence_spans"][0]["exact_quote"], "血清铁降低")
 
     def test_repair_requires_target_and_supported_action(self):
-        response = {"results": [{
+        response: dict[str, Any] = {"results": [{
             "judge_item_id": "node:candidate:1", "verdict": "REPAIR",
             "reason_code": "NODE_TYPE_WRONG", "reason": "节点类型需要修改。",
             "evidence_spans": [{"chunk_id": "case:chunk", "start": 0, "end": 5}],
@@ -155,13 +156,32 @@ class GraphBuilderJudgeTests(unittest.TestCase):
         path = Path("evaluation/typical-cases/typical-cases-v0.1.json")
         value = json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(len(value["cases"]), 8)
-        self.assertEqual(value["status"], "HUMAN_VALIDATED")
+        self.assertEqual(value["status"], "HUMAN_REVIEW_REQUIRED")
         self.assertEqual(load_typical_case(path, "TC-08")["case_id"], "TC-08")
         for case in value["cases"]:
+            self.assertTrue(case["evaluation_scopes"], case["case_id"])
             mentions = {mention for _entity_type, mention in case["entities"]}
             for source, _relation_type, target in case["relationships"]:
                 self.assertIn(source, mentions, case["case_id"])
                 self.assertIn(target, mentions, case["case_id"])
+            for rule in case["rules"]:
+                for endpoint in [*rule["inputs"], *rule["outputs"]]:
+                    self.assertIn(endpoint, mentions, case["case_id"])
+
+    def test_typical_case_scopes_are_inside_canonical_chunks(self):
+        path = Path("evaluation/typical-cases/typical-cases-v0.1.json")
+        dataset = json.loads(path.read_text(encoding="utf-8"))
+        _manifest, chunks = load_chunk_manifest(DEFAULT_CHUNK_MANIFEST)
+        source_by_id = {chunk.chunk_id: chunk.text for chunk in chunks}
+
+        for case in dataset["cases"]:
+            case_chunk_ids = set(case["chunk_ids"])
+            for scope in case["evaluation_scopes"]:
+                self.assertIn(scope["chunk_id"], case_chunk_ids, case["case_id"])
+                source = source_by_id[scope["chunk_id"]]
+                self.assertLessEqual(0, scope["start"], case["case_id"])
+                self.assertLess(scope["start"], scope["end"], case["case_id"])
+                self.assertLessEqual(scope["end"], len(source), case["case_id"])
 
     def test_specialized_test_sets_match_graph_dataset(self):
         root = Path("evaluation/typical-cases")
@@ -181,9 +201,16 @@ class GraphBuilderJudgeTests(unittest.TestCase):
             for case in dataset["cases"]:
                 graph_case = graph_by_id[case["case_id"]]
                 self.assertEqual(case["chunk_ids"], graph_case["chunk_ids"])
+                self.assertEqual(case["evaluation_scopes"], graph_case["evaluation_scopes"])
                 self.assertEqual(case["expected"], graph_case[field])
         for case in relationships["cases"]:
             self.assertEqual(case["forbidden"], graph_by_id[case["case_id"]]["must_not_extract"])
+        graph_rules = [rule for case in graph["cases"] for rule in case["rules"]]
+        self.assertEqual(len(graph_rules), 10)
+        self.assertTrue(all(rule["rule_stage"] == "GRAPH_COMPOSITE" for rule in graph_rules))
+        self.assertTrue(all(rule["logic"] in {"ALL", "ALL_SAME_WINDOW"} for rule in graph_rules))
+        self.assertEqual(graph_by_id["TC-06"]["rules"], [])
+        self.assertEqual(graph_by_id["TC-08"]["rules"], [])
 
 
 if __name__ == "__main__":

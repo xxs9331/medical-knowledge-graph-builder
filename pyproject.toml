@@ -8,14 +8,18 @@ version = "0.1.0"
 description = "Provenance-first source preparation for downstream medical knowledge graph work"
 requires-python = ">=3.11"
 dependencies = [
+    "jieba>=0.42.1",
     "langextract==1.6.0",
+    "more-itertools==10.8.0",
     "neo4j-graphrag==1.18.0",
     "openai==2.52.0",
     "python-dotenv==1.2.2",
 ]
 
 [project.scripts]
+medical-kg-terminology = "medical_kg_sourceprep.extraction.terminology:main"
 prepare-chunks = "medical_kg_sourceprep.provenance.chunks:main"
+prepare-semantic-sections = "medical_kg_sourceprep.provenance.semantic_sections:main"
 prepare-source = "medical_kg_sourceprep.cli.source:main"
 medical-kg-qa = "medical_kg_sourceprep.api.qa:main"
 medical-report = "medical_kg_sourceprep.report.report_pipeline:main"

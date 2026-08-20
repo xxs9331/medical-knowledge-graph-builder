@@ -47,6 +47,21 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                 [property_definition.name for property_definition in relationship.properties],
                 ["exact_quote", "exact_quote_occurrence_index"],
             )
+        self.assertNotIn("HAS_STATE", {
+            relationship.label for relationship in graph_schema.relationship_types
+        })
+
+        state_schema = graph_builder.build_graphrag_schema(
+            schema,
+            relation_types=sorted(graph_builder.STATE_RELATION_TYPES),
+            node_types=sorted(graph_builder.BUSINESS_NODE_TYPES),
+            node_property_names=("mention",),
+            relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
+        )
+        self.assertEqual(
+            {relationship.label for relationship in state_schema.relationship_types},
+            {"HAS_STATE"},
+        )
 
     def test_missing_deepseek_key_fails_without_loading_local_environment(self):
         with self.assertRaisesRegex(graph_builder.GraphBuilderConfigurationError, "DEEPSEEK_API_KEY"):
@@ -127,10 +142,16 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                                     "header_exact_quote": "血清铁",
                                     "row_exact_quote": "↓",
                                 },
+                                "derived_entity_evidence_json": "",
+                                "rule_inputs_json": ["血清铁降低", "TIBC增高"],
+                                "rule_outputs_json": ["缺铁性贫血"],
                             },
                         }],
                         "edges": [{
+                            "id": "rel-1",
                             "type": "RULE_INPUT",
+                            "source_node": "source-1",
+                            "target_node": "target-1",
                             "exact_quote": "转铁蛋白减少。",
                             "exact_quote_occurrence_index": 0,
                             "source_char_start": 12,
@@ -150,11 +171,19 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             json.loads(payload["nodes"][0]["properties"]["table_state_evidence_json"]),
             {"header_exact_quote": "血清铁", "row_exact_quote": "↓"},
         )
+        self.assertNotIn("derived_entity_evidence_json", payload["nodes"][0]["properties"])
+        self.assertEqual(
+            json.loads(payload["nodes"][0]["properties"]["rule_inputs_json"]),
+            ["血清铁降低", "TIBC增高"],
+        )
         self.assertEqual(adapter.last_response_diagnostic["usage"], {
             "input_tokens": 100, "output_tokens": 20, "total_tokens": 120,
         })
         self.assertEqual(result.usage.total_tokens, 120)
         relationship = payload["relationships"][0]
+        self.assertNotIn("id", relationship)
+        self.assertEqual(relationship["start_node_id"], "source-1")
+        self.assertEqual(relationship["end_node_id"], "target-1")
         self.assertNotIn("exact_quote_occurrence_index", relationship)
         self.assertNotIn("source_char_start", relationship)
         self.assertNotIn("source_char_end", relationship)
@@ -209,6 +238,83 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             for node in states
         ))
 
+    def test_derived_entity_replays_shared_suffix_evidence(self):
+        text = "叶酸、维生素 B12 缺乏可导致巨幼细胞性贫血。"
+        chunk = EvidenceChunk("synthetic:shared-suffix", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[{
+            "id": "folate-deficiency",
+            "label": "ClinicalContext",
+            "properties": {
+                "mention": "叶酸缺乏",
+                "extraction_reason": "原文使用共享后缀列出两个缺乏因素。",
+                "derived_entity_evidence_json": json.dumps({
+                    "derivation_type": "SHARED_SUFFIX",
+                    "evidence": [{"role": "source_expression", "exact_quote": text}],
+                }, ensure_ascii=False),
+            },
+        }])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(),
+            derive_entity_provenance=True,
+        )
+
+        self.assertEqual(result.review_items, [])
+        node = result.accepted[0]
+        self.assertEqual(node["mention"], "叶酸缺乏")
+        self.assertEqual(node["derivation_type"], "SHARED_SUFFIX")
+        self.assertEqual(node["derived_entity_evidence_refs"][0]["exact_quote"], text)
+        self.assertEqual(node["source_ref"]["char_start"], 0)
+
+    def test_derived_entity_rejects_unknown_derivation_type(self):
+        text = "血红蛋白参考范围为 120~160 g/L。"
+        chunk = EvidenceChunk("synthetic:bad-derived", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[{
+            "id": "state",
+            "label": "IndicatorState",
+            "properties": {
+                "mention": "血红蛋白正常",
+                "extraction_reason": "由参考范围得到。",
+                "derived_entity_evidence_json": json.dumps({
+                    "derivation_type": "FREE_FORM",
+                    "evidence": [{"role": "range", "exact_quote": text}],
+                }, ensure_ascii=False),
+            },
+        }])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(),
+            derive_entity_provenance=True,
+        )
+
+        self.assertEqual(result.accepted, [])
+        self.assertEqual(result.review_items[0]["reason_code"], "derived_entity_type_invalid")
+        self.assertEqual(len(result.judge_drafts), 1)
+
+    def test_derived_entity_requires_replayable_evidence(self):
+        text = "平均血小板体积与血小板计数同时持续下降。"
+        chunk = EvidenceChunk("synthetic:trend", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[{
+            "id": "state",
+            "label": "IndicatorState",
+            "properties": {
+                "mention": "平均血小板体积持续下降",
+                "extraction_reason": "由联合趋势表达拆分。",
+                "derived_entity_evidence_json": json.dumps({
+                    "derivation_type": "COORDINATED_TREND",
+                    "evidence": [{"role": "source_expression", "exact_quote": "不存在的引语"}],
+                }, ensure_ascii=False),
+            },
+        }])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(),
+            derive_entity_provenance=True,
+        )
+
+        self.assertEqual(result.accepted, [])
+        self.assertIn("quote_absent_or_ambiguous", result.review_items[0]["reason_code"])
+
     def test_runner_passes_raw_table_to_model_without_derived_view(self):
         header = "<tr><th>血清铁</th></tr>"
         row = "<tr><td>↓</td></tr>"
@@ -230,11 +336,12 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                 source_manifest_sha256="a" * 64,
             ))
 
-        self.assertEqual(len(prompts), 3)
+        self.assertEqual(len(prompts), 4)
         self.assertIn(text, prompts[0])
         self.assertNotIn("[DERIVED_TABLE_STATE_VIEW]", prompts[0])
         self.assertNotIn("[DERIVED_TABLE_STATE_VIEW]", prompts[1])
         self.assertNotIn("[DERIVED_TABLE_STATE_VIEW]", prompts[2])
+        self.assertNotIn("[DERIVED_TABLE_STATE_VIEW]", prompts[3])
 
     def test_candidate_graph_validates_nodes_relations_and_writes_no_raw_response(self):
         text = "血清铁降低。生长发育需要量多导致缺铁性贫血。"
@@ -276,16 +383,15 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                     ], "relationships": []}, ensure_ascii=False))
                 if self.calls == 2:
                     return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
-                return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [
-                    {
+                if self.calls == 3:
+                    return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [{
                         "type": "HAS_STATE", "start_node_id": indicator_key, "end_node_id": state_key,
                         "exact_quote": "血清铁降低。"
-                    },
-                    {
+                    }]}, ensure_ascii=False))
+                return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [{
                         "type": "CAUSES", "start_node_id": context_key, "end_node_id": disease_key,
                         "exact_quote": "生长发育需要量多导致缺铁性贫血。"
-                    },
-                ]}, ensure_ascii=False))
+                    }]}, ensure_ascii=False))
 
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "candidate"
@@ -358,6 +464,8 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                             "mention": "普通疾病", "canonical_name_candidate": "普通疾病", "exact_quote": "普通疾病。"
                         }
                     }], "relationships": []}, ensure_ascii=False))
+                if self.calls == 3:
+                    return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
                 return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [{
                     "type": "CAUSES", "start_node_id": "unknown", "end_node_id": "other",
                     "properties": {"exact_quote": "甲和乙导致丙。"}
@@ -436,7 +544,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                         "rule_name": "贫血形态判断",
                         "rule_evidence_json": json.dumps(evidence, ensure_ascii=False),
                     }}], "relationships": []}, ensure_ascii=False))
-                if self.calls == 3:
+                if self.calls in {3, 4}:
                     return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
                 edges = [
                     ("RULE_INPUT", keys["贫血状态"], rule_key),
@@ -506,7 +614,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                             {"role": "table_row", "exact_quote": row},
                         ], ensure_ascii=False),
                     }}], "relationships": []}, ensure_ascii=False))
-                if self.calls == 3:
+                if self.calls in {3, 4}:
                     return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
                 edges = [("RULE_INPUT", keys["血清铁"], rule_key, "table_header"),
                          ("RULE_INPUT", keys["TIBC"], rule_key, "table_header"),
@@ -532,7 +640,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(summary["relationship_count"], 4)
         self.assertEqual(summary["hold_count"], 0)
 
-    def test_formula_rules_keep_only_frozen_business_endpoints(self):
+    def test_first_graph_pass_excludes_formula_rules(self):
         ptr_formula = "PTR = PT / 正常人血浆 PT。"
         inr_formula = "国际标准化比值 (INR) = PTR × ISI。"
         text = f"{ptr_formula}{inr_formula}"
@@ -577,7 +685,7 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                             "rule_evidence_json": json.dumps([{"role": "formula", "exact_quote": inr_formula}], ensure_ascii=False),
                         }},
                     ], "relationships": []}, ensure_ascii=False))
-                if self.calls == 3:
+                if self.calls in {3, 4}:
                     return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": []}))
                 return SimpleNamespace(content=json.dumps({"nodes": [], "relationships": [
                     {"type": "RULE_INPUT", "start_node_id": keys["PT"], "end_node_id": ptr_rule_key,
@@ -599,10 +707,15 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             queue = json.loads((output / "review-queue.json").read_text(encoding="utf-8"))
             graph = json.loads((output / "graph.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(summary["hold_count"], 0, queue)
-        self.assertEqual(summary["relationship_count"], 4)
+        self.assertEqual(summary["hold_count"], 2, queue)
+        self.assertEqual(summary["relationship_count"], 0)
         self.assertEqual({item["mention"] for item in graph["nodes"] if item["entity_type"] == "LabIndicator"},
                          {"PT", "PTR", "INR"})
+        self.assertFalse(any(item["entity_type"] == "RuleDefinition" for item in graph["nodes"]))
+        self.assertEqual(
+            {item["reason_code"] for item in queue["items"]},
+            {"rule_stage_not_enabled_for_trial"},
+        )
         self.assertFalse(any(item.get("mention") == "ISI" for item in graph["nodes"]))
 
     def test_conjunction_without_multiple_states_is_retained_for_later_evaluation(self):
@@ -780,6 +893,129 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertEqual(relation["source_ref"]["exact_quote"], row)
         self.assertEqual([item["role"] for item in relation["table_state_evidence_refs"]],
                          ["table_header", "table_row"])
+
+    def test_has_state_reuses_coordinated_trend_evidence(self):
+        text = "平均血小板体积与血小板计数同时持续下降。"
+        chunk = EvidenceChunk("synthetic:derived-has-state", text, hashlib.sha256(text.encode()).hexdigest())
+        indicator_ref = graph_builder._source_ref(chunk, "平均血小板体积", text)
+        evidence_ref = {
+            "role": "source_expression",
+            "chunk_id": chunk.chunk_id,
+            "chunk_sha256": chunk.chunk_sha256,
+            "exact_quote": text,
+            "char_start": 0,
+            "char_end": len(text),
+        }
+        indicator = {
+            "candidate_key": graph_builder._candidate_key("LabIndicator", "平均血小板体积", indicator_ref),
+            "entity_type": "LabIndicator", "mention": "平均血小板体积",
+            "canonical_name_candidate": "平均血小板体积", "source_ref": indicator_ref,
+        }
+        state = {
+            "candidate_key": "candidate:derived-state",
+            "entity_type": "IndicatorState", "mention": "平均血小板体积持续下降",
+            "canonical_name_candidate": "平均血小板体积持续下降",
+            "source_ref": {key: evidence_ref[key] for key in (
+                "chunk_id", "chunk_sha256", "exact_quote", "char_start", "char_end",
+            )},
+            "derivation_type": "COORDINATED_TREND",
+            "derived_entity_evidence_refs": [evidence_ref],
+        }
+        graph = Neo4jGraph(relationships=[Neo4jRelationship(
+            start_node_id=f"{chunk.chunk_id}:{indicator['candidate_key']}",
+            end_node_id=f"{chunk.chunk_id}:{state['candidate_key']}",
+            type="HAS_STATE", properties={},
+        )])
+
+        result = graph_builder.normalize_candidate_relationships(
+            graph, chunk=chunk, schema=graph_builder.load_candidate_graph_schema(),
+            nodes=[indicator, state],
+        )
+
+        self.assertEqual(result.review_items, [])
+        self.assertEqual(
+            result.accepted[0]["derived_entity_evidence_refs"][0]["exact_quote"], text,
+        )
+
+    def test_cross_chunk_relation_replays_each_canonical_chunk(self):
+        heading = "D-二聚体阳性可见于下列情况。"
+        listing = "包括心肌梗死、脑梗死和肺栓塞。"
+        first = EvidenceChunk("synthetic:cross:0000", heading, hashlib.sha256(heading.encode()).hexdigest())
+        second = EvidenceChunk("synthetic:cross:0001", listing, hashlib.sha256(listing.encode()).hexdigest())
+        source_ref = graph_builder._source_ref(first, "D-二聚体阳性", heading)
+        target_ref = graph_builder._source_ref(second, "心肌梗死", listing)
+        source = {
+            "candidate_key": graph_builder._candidate_key("IndicatorState", "D-二聚体阳性", source_ref),
+            "entity_type": "IndicatorState", "mention": "D-二聚体阳性",
+            "canonical_name_candidate": "D-二聚体阳性", "source_ref": source_ref,
+            "extraction_status": "VALID",
+        }
+        target = {
+            "candidate_key": graph_builder._candidate_key("Disease", "心肌梗死", target_ref),
+            "entity_type": "Disease", "mention": "心肌梗死",
+            "canonical_name_candidate": "心肌梗死", "source_ref": target_ref,
+            "extraction_status": "VALID",
+        }
+        evidence = json.dumps([
+            {"chunk_id": first.chunk_id, "role": "scope_heading", "exact_quote": heading},
+            {"chunk_id": second.chunk_id, "role": "list_item", "exact_quote": listing},
+        ], ensure_ascii=False)
+        graph = Neo4jGraph(relationships=[Neo4jRelationship(
+            start_node_id=f"{first.chunk_id}:{source['candidate_key']}",
+            end_node_id=f"{first.chunk_id}:{target['candidate_key']}",
+            type="ASSOCIATED_WITH",
+            properties={"relation_evidence_json": evidence},
+        )])
+
+        result = graph_builder.normalize_cross_chunk_relationships(
+            graph,
+            chunks=[first, second],
+            schema=graph_builder.load_candidate_graph_schema(),
+            nodes=[source, target],
+            allowed_relation_types=graph_builder.ORDINARY_RELATION_TYPES,
+        )
+
+        self.assertEqual(result.review_items, [])
+        relation = result.accepted[0]
+        self.assertEqual(relation["generation"], "cross_chunk_model_candidate")
+        self.assertEqual(
+            [ref["chunk_id"] for ref in relation["relation_evidence_refs"]],
+            [first.chunk_id, second.chunk_id],
+        )
+
+    def test_cross_chunk_relation_requires_evidence_from_two_chunks(self):
+        text = "D-二聚体阳性与心肌梗死相关。"
+        first = EvidenceChunk("synthetic:same:0000", text, hashlib.sha256(text.encode()).hexdigest())
+        second_text = "另一段原文。"
+        second = EvidenceChunk(
+            "synthetic:same:0001", second_text, hashlib.sha256(second_text.encode()).hexdigest()
+        )
+        source_ref = graph_builder._source_ref(first, "D-二聚体阳性", text)
+        target_ref = graph_builder._source_ref(first, "心肌梗死", text)
+        source = {
+            "candidate_key": "candidate:source", "entity_type": "IndicatorState",
+            "mention": "D-二聚体阳性", "source_ref": source_ref,
+        }
+        target = {
+            "candidate_key": "candidate:target", "entity_type": "Disease",
+            "mention": "心肌梗死", "source_ref": target_ref,
+        }
+        evidence = json.dumps([
+            {"chunk_id": first.chunk_id, "role": "sentence", "exact_quote": text},
+            {"chunk_id": first.chunk_id, "role": "repeated_scope", "exact_quote": text},
+        ], ensure_ascii=False)
+        graph = Neo4jGraph(relationships=[Neo4jRelationship(
+            start_node_id="candidate:source", end_node_id="candidate:target",
+            type="ASSOCIATED_WITH", properties={"relation_evidence_json": evidence},
+        )])
+
+        result = graph_builder.normalize_cross_chunk_relationships(
+            graph, chunks=[first, second], schema=graph_builder.load_candidate_graph_schema(),
+            nodes=[source, target], allowed_relation_types=graph_builder.ORDINARY_RELATION_TYPES,
+        )
+
+        self.assertEqual(result.accepted, [])
+        self.assertEqual(result.review_items[0]["reason_code"], "relation_evidence_not_cross_chunk")
 
     def test_relation_endpoint_type_mismatch_is_retained_as_partial(self):
         text = "血清铁提示缺铁性贫血。"
@@ -1039,8 +1275,8 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             "REVIEW_REQUIRED",
         )
 
-    def test_rule_without_complete_input_output_subgraph_is_retained_for_review(self):
-        text = "PTR = 受检血浆。"
+    def test_rule_edges_are_generated_from_validated_expression(self):
+        text = "甲状态和乙状态共同提示丙。"
         chunk = EvidenceChunk("synthetic:isolated-rule", text, hashlib.sha256(text.encode()).hexdigest())
         schema = graph_builder.load_candidate_graph_schema()
 
@@ -1052,21 +1288,25 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
                 self.calls += 1
                 if self.calls == 1:
                     return SimpleNamespace(content=json.dumps({"nodes": [
-                        {"label": "LabIndicator", "properties": {
-                            "mention": "PTR", "canonical_name_candidate": "PTR", "exact_quote": text,
+                        {"label": "IndicatorState", "properties": {
+                            "mention": "甲状态", "canonical_name_candidate": "甲状态", "exact_quote": text,
                         }},
-                        {"label": "LabIndicator", "properties": {
-                            "mention": "受检血浆", "canonical_name_candidate": "受检血浆", "exact_quote": text,
+                        {"label": "IndicatorState", "properties": {
+                            "mention": "乙状态", "canonical_name_candidate": "乙状态", "exact_quote": text,
+                        }},
+                        {"label": "ClinicalContext", "properties": {
+                            "mention": "丙", "canonical_name_candidate": "丙", "exact_quote": text,
                         }},
                     ], "relationships": []}, ensure_ascii=False))
                 if self.calls == 2:
                     return SimpleNamespace(content=json.dumps({"nodes": [{
                         "label": "RuleDefinition", "properties": {
-                            "rule_stage_candidate": "PREPROCESS",
-                            "rule_expression": "PTR=比值计算(受检血浆)",
-                            "rule_name": "比值计算",
+                            "rule_stage_candidate": "GRAPH_COMPOSITE",
+                            "rule_logic_candidate": "ALL",
+                            "rule_expression": "丙=联合判断(甲状态,乙状态)",
+                            "rule_name": "联合判断",
                             "rule_evidence_json": json.dumps([
-                                {"role": "formula", "exact_quote": text}
+                                {"role": "joint_statement", "exact_quote": text}
                             ], ensure_ascii=False),
                         }
                     }], "relationships": []}, ensure_ascii=False))
@@ -1081,16 +1321,138 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
             graph = json.loads((output / "graph.json").read_text(encoding="utf-8"))
             queue = json.loads((output / "review-queue.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(summary["relationship_count"], 0)
-        self.assertEqual(summary["node_count"], 3)
+        self.assertEqual(summary["relationship_count"], 3)
+        self.assertEqual(summary["node_count"], 4)
         rule = next(item for item in graph["nodes"] if item["entity_type"] == "RuleDefinition")
-        self.assertEqual(rule["extraction_status"], "PARTIAL")
-        self.assertEqual(rule["review_status"], "REVIEW_REQUIRED")
-        self.assertIn("INPUT_ENTITY_UNRESOLVED", rule["warnings"])
-        self.assertIn("rule_structure_incomplete", {item["reason_code"] for item in queue["items"]})
+        self.assertEqual(rule["extraction_status"], "VALID")
+        self.assertEqual(rule["review_status"], "PENDING")
+        self.assertNotIn("rule_structure_incomplete", {item["reason_code"] for item in queue["items"]})
         self.assertEqual(
-            next(item for item in queue["items"] if item["reason_code"] == "rule_structure_incomplete")["status"],
-            "REVIEW_REQUIRED",
+            {item["generation"] for item in graph["relationships"]},
+            {"deterministic_rule_structure"},
+        )
+
+    def test_structured_rule_does_not_require_name_expression_or_exact_spacing(self):
+        text = "正细胞不均一性贫血: MCV 正常, RDW 增大。"
+        chunk = EvidenceChunk("synthetic:structured-rule", text, hashlib.sha256(text.encode()).hexdigest())
+        schema = graph_builder.load_candidate_graph_schema()
+        business_nodes = []
+        for entity_type, mention in (
+            ("IndicatorState", "MCV 正常"),
+            ("IndicatorState", "RDW 增大"),
+            ("ClinicalContext", "正细胞不均一性贫血"),
+        ):
+            source_ref = graph_builder._source_ref(chunk, mention, text)
+            business_nodes.append({
+                "candidate_key": graph_builder._candidate_key(entity_type, mention, source_ref),
+                "entity_type": entity_type,
+                "mention": mention,
+                "canonical_name_candidate": mention,
+                "source_ref": source_ref,
+                "extraction_status": "VALID",
+                "review_status": "PENDING",
+                "publication_status": "HOLD",
+            })
+        raw_rule = Neo4jGraph(nodes=[{
+            "id": "structured-rule",
+            "label": "RuleDefinition",
+            "properties": {
+                "rule_stage_candidate": "GRAPH_COMPOSITE",
+                "rule_logic_candidate": "ALL",
+                "rule_inputs_json": json.dumps(["MCV正常", "RDW增大"], ensure_ascii=False),
+                "rule_outputs_json": json.dumps(["正细胞不均一性贫血"], ensure_ascii=False),
+                "rule_evidence_json": json.dumps(
+                    [{"role": "definition", "exact_quote": text}], ensure_ascii=False
+                ),
+            },
+        }])
+
+        rule_result = graph_builder.normalize_candidate_nodes(
+            raw_rule,
+            chunk=chunk,
+            schema=schema,
+            allowed_node_types=("RuleDefinition",),
+            allowed_rule_stages=("GRAPH_COMPOSITE",),
+            allowed_rule_logics=("ALL", "ALL_SAME_WINDOW"),
+        )
+        rule = rule_result.accepted[0]
+        edge_result = graph_builder.build_rule_relationships_from_definitions(
+            schema=schema,
+            nodes=[*business_nodes, rule],
+        )
+
+        self.assertEqual(rule_result.review_items, [])
+        self.assertNotIn("rule_expression", rule)
+        self.assertEqual(rule["rule_name"], "")
+        self.assertEqual(len(edge_result.accepted), 3)
+        self.assertEqual(edge_result.review_items, [])
+
+    def test_explicit_exclusion_rule_accepts_one_complete_condition(self):
+        text = "D-二聚体正常，对排除深静脉血栓有重要价值。"
+        chunk = EvidenceChunk(
+            "synthetic:exclusion-rule", text,
+            hashlib.sha256(text.encode()).hexdigest(),
+        )
+        schema = graph_builder.load_candidate_graph_schema()
+        business_nodes = []
+        for entity_type, mention in (
+            ("IndicatorState", "D-二聚体正常"),
+            ("Disease", "深静脉血栓"),
+        ):
+            source_ref = graph_builder._source_ref(chunk, mention, text)
+            business_nodes.append({
+                "candidate_key": graph_builder._candidate_key(
+                    entity_type, mention, source_ref
+                ),
+                "entity_type": entity_type,
+                "mention": mention,
+                "canonical_name_candidate": mention,
+                "source_ref": source_ref,
+                "extraction_status": "VALID",
+                "review_status": "PENDING",
+                "publication_status": "HOLD",
+            })
+        raw_rule = Neo4jGraph(nodes=[{
+            "id": "exclusion-rule",
+            "label": "RuleDefinition",
+            "properties": {
+                "rule_stage_candidate": "GRAPH_COMPOSITE",
+                "rule_logic_candidate": "ALL",
+                "rule_inputs_json": json.dumps(["D-二聚体正常"], ensure_ascii=False),
+                "rule_outputs_json": "[]",
+                "rule_excluded_outputs_json": json.dumps(
+                    ["深静脉血栓"], ensure_ascii=False
+                ),
+                "rule_evidence_json": "[]",
+            },
+        }])
+
+        rule_result = graph_builder.normalize_candidate_nodes(
+            raw_rule,
+            chunk=chunk,
+            schema=schema,
+            allowed_node_types=("RuleDefinition",),
+            allowed_rule_stages=("GRAPH_COMPOSITE",),
+            allowed_rule_logics=("ALL", "ALL_SAME_WINDOW"),
+        )
+        edge_result = graph_builder.build_rule_relationships_from_definitions(
+            schema=schema,
+            nodes=[*business_nodes, rule_result.accepted[0]],
+        )
+
+        self.assertEqual(rule_result.review_items, [])
+        self.assertEqual(len(edge_result.accepted), 2)
+        self.assertEqual(edge_result.review_items, [])
+        exclusion_edge = next(
+            item for item in edge_result.accepted
+            if item["relation_type"] == "RULE_OUTPUT"
+        )
+        self.assertEqual(exclusion_edge["output_semantics"], "EXCLUDED")
+        self.assertEqual(
+            rule_result.accepted[0]["rule_excluded_outputs"], ["深静脉血栓"]
+        )
+        self.assertEqual(
+            rule_result.accepted[0]["rule_evidence_refs"][0]["exact_quote"], text
         )
 
     def test_rule_phase_retries_once_after_invalid_response(self):
@@ -1307,19 +1669,59 @@ class Neo4jGraphBuilderTests(unittest.TestCase):
         self.assertIn("causal sentence", graph_builder.RELATION_PROMPT_TEMPLATE)
         self.assertNotIn("rule_evidence_json", graph_builder.NODE_PROMPT_TEMPLATE)
         self.assertIn("rule_evidence_json", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("rule_inputs_json", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("rule_outputs_json", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("optional display text", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
         self.assertIn("GRAPH_COMPOSITE", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
-        self.assertIn("decide from its complete context", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("later executor-extraction module", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("MCV 正常", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("explicit diagnostic exclusion", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
+        self.assertIn("子女不可能为A型血", graph_builder.NODE_PROMPT_TEMPLATE)
+        self.assertNotIn("formula rule", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
         self.assertIn("table_state_evidence_json", graph_builder.NODE_PROMPT_TEMPLATE)
         self.assertIn("RULE_INPUT", graph_builder.RULE_EDGE_PROMPT_TEMPLATE)
         self.assertNotIn("PTR", graph_builder.RULE_NODE_PROMPT_TEMPLATE)
         self.assertNotIn("ISI", graph_builder.RULE_EDGE_PROMPT_TEMPLATE)
 
+    def test_graph_semantic_rule_phase_rejects_executor_rule(self):
+        text = "凝血酶原时间比值 (PTR) = 受检血浆 PT/正常人血浆 PT。"
+        chunk = EvidenceChunk("synthetic:executor", text, hashlib.sha256(text.encode()).hexdigest())
+        graph = Neo4jGraph(nodes=[{
+            "id": "formula-rule",
+            "label": "RuleDefinition",
+            "properties": {
+                "rule_stage_candidate": "PREPROCESS",
+                "rule_logic_candidate": "FORMULA",
+                "rule_expression": "PTR=比值计算(PT)",
+                "rule_name": "比值计算",
+                "rule_evidence_json": json.dumps(
+                    [{"role": "formula", "exact_quote": text}], ensure_ascii=False
+                ),
+            },
+        }])
+
+        result = graph_builder.normalize_candidate_nodes(
+            graph,
+            chunk=chunk,
+            schema=graph_builder.load_candidate_graph_schema(),
+            allowed_node_types=("RuleDefinition",),
+            allowed_rule_stages=("GRAPH_COMPOSITE",),
+            allowed_rule_logics=("ALL", "ALL_SAME_WINDOW"),
+        )
+
+        self.assertEqual(result.accepted, [])
+        self.assertEqual(result.review_items[0]["reason_code"], "rule_stage_not_enabled_for_trial")
+
     def test_entity_discovery_uses_diverse_few_shot_examples(self):
         examples = graph_builder.ENTITY_DISCOVERY_EXAMPLES
 
         self.assertIn("Example 1", examples)
-        self.assertNotIn("Example 4", examples)
+        self.assertIn("Example 5", examples)
+        self.assertIn("Example 9", examples)
         self.assertIn("<table>", examples)
+        self.assertIn("table_state_evidence_json", examples)
+        self.assertIn("轻度甲状态", examples)
+        self.assertIn("同时持续下降", examples)
         self.assertIn("严重的肝病", examples)
         self.assertIn("转铁蛋白合成减少", examples)
         self.assertIn("extraction_reason", examples)

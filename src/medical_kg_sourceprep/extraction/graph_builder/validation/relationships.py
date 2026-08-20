@@ -16,6 +16,7 @@ LLM Judge。所有本地接纳结果仍为 ``publication_status=HOLD``，不会�
 from __future__ import annotations
 
 from collections.abc import Collection, Mapping, Sequence
+import re
 from typing import Any
 
 from neo4j_graphrag.experimental.components.types import Neo4jGraph, Neo4jNode
@@ -34,6 +35,8 @@ if __package__ in {None, ""}:
     from medical_kg_sourceprep.extraction.llm_extraction import EvidenceChunk
     from medical_kg_sourceprep.extraction.graph_builder.validation.provenance import (
         _relation_key,
+        _multi_evidence_relation_key,
+        _parse_cross_chunk_relation_evidence,
         _rule_expression_endpoints,
         _source_ref,
     )
@@ -52,7 +55,13 @@ else:
     from ..contract import MODEL_RELATION_TYPES, GraphBuilderConfigurationError
     from ..schema import _relation_endpoint_pairs
     from ...llm_extraction import EvidenceChunk
-    from .provenance import _relation_key, _rule_expression_endpoints, _source_ref
+    from .provenance import (
+        _multi_evidence_relation_key,
+        _parse_cross_chunk_relation_evidence,
+        _relation_key,
+        _rule_expression_endpoints,
+        _source_ref,
+    )
     from .result import CandidateNormalization
     from .review import (
         _hold,
@@ -110,7 +119,7 @@ def _has_state_source_refs(
     source: Mapping[str, Any],
     target: Mapping[str, Any],
 ) -> tuple[Mapping[str, Any] | None, list[Mapping[str, Any]] | None]:
-    """为 HAS_STATE 选择普通引语或表格派生状态已验证过的双锚点。
+    """为 HAS_STATE 选择普通引语或派生状态已经验证过的证据锚点。
 
     普通状态词如“血清铁降低”可直接出现在关系引语中；表格箭头派生状态则没有
     连续的状态词，不能要求模型伪造 exact_quote。后者复用目标状态节点已回放的
@@ -118,21 +127,23 @@ def _has_state_source_refs(
     """
     properties = relationship.properties
     exact_quote = properties.get("exact_quote")
-    table_refs = target.get("table_state_evidence_refs")
-    # 有普通引语时交给通用 _source_ref；没有表格双锚点也无法走特殊通道。
-    if exact_quote not in (None, "") or not isinstance(table_refs, list):
+    derived_refs = target.get("table_state_evidence_refs")
+    if not isinstance(derived_refs, list):
+        derived_refs = target.get("derived_entity_evidence_refs")
+    # 有普通引语时交给通用 _source_ref；没有已回放派生证据也无法走特殊通道。
+    if exact_quote not in (None, "") or not isinstance(derived_refs, list):
         return None, None
     if target.get("entity_type") != "IndicatorState":
         return None, None
-    if not all(isinstance(ref, Mapping) for ref in table_refs):
-        raise GraphBuilderConfigurationError("has_state_table_evidence_invalid")
-    quotes = [ref.get("exact_quote") for ref in table_refs]
+    if not all(isinstance(ref, Mapping) for ref in derived_refs):
+        raise GraphBuilderConfigurationError("has_state_derived_evidence_invalid")
+    quotes = [ref.get("exact_quote") for ref in derived_refs]
     if not any(isinstance(quote, str) and source["mention"] in quote for quote in quotes):
-        raise GraphBuilderConfigurationError("has_state_table_evidence_lacks_indicator")
+        raise GraphBuilderConfigurationError("has_state_derived_evidence_lacks_indicator")
     source_ref = target.get("source_ref")
     if not isinstance(source_ref, Mapping):
-        raise GraphBuilderConfigurationError("has_state_table_evidence_missing")
-    return source_ref, list(table_refs)
+        raise GraphBuilderConfigurationError("has_state_derived_evidence_missing")
+    return source_ref, list(derived_refs)
 
 
 def normalize_candidate_relationships(
@@ -268,8 +279,13 @@ def normalize_candidate_relationships(
                 "publication_status": "HOLD",
             }
             if table_state_source_ref is not None:
-                # 关系自身保留同一组双锚点，避免只有状态节点知道表头和表格行的对应范围。
-                record["table_state_evidence_refs"] = table_state_source_ref
+                # 关系自身保留同一组证据锚点，避免只有状态节点知道派生依据。
+                evidence_field = (
+                    "table_state_evidence_refs"
+                    if target.get("table_state_evidence_refs")
+                    else "derived_entity_evidence_refs"
+                )
+                record[evidence_field] = table_state_source_ref
             if warnings:
                 # 结构可保存但端点类型不符合当前 Schema 时降为 PARTIAL，并留下审查项。
                 _mark_partial(record, *warnings)
@@ -305,6 +321,244 @@ def normalize_candidate_relationships(
         invalid_rule_keys=invalid_rule_keys,
     )
     return result
+
+
+def _resolve_frozen_endpoint(value: Any, node_by_key: Mapping[str, Mapping[str, Any]]) -> str:
+    """接受原始 candidate_key 或 GraphRAG 自动增加前缀后的端点 ID。"""
+    if not isinstance(value, str) or not value:
+        raise GraphBuilderConfigurationError("relation_endpoint_invalid")
+    matches = [key for key in node_by_key if value == key or value.endswith(f":{key}")]
+    if len(matches) != 1:
+        raise GraphBuilderConfigurationError("relation_endpoint_not_frozen")
+    return matches[0]
+
+
+def normalize_cross_chunk_relationships(
+    graph: Neo4jGraph,
+    *,
+    chunks: Sequence[EvidenceChunk],
+    schema: Mapping[str, Any],
+    nodes: Sequence[Mapping[str, Any]],
+    allowed_relation_types: Collection[str],
+) -> CandidateNormalization:
+    """校验案例级跨 chunk 普通关系及其分块证据数组。
+
+    与单 chunk 校验不同，这里不要求伪造一个同时包含两端的连续引语。模型必须分别
+    提供至少两个真实 chunk 的证据；端点名称可在后续 chunk 中重复出现，因此跨块性
+    由证据数组而非节点主锚点决定。医学方向和直接性仍交给 Judge。
+    """
+    node_by_key = {
+        str(item["candidate_key"]): item
+        for item in nodes
+        if isinstance(item.get("candidate_key"), str)
+    }
+    relations: list[dict[str, Any]] = []
+    review_items: list[dict[str, Any]] = []
+    judge_drafts: list[dict[str, Any]] = []
+    seen_keys: set[str] = set()
+    for index, node in enumerate(graph.nodes):
+        review_items.append(_hold("cross_chunk_relation", index, "relation_phase_created_node", _node_summary(node)))
+    for index, relationship in enumerate(graph.relationships):
+        summary = _relationship_summary(relationship)
+        try:
+            relation_type = relationship.type
+            if relation_type not in allowed_relation_types:
+                raise GraphBuilderConfigurationError("relation_type_not_enabled_for_trial")
+            source_key = _resolve_frozen_endpoint(relationship.start_node_id, node_by_key)
+            target_key = _resolve_frozen_endpoint(relationship.end_node_id, node_by_key)
+            source = node_by_key[source_key]
+            target = node_by_key[target_key]
+            evidence_refs = _parse_cross_chunk_relation_evidence(
+                chunks, value=relationship.properties.get("relation_evidence_json")
+            )
+            quotes = [str(ref["exact_quote"]) for ref in evidence_refs]
+            if not any(str(source.get("mention", "")) in quote for quote in quotes):
+                raise GraphBuilderConfigurationError("relation_evidence_lacks_source_endpoint")
+            if not any(str(target.get("mention", "")) in quote for quote in quotes):
+                raise GraphBuilderConfigurationError("relation_evidence_lacks_target_endpoint")
+            candidate_key = _multi_evidence_relation_key(
+                relation_type, source_key, target_key, evidence_refs
+            )
+            if candidate_key in seen_keys:
+                raise GraphBuilderConfigurationError("duplicate_relation")
+            seen_keys.add(candidate_key)
+            record: dict[str, Any] = {
+                "candidate_key": candidate_key,
+                "relation_type": relation_type,
+                "source_candidate_key": source_key,
+                "target_candidate_key": target_key,
+                "source_ref": evidence_refs[0],
+                "relation_evidence_refs": evidence_refs,
+                "generation": "cross_chunk_model_candidate",
+                "extraction_status": "VALID",
+                "review_status": "PENDING",
+                "publication_status": "HOLD",
+            }
+            if source_key == target_key or not _has_allowed_endpoints(
+                schema, relation_type, source, target
+            ):
+                _mark_partial(record, "RELATION_ENDPOINT_TYPE_INVALID")
+                review_items.append(_review_item(
+                    "cross_chunk_relation", index, "REVIEW_REQUIRED",
+                    "relation_endpoint_type_invalid", summary,
+                    warnings=["RELATION_ENDPOINT_TYPE_INVALID"],
+                ))
+            relations.append(record)
+        except GraphBuilderConfigurationError as error:
+            draft = _relationship_judge_draft(relationship)
+            if draft is None or str(error) == "duplicate_relation":
+                review_items.append(_hold("cross_chunk_relation", index, str(error), summary))
+            else:
+                judge_drafts.append(_judge_draft(
+                    "cross_chunk_relation", index, str(error), draft
+                ))
+                review_items.append(_review_item(
+                    "cross_chunk_relation", index, "REVIEW_REQUIRED", str(error), summary
+                ))
+    return CandidateNormalization(
+        accepted=relations,
+        review_items=review_items,
+        judge_drafts=judge_drafts,
+    )
+
+
+def _rule_endpoint_for_evidence(
+    mention: str,
+    *,
+    business_nodes: Sequence[Mapping[str, Any]],
+    evidence_refs: Sequence[Mapping[str, Any]],
+) -> Mapping[str, Any] | None:
+    """按 mention 找冻结端点；允许唯一的空白差异，重名时再按证据位置消歧。"""
+    candidates = [node for node in business_nodes if node.get("mention") == mention]
+    if not candidates:
+        normalized = re.sub(r"\s+", "", mention)
+        candidates = [
+            node for node in business_nodes
+            if re.sub(r"\s+", "", str(node.get("mention", ""))) == normalized
+        ]
+    if len(candidates) == 1:
+        return candidates[0]
+    evidence_quotes = [str(ref.get("exact_quote", "")) for ref in evidence_refs]
+    aligned = []
+    for node in candidates:
+        source_ref = node.get("source_ref")
+        if not isinstance(source_ref, Mapping):
+            continue
+        node_quote = str(source_ref.get("exact_quote", ""))
+        if node_quote and any(
+            node_quote in evidence_quote or evidence_quote in node_quote
+            for evidence_quote in evidence_quotes if evidence_quote
+        ):
+            aligned.append(node)
+    return aligned[0] if len(aligned) == 1 else None
+
+
+def _rule_definition_endpoints(
+    rule: Mapping[str, Any],
+) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
+    """优先读取结构化端点数组，缺失时兼容历史表达式。"""
+    raw_inputs = rule.get("rule_inputs")
+    raw_outputs = rule.get("rule_outputs")
+    raw_excluded_outputs = rule.get("rule_excluded_outputs", [])
+    if (
+        isinstance(raw_inputs, Sequence) and not isinstance(raw_inputs, (str, bytes))
+        and isinstance(raw_outputs, Sequence) and not isinstance(raw_outputs, (str, bytes))
+        and isinstance(raw_excluded_outputs, Sequence)
+        and not isinstance(raw_excluded_outputs, (str, bytes))
+        and all(isinstance(item, str) for item in (*raw_inputs, *raw_outputs, *raw_excluded_outputs))
+    ):
+        return (
+            tuple(str(item) for item in raw_outputs),
+            tuple(str(item) for item in raw_excluded_outputs),
+            tuple(str(item) for item in raw_inputs),
+        )
+    outputs, inputs = _rule_expression_endpoints(str(rule.get("rule_expression", "")))
+    return outputs, (), inputs
+
+
+def build_rule_relationships_from_definitions(
+    *, schema: Mapping[str, Any], nodes: Sequence[Mapping[str, Any]],
+) -> CandidateNormalization:
+    """从已校验 RuleDefinition 结构化端点确定性生成规则输入输出边。"""
+    business_nodes = [
+        node for node in nodes
+        if node.get("entity_type") != "RuleDefinition" and node.get("extraction_status") == "VALID"
+    ]
+    rule_nodes = [
+        node for node in nodes
+        if node.get("entity_type") == "RuleDefinition" and node.get("extraction_status") == "VALID"
+    ]
+    relation_items: list[tuple[int, dict[str, Any]]] = []
+    review_items: list[dict[str, Any]] = []
+    relation_index = 0
+    for rule in rule_nodes:
+        rule_key = str(rule["candidate_key"])
+        outputs, excluded_outputs, inputs = _rule_definition_endpoints(rule)
+        evidence_refs = [
+            ref for ref in rule.get("rule_evidence_refs", []) if isinstance(ref, Mapping)
+        ]
+        if not evidence_refs:
+            continue
+        source_ref = evidence_refs[0]
+        role = str(source_ref.get("role", "rule_evidence"))
+        endpoint_groups = (
+            ("RULE_INPUT", inputs, None),
+            ("RULE_OUTPUT", outputs, "ASSERTED"),
+            ("RULE_OUTPUT", excluded_outputs, "EXCLUDED"),
+        )
+        for relation_type, mentions, output_semantics in endpoint_groups:
+            for mention in mentions:
+                endpoint = _rule_endpoint_for_evidence(
+                    mention, business_nodes=business_nodes, evidence_refs=evidence_refs
+                )
+                # PREPROCESS 允许公式参数、单位和阈值不建业务节点；组合规则和输出缺失
+                # 会在统一结构校验中形成明确的 PARTIAL 原因。
+                if endpoint is None:
+                    continue
+                endpoint_key = str(endpoint["candidate_key"])
+                if relation_type == "RULE_INPUT":
+                    source_key, target_key = endpoint_key, rule_key
+                    source, target = endpoint, rule
+                else:
+                    source_key, target_key = rule_key, endpoint_key
+                    source, target = rule, endpoint
+                record: dict[str, Any] = {
+                    "candidate_key": _relation_key(
+                        relation_type, source_key, target_key, source_ref
+                    ),
+                    "relation_type": relation_type,
+                    "source_candidate_key": source_key,
+                    "target_candidate_key": target_key,
+                    "source_ref": source_ref,
+                    "rule_evidence_role": role,
+                    "generation": "deterministic_rule_structure",
+                    "extraction_status": "VALID",
+                    "review_status": "PENDING",
+                    "publication_status": "HOLD",
+                }
+                if output_semantics is not None:
+                    record["output_semantics"] = output_semantics
+                if not _has_allowed_endpoints(schema, relation_type, source, target):
+                    _mark_partial(record, "RELATION_ENDPOINT_TYPE_INVALID")
+                    review_items.append(_review_item(
+                        "rule", relation_index, "REVIEW_REQUIRED",
+                        "relation_endpoint_type_invalid", {
+                            "relation_type": relation_type,
+                            "source_candidate_key": source_key,
+                            "target_candidate_key": target_key,
+                        }, warnings=["RELATION_ENDPOINT_TYPE_INVALID"],
+                    ))
+                relation_items.append((relation_index, record))
+                relation_index += 1
+    node_by_key = {str(node["candidate_key"]): node for node in nodes}
+    relationships, structure_reviews, _invalid_rule_keys = _validate_composite_structures(
+        relation_items, node_by_key=node_by_key
+    )
+    return CandidateNormalization(
+        accepted=relationships,
+        review_items=[*review_items, *structure_reviews],
+        judge_drafts=[],
+    )
 
 
 def _validate_composite_structures(
@@ -356,11 +610,14 @@ def _validate_composite_structures(
         if not distinct_outputs:
             reasons.append("rule_output_missing")
         stage = rule.get("rule_stage_candidate")
-        # GRAPH_COMPOSITE 至少应有两个不同输入；PREPROCESS 允许公式参数没有业务实体节点。
-        if stage == "GRAPH_COMPOSITE" and len(distinct_inputs) < 2:
+        # 完整组合或排除条件可以由一个冻结端点承载；图规则仍必须至少有一个业务输入。
+        if stage == "GRAPH_COMPOSITE" and not distinct_inputs:
             reasons.append("composite_rule_inputs_incomplete")
-        # 解析结构化表达式中的期望端点，再与实际规则边逐项比较。
-        expression_outputs, expression_inputs = _rule_expression_endpoints(rule["rule_expression"])
+        # 读取结构化期望端点，再与实际规则边逐项比较；旧表达式仅作为历史回放兜底。
+        expected_outputs, expected_excluded_outputs, expected_inputs_tuple = (
+            _rule_definition_endpoints(rule)
+        )
+        expected_all_outputs = (*expected_outputs, *expected_excluded_outputs)
         input_mentions = {
             str(node_by_key[record["source_candidate_key"]].get("mention", "")) for record in inputs
         }
@@ -372,19 +629,36 @@ def _validate_composite_structures(
             for node in node_by_key.values()
             if node.get("entity_type") != "RuleDefinition"
         }
+        normalize_endpoint = lambda value: re.sub(r"\s+", "", value)
+        frozen_normalized = {normalize_endpoint(item) for item in frozen_business_mentions}
+        missing_inputs: set[str] = set()
         if stage == "PREPROCESS":
             # 公式中的常量、单位和参考量可能不在冻结业务目录，只要求已冻结输入建边。
-            expected_inputs = set(expression_inputs) & frozen_business_mentions
+            expected_inputs = {
+                item for item in expected_inputs_tuple
+                if normalize_endpoint(item) in frozen_normalized
+            }
         else:
             # 组合规则的业务输入必须全部已经冻结，否则规则结构不完整。
-            expected_inputs = set(expression_inputs)
-            missing_inputs = expected_inputs - frozen_business_mentions
+            expected_inputs = set(expected_inputs_tuple)
+            missing_inputs = {
+                item for item in expected_inputs
+                if normalize_endpoint(item) not in frozen_normalized
+            }
             if missing_inputs:
                 reasons.append("rule_expression_input_not_frozen")
-        missing_outputs = set(expression_outputs) - frozen_business_mentions
+        missing_outputs = {
+            item for item in expected_all_outputs
+            if normalize_endpoint(item) not in frozen_normalized
+        }
         if missing_outputs:
             reasons.append("rule_expression_output_not_frozen")
-        if expected_inputs != input_mentions or set(expression_outputs) != output_mentions:
+        if (
+            {normalize_endpoint(item) for item in expected_inputs}
+            != {normalize_endpoint(item) for item in input_mentions}
+            or {normalize_endpoint(item) for item in expected_all_outputs}
+            != {normalize_endpoint(item) for item in output_mentions}
+        ):
             reasons.append("rule_expression_endpoints_mismatch")
         if reasons:
             # 任一结构问题都会同时标记规则节点和它已有的规则边，避免下游误用半张子图。
@@ -399,10 +673,12 @@ def _validate_composite_structures(
                 "rule_structure_incomplete",
                 {
                     "rule_candidate_key": rule_key,
-                    "rule_expression": rule["rule_expression"],
+                    "rule_inputs": list(expected_inputs_tuple),
+                    "rule_outputs": list(expected_outputs),
+                    "rule_excluded_outputs": list(expected_excluded_outputs),
                     "reasons": reasons,
                     "missing_business_inputs": sorted(
-                        set(expression_inputs) - frozen_business_mentions
+                        missing_inputs
                     ) if stage != "PREPROCESS" else [],
                     "missing_business_outputs": sorted(missing_outputs),
                 },

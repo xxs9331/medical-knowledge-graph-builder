@@ -129,7 +129,11 @@ def candidate_summary(
             {
                 "candidate_key": item["candidate_key"],
                 "entity_type": item["entity_type"],
-                **({"rule_expression": item["rule_expression"], "rule_name": item["rule_name"]}
+                **({
+                    "rule_inputs": item["rule_inputs"],
+                    "rule_outputs": item["rule_outputs"],
+                    **({"rule_name": item["rule_name"]} if item.get("rule_name") else {}),
+                }
                    if item["entity_type"] == "RuleDefinition"
                    else {"mention": item["mention"]}),
             }
@@ -141,6 +145,10 @@ def candidate_summary(
                 "source": _candidate_display(node_by_key[item["source_candidate_key"]]),
                 "target": _candidate_display(node_by_key[item["target_candidate_key"]]),
                 "generation": item["generation"],
+                **(
+                    {"output_semantics": item["output_semantics"]}
+                    if item.get("output_semantics") else {}
+                ),
             }
             for item in relationships
         ],
@@ -148,7 +156,18 @@ def candidate_summary(
 
 
 def _candidate_display(node: Mapping[str, Any]) -> str:
-    return str(node.get("mention") or node.get("rule_expression") or node["candidate_key"])
+    if node.get("mention"):
+        return str(node["mention"])
+    outputs = node.get("rule_outputs")
+    excluded_outputs = node.get("rule_excluded_outputs")
+    inputs = node.get("rule_inputs")
+    if isinstance(outputs, list) and isinstance(inputs, list):
+        excluded = (
+            f" EXCLUDES {','.join(map(str, excluded_outputs))}"
+            if isinstance(excluded_outputs, list) and excluded_outputs else ""
+        )
+        return f"{','.join(map(str, inputs))} -> {','.join(map(str, outputs))}{excluded}"
+    return str(node.get("rule_expression") or node["candidate_key"])
 
 
 def _public_candidate_nodes(nodes: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:

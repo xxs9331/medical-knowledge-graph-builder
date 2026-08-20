@@ -8,7 +8,12 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from ..contract import CANDIDATE_RUN_VERSION, RULE_EXPRESSION_PATTERN, GraphBuilderConfigurationError
+from ..contract import (
+    CANDIDATE_RUN_VERSION,
+    DERIVED_ENTITY_TYPES,
+    RULE_EXPRESSION_PATTERN,
+    GraphBuilderConfigurationError,
+)
 from ...llm_extraction import EvidenceChunk
 
 
@@ -177,6 +182,90 @@ def _table_state_candidate_key(
     return f"candidate:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
 
 
+def _derived_entity_candidate_key(
+    *, entity_type: str, mention: str, derivation_type: str,
+    evidence_refs: Sequence[Mapping[str, Any]],
+) -> str:
+    """以派生类型、名称和全部证据位置生成稳定候选键。"""
+    raw = json.dumps(
+        {
+            "version": CANDIDATE_RUN_VERSION,
+            "entity_type": entity_type,
+            "mention": mention,
+            "derivation_type": derivation_type,
+            "evidence_positions": [
+                {
+                    "role": ref["role"],
+                    "chunk_id": ref["chunk_id"],
+                    "char_start": ref["char_start"],
+                    "char_end": ref["char_end"],
+                }
+                for ref in evidence_refs
+            ],
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return f"candidate:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
+
+
+def _parse_derived_entity_evidence(
+    chunk: EvidenceChunk, *, value: Any
+) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
+    """回放通用派生实体证据；只验证结构和原文位置，不裁决派生语义。"""
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as error:
+            raise GraphBuilderConfigurationError("derived_entity_evidence_json_invalid") from error
+    if not isinstance(value, Mapping):
+        raise GraphBuilderConfigurationError("derived_entity_evidence_missing")
+    derivation_type = value.get("derivation_type")
+    if derivation_type not in DERIVED_ENTITY_TYPES:
+        raise GraphBuilderConfigurationError("derived_entity_type_invalid")
+    evidence = value.get("evidence")
+    if not isinstance(evidence, list) or not evidence:
+        raise GraphBuilderConfigurationError("derived_entity_evidence_items_missing")
+    refs: list[dict[str, Any]] = []
+    for item in evidence:
+        if not isinstance(item, Mapping):
+            raise GraphBuilderConfigurationError("derived_entity_evidence_item_invalid")
+        role = item.get("role")
+        quote = item.get("exact_quote")
+        if not isinstance(role, str) or not role.strip():
+            raise GraphBuilderConfigurationError("derived_entity_evidence_role_invalid")
+        if not isinstance(quote, str) or not quote:
+            raise GraphBuilderConfigurationError("derived_entity_evidence_quote_missing")
+        try:
+            start, end = _replay_source_span(
+                chunk,
+                quote,
+                exact_quote_occurrence_index=item.get("exact_quote_occurrence_index"),
+                source_char_start=item.get("source_char_start"),
+                source_char_end=item.get("source_char_end"),
+            )
+        except GraphBuilderConfigurationError as error:
+            raise GraphBuilderConfigurationError(f"derived_entity_evidence_{error}") from error
+        refs.append({
+            "role": role.strip(),
+            "chunk_id": chunk.chunk_id,
+            "chunk_sha256": chunk.chunk_sha256,
+            "exact_quote": quote,
+            "char_start": start,
+            "char_end": end,
+        })
+    first = refs[0]
+    source_ref = {
+        "chunk_id": first["chunk_id"],
+        "chunk_sha256": first["chunk_sha256"],
+        "exact_quote": first["exact_quote"],
+        "char_start": first["char_start"],
+        "char_end": first["char_end"],
+    }
+    return str(derivation_type), source_ref, refs
+
+
 def _parse_table_state_evidence(
     chunk: EvidenceChunk, *, value: Any
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -279,6 +368,30 @@ def _rule_expression_endpoints(expression: str) -> tuple[tuple[str, ...], tuple[
     return outputs, inputs
 
 
+def _parse_rule_endpoint_mentions(
+    value: Any, *, field: str, minimum: int,
+) -> tuple[str, ...]:
+    """解析规则输入/输出 JSON，并拒绝空值、重复值和非字符串端点。"""
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as error:
+            raise GraphBuilderConfigurationError(f"{field}_json_invalid") from error
+    if not isinstance(value, list):
+        raise GraphBuilderConfigurationError(f"{field}_missing")
+    mentions: list[str] = []
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            raise GraphBuilderConfigurationError(f"{field}_item_invalid")
+        mention = item.strip()
+        if mention in mentions:
+            raise GraphBuilderConfigurationError(f"{field}_duplicate")
+        mentions.append(mention)
+    if len(mentions) < minimum:
+        raise GraphBuilderConfigurationError(f"{field}_insufficient")
+    return tuple(mentions)
+
+
 def _parse_rule_evidence(chunk: EvidenceChunk, value: Any) -> list[dict[str, Any]]:
     """将模型返回的规则证据 JSON 转为本地可回放引用。"""
     if isinstance(value, str):
@@ -310,15 +423,34 @@ def _parse_rule_evidence(chunk: EvidenceChunk, value: Any) -> list[dict[str, Any
 
 
 def _rule_candidate_key(
-    *, chunk: EvidenceChunk, rule_stage: str, rule_expression: str, rule_evidence_refs: Sequence[Mapping[str, Any]]
+    *, chunk: EvidenceChunk, rule_stage: str, rule_expression: str = "",
+    rule_evidence_refs: Sequence[Mapping[str, Any]], rule_logic: str | None = None,
+    rule_inputs: Sequence[str] = (), rule_outputs: Sequence[str] = (),
+    rule_excluded_outputs: Sequence[str] = (),
 ) -> str:
-    """以规则阶段、表达式和证据位置生成规则候选键。"""
+    """以结构化端点、规则类型和证据位置生成规则候选键；表达式仅兼容旧工件。"""
+    if rule_logic is None:
+        roles = {str(item.get("role", "")).lower() for item in rule_evidence_refs}
+        if "formula" in roles:
+            rule_logic = "FORMULA"
+        elif rule_stage == "GRAPH_COMPOSITE":
+            rule_logic = "ALL"
+        elif any("trend" in role or "time" in role for role in roles):
+            rule_logic = "TREND"
+        elif any("range" in role or "table" in role or "severity" in role for role in roles):
+            rule_logic = "RANGE_TABLE"
+        else:
+            rule_logic = "UNKNOWN"
     raw = json.dumps(
         {
             "version": CANDIDATE_RUN_VERSION,
             "chunk_id": chunk.chunk_id,
             "rule_stage": rule_stage,
-            "rule_expression": rule_expression,
+            "rule_logic": rule_logic,
+            "rule_inputs": list(rule_inputs),
+            "rule_outputs": list(rule_outputs),
+            "rule_excluded_outputs": list(rule_excluded_outputs),
+            "legacy_rule_expression": rule_expression if not rule_inputs and not rule_outputs else "",
             "rule_evidence_positions": [
                 {"role": item["role"], "char_start": item["char_start"], "char_end": item["char_end"]}
                 for item in rule_evidence_refs
@@ -335,3 +467,80 @@ def _relation_key(relation_type: str, source_key: str, target_key: str, source_r
     """以关系端点和独立证据位置生成稳定关系键。"""
     raw = f"{CANDIDATE_RUN_VERSION}:{relation_type}:{source_key}:{target_key}:{source_ref['chunk_id']}:{source_ref['char_start']}:{source_ref['char_end']}"
     return f"relation:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
+
+
+def _multi_evidence_relation_key(
+    relation_type: str, source_key: str, target_key: str,
+    evidence_refs: Sequence[Mapping[str, Any]],
+) -> str:
+    """以两个端点和分 chunk 证据位置生成跨 chunk 关系稳定键。"""
+    raw = json.dumps(
+        {
+            "version": CANDIDATE_RUN_VERSION,
+            "relation_type": relation_type,
+            "source_candidate_key": source_key,
+            "target_candidate_key": target_key,
+            "evidence_positions": [
+                {
+                    "chunk_id": ref["chunk_id"],
+                    "role": ref["role"],
+                    "char_start": ref["char_start"],
+                    "char_end": ref["char_end"],
+                }
+                for ref in evidence_refs
+            ],
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return f"relation:{hashlib.sha256(raw.encode()).hexdigest()[:24]}"
+
+
+def _parse_cross_chunk_relation_evidence(
+    chunks: Sequence[EvidenceChunk], *, value: Any,
+) -> list[dict[str, Any]]:
+    """逐项回放跨 chunk 关系证据，并保留每项自己的规范 chunk 身份。"""
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as error:
+            raise GraphBuilderConfigurationError("relation_evidence_json_invalid") from error
+    if not isinstance(value, list) or len(value) < 2:
+        raise GraphBuilderConfigurationError("relation_evidence_items_missing")
+    chunk_by_id = {chunk.chunk_id: chunk for chunk in chunks}
+    refs: list[dict[str, Any]] = []
+    for item in value:
+        if not isinstance(item, Mapping):
+            raise GraphBuilderConfigurationError("relation_evidence_item_invalid")
+        chunk_id = item.get("chunk_id")
+        role = item.get("role")
+        quote = item.get("exact_quote")
+        if not isinstance(chunk_id, str) or chunk_id not in chunk_by_id:
+            raise GraphBuilderConfigurationError("relation_evidence_chunk_invalid")
+        if not isinstance(role, str) or not role.strip():
+            raise GraphBuilderConfigurationError("relation_evidence_role_invalid")
+        if not isinstance(quote, str) or not quote:
+            raise GraphBuilderConfigurationError("relation_evidence_quote_missing")
+        chunk = chunk_by_id[chunk_id]
+        try:
+            start, end = _replay_source_span(
+                chunk,
+                quote,
+                exact_quote_occurrence_index=item.get("exact_quote_occurrence_index"),
+                source_char_start=item.get("source_char_start"),
+                source_char_end=item.get("source_char_end"),
+            )
+        except GraphBuilderConfigurationError as error:
+            raise GraphBuilderConfigurationError(f"relation_evidence_{error}") from error
+        refs.append({
+            "role": role.strip(),
+            "chunk_id": chunk.chunk_id,
+            "chunk_sha256": chunk.chunk_sha256,
+            "exact_quote": quote,
+            "char_start": start,
+            "char_end": end,
+        })
+    if len({ref["chunk_id"] for ref in refs}) < 2:
+        raise GraphBuilderConfigurationError("relation_evidence_not_cross_chunk")
+    return refs

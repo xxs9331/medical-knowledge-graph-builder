@@ -19,7 +19,11 @@ from .provenance import (
     _source_refs_for_mention,
     _table_state_candidate_key,
 )
-from .relationships import normalize_candidate_relationships
+from .relationships import (
+    build_rule_relationships_from_definitions,
+    normalize_candidate_relationships,
+    normalize_cross_chunk_relationships,
+)
 from .result import CandidateNormalization
 from .review import _hold
 
@@ -36,4 +40,6 @@ __all__ = [
     "CandidateNormalization",
     "normalize_candidate_nodes",
     "normalize_candidate_relationships",
+    "normalize_cross_chunk_relationships",
+    "build_rule_relationships_from_definitions",
 ]

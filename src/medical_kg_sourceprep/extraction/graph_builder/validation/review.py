@@ -71,9 +71,13 @@ def _node_judge_draft(node: Any) -> dict[str, Any] | None:
         properties = {}
     label = getattr(node, "label", "")
     mention = properties.get("mention")
-    expression = properties.get("rule_expression")
     if label == "RuleDefinition":
-        has_minimum_identity = isinstance(expression, str) and bool(expression)
+        structured_inputs = properties.get("rule_inputs_json")
+        structured_outputs = properties.get("rule_outputs_json")
+        expression = properties.get("rule_expression")
+        has_minimum_identity = (
+            structured_inputs not in (None, "") and structured_outputs not in (None, "")
+        ) or (isinstance(expression, str) and bool(expression))
     else:
         has_minimum_identity = isinstance(mention, str) and bool(mention)
     if not (isinstance(label, str) and label and has_minimum_identity):
@@ -81,8 +85,10 @@ def _node_judge_draft(node: Any) -> dict[str, Any] | None:
     allowed = (
         "mention", "extraction_reason", "canonical_name_candidate", "exact_quote", "exact_quote_occurrence_index",
         "mention_occurrence_index", "source_char_start", "source_char_end",
-        "bound_indicator_mention", "rule_stage_candidate", "rule_expression", "rule_name",
-        "rule_evidence_json", "table_state_evidence_json",
+        "bound_indicator_mention", "rule_stage_candidate", "rule_logic_candidate",
+        "rule_inputs_json", "rule_outputs_json", "rule_excluded_outputs_json",
+        "rule_expression", "rule_name",
+        "rule_evidence_json", "table_state_evidence_json", "derived_entity_evidence_json",
     )
     return {"kind": "node", "label": label, "properties": {key: properties[key] for key in allowed if key in properties}}
 
@@ -99,7 +105,7 @@ def _relationship_judge_draft(relationship: Any) -> dict[str, Any] | None:
         properties = {}
     allowed = (
         "exact_quote", "exact_quote_occurrence_index", "source_char_start", "source_char_end",
-        "rule_evidence_role",
+        "rule_evidence_role", "relation_evidence_json",
     )
     return {
         "kind": "relationship", "relation_type": relation_type,
@@ -202,8 +208,12 @@ def _node_summary(node: Any) -> dict[str, Any]:
         return {
             "label": "RuleDefinition",
             "rule_stage_candidate": properties.get("rule_stage_candidate"),
+            "rule_inputs_json": str(properties.get("rule_inputs_json", ""))[:240],
+            "rule_outputs_json": str(properties.get("rule_outputs_json", ""))[:240],
+            "rule_excluded_outputs_json": str(
+                properties.get("rule_excluded_outputs_json", "")
+            )[:240],
             "rule_expression": str(properties.get("rule_expression", ""))[:160],
-            "rule_name": str(properties.get("rule_name", ""))[:160],
         }
     return {
         "label": str(getattr(node, "label", ""))[:80],

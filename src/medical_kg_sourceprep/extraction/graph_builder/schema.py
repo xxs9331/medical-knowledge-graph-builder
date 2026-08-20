@@ -90,8 +90,11 @@ def build_graphrag_schema(
     all_node_properties = (
         "mention", "extraction_reason", "canonical_name_candidate", "exact_quote",
         "exact_quote_occurrence_index", "mention_occurrence_index", "source_char_start",
-        "source_char_end", "bound_indicator_mention", "rule_stage_candidate",
-        "rule_expression", "rule_name", "rule_evidence_json", "table_state_evidence_json",
+        "source_char_end", "bound_indicator_mention", "rule_stage_candidate", "rule_logic_candidate",
+        "rule_inputs_json", "rule_outputs_json", "rule_excluded_outputs_json",
+        "rule_expression", "rule_name",
+        "rule_evidence_json", "table_state_evidence_json",
+        "derived_entity_evidence_json",
     )
     property_types = {
         "mention": "STRING",
@@ -104,10 +107,15 @@ def build_graphrag_schema(
         "source_char_end": "INTEGER",
         "bound_indicator_mention": "STRING",
         "rule_stage_candidate": "STRING",
+        "rule_logic_candidate": "STRING",
+        "rule_inputs_json": "STRING",
+        "rule_outputs_json": "STRING",
+        "rule_excluded_outputs_json": "STRING",
         "rule_expression": "STRING",
         "rule_name": "STRING",
         "rule_evidence_json": "STRING",
         "table_state_evidence_json": "STRING",
+        "derived_entity_evidence_json": "STRING",
     }
     properties = tuple(node_property_names) if node_property_names is not None else all_node_properties
     unsupported_properties = set(properties) - property_types.keys()
@@ -131,6 +139,7 @@ def build_graphrag_schema(
         "source_char_start": "INTEGER",
         "source_char_end": "INTEGER",
         "rule_evidence_role": "STRING",
+        "relation_evidence_json": "STRING",
     }
     selected_relationship_properties = (
         tuple(relationship_property_names)

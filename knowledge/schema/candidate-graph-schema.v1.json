@@ -1,6 +1,6 @@
 {
   "schema_id": "medical-report-candidate-graph",
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "title": "体检报告解读候选实体关系图 Schema",
   "status": "draft",
   "purpose": "约束自动建图阶段可生成的候选实体、普通关系、属性及来源引用；代码端读取后转换为抽取器和本地校验器配置。",
@@ -179,10 +179,18 @@
         {
           "source": "LabPanel",
           "target": "LabIndicator"
+        },
+        {
+          "source": "LabPanel",
+          "target": "LabPanel"
+        },
+        {
+          "source": "LabIndicator",
+          "target": "LabIndicator"
         }
       ],
       "generation": "来源结构明确时确定性生成，否则生成候选。",
-      "direction_rule": "检验组合 -> 检查指标"
+      "direction_rule": "检验组合 -> 子组合或检查指标；复合指标 -> 子指标"
     },
     {
       "id": "RC-02",
@@ -222,7 +230,8 @@
         {
           "source": [
             "ClinicalContext",
-            "Disease"
+            "Disease",
+            "IndicatorState"
           ],
           "target": [
             "IndicatorState",
@@ -293,6 +302,10 @@
         {
           "source": "Disease",
           "target": "Disease"
+        },
+        {
+          "source": "Disease",
+          "target": "ClinicalContext"
         }
       ],
       "generation": "严格上位分类候选。",

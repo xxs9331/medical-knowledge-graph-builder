@@ -17,8 +17,9 @@ if __package__ in {None, ""}:
 
 import argparse
 import asyncio
+import json
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -50,24 +51,30 @@ from .contract import (
     DEEPSEEK_MODEL,
     ENTITY_DISCOVERY_EXAMPLES,
     ENTITY_DISCOVERY_PROMPT_TEMPLATE,
+    CROSS_CHUNK_RELATION_PROMPT_TEMPLATE,
     NODE_PROMPT_TEMPLATE,
+    STATE_RELATION_PROMPT_TEMPLATE,
     ORDINARY_RELATION_PROMPT_TEMPLATE,
-    RULE_EDGE_PROMPT_TEMPLATE,
     RULE_NODE_PROMPT_TEMPLATE,
-    RULE_EDGE_TYPES,
     ORDINARY_RELATION_TYPES,
+    STATE_RELATION_TYPES,
     SMOKE_TEXT,
     GraphBuilderConfigurationError,
 )
 from .schema import _extract_graph, build_graphrag_schema, load_candidate_graph_schema
+from .relation_classifier import classify_relationships_two_stage
+from .rule_gate import partition_invalid_rules
+from .trace import NULL_TRACE, TraceRecorder
 from .validation import (
     CandidateNormalization,
     _catalog_for_prompt,
     _hold,
+    build_rule_relationships_from_definitions,
     normalize_candidate_nodes,
     normalize_candidate_relationships,
+    normalize_cross_chunk_relationships,
 )
-from ..llm_extraction import EvidenceChunk, load_chunk_manifest
+from ..llm_extraction import EvidenceChunk, atomic_write_json, load_chunk_manifest
 
 
 async def run_candidate_graph(
@@ -80,6 +87,8 @@ async def run_candidate_graph(
     source_manifest_sha256: str,
     run_id: str | None = None,
     revision_context: str = "",
+    relation_extraction_mode: str = "generative",
+    trace: TraceRecorder = NULL_TRACE,
 ) -> dict[str, Any]:
     """对一个 chunk 依次执行实体、规则、普通关系和规则边四个候选抽取阶段。
 
@@ -91,6 +100,8 @@ async def run_candidate_graph(
     input_text = chunk.text
     # 显式 run_id 优先；未提供时使用本轮输出目录名，保证摘要和工件目录身份一致。
     effective_run_id = run_id or output_dir.name
+    if relation_extraction_mode not in {"generative", "two-stage-classification"}:
+        raise GraphBuilderConfigurationError("relation_extraction_mode_invalid")
 
     def revised_prompt(template: str) -> str:
         """仅在二次抽取实验中附加上一轮审查反馈；默认生产行为完全不变。"""
@@ -108,32 +119,56 @@ correct when it conflicts with the source or Schema.
 """.replace("{revision_context}", escaped_context)
 
     async def extract_with_retry(
-        *, graph_schema: Any, prompt_template: str, examples: str, diagnostics: list[dict[str, Any]],
+        *, phase: str, graph_schema: Any, prompt_template: str, examples: str,
+        diagnostics: list[dict[str, Any]],
     ) -> tuple[Neo4jGraph | None, LLMGenerationError | None, int]:
         """每阶段总共尝试两次；失败响应只保存安全形状诊断。"""
-        last_error: LLMGenerationError | None = None
-        for attempt in range(1, 3):
-            try:
-                return await _extract_graph(
-                    client, chunk=chunk, graph_schema=graph_schema, prompt_template=prompt_template,
-                    examples=examples, input_text=input_text, response_diagnostics=diagnostics,
-                ), None, attempt
-            except LLMGenerationError as error:
-                last_error = error
-        return None, last_error, 2
+        with trace.stage(f"extraction/{phase}", chunk_id=chunk.chunk_id) as stage:
+            last_error: LLMGenerationError | None = None
+            for attempt in range(1, 3):
+                try:
+                    graph = await _extract_graph(
+                        client, chunk=chunk, graph_schema=graph_schema,
+                        prompt_template=prompt_template, examples=examples, input_text=input_text,
+                        response_diagnostics=diagnostics,
+                    )
+                    stage.update(
+                        attempts=attempt,
+                        proposed_node_count=len(graph.nodes),
+                        proposed_relationship_count=len(graph.relationships),
+                    )
+                    return graph, None, attempt
+                except LLMGenerationError as error:
+                    last_error = error
+            stage.update(status="model_error", attempts=2, error_type="LLMGenerationError")
+            return None, last_error, 2
+
+    def record_validation(phase: str, result: CandidateNormalization) -> None:
+        """记录硬校验的三路分流数量，不复制候选正文或审查原因。"""
+        trace.record(
+            f"validation/{phase}",
+            chunk_id=chunk.chunk_id,
+            accepted_count=len(result.accepted),
+            review_count=len(result.review_items),
+            judge_draft_count=len(result.judge_drafts),
+        )
 
     # 四个阶段产生的 Judge 草稿统一汇总，最后写入同一个 judge-queue.json。
     judge_drafts: list[dict[str, Any]] = []
 
-    # 第一阶段：只抽取业务实体。关系类型为空，并把模型字段限制为实体名称和抽取理由；
-    # canonical_name、来源位置、候选键和生命周期状态由后续本地代码生成。
+    # 第一阶段：只抽取业务实体。普通实体的来源由代码按 mention 逐字定位；表格箭头等
+    # 无连续状态词的场景允许模型额外给出表头和数据行双锚点，供既有校验器回放。
     entity_response_diagnostics: list[dict[str, Any]] = []
     entity_graph, entity_error, entity_attempts = await extract_with_retry(
+        phase="entity",
         graph_schema=build_graphrag_schema(
             schema,
             relation_types=(),
             node_types=sorted(BUSINESS_NODE_TYPES),
-            node_property_names=("mention", "extraction_reason"),
+            node_property_names=(
+                "mention", "extraction_reason", "table_state_evidence_json",
+                "derived_entity_evidence_json",
+            ),
         ),
         prompt_template=revised_prompt(ENTITY_DISCOVERY_PROMPT_TEMPLATE),
         examples=ENTITY_DISCOVERY_EXAMPLES,
@@ -158,6 +193,16 @@ correct when it conflicts with the source or Schema.
             relationships=[],
             holds=entity_holds, judge_drafts=judge_drafts,
         )
+        trace.record(
+            "candidate-graph/artifact",
+            chunk_id=chunk.chunk_id,
+            graph_path=output_dir / "graph.json",
+            node_count=0,
+            relationship_count=0,
+            review_count=len(entity_holds),
+            judge_draft_count=len(judge_drafts),
+            status="incomplete",
+        )
         return candidate_summary(
             chunk=chunk, nodes=[], relationships=[], holds=entity_holds, output_dir=output_dir, judge_drafts=judge_drafts,
         )
@@ -170,6 +215,7 @@ correct when it conflicts with the source or Schema.
         allowed_node_types=BUSINESS_NODE_TYPES,
         derive_entity_provenance=True,
     )
+    record_validation("entity", entity_result)
     # CandidateNormalization 为兼容旧调用支持解包：第一个值是 accepted，第二个值
     # 是 review_items。这里的 entity_nodes 尚未发布，只是本轮保留的候选节点。
     entity_nodes, entity_holds = entity_result
@@ -180,6 +226,7 @@ correct when it conflicts with the source or Schema.
     # 规则模型只能引用该目录中的实体，不能在规则阶段重新创建业务实体。
     rule_response_diagnostics: list[dict[str, Any]] = []
     rule_graph, rule_error, rule_attempts = await extract_with_retry(
+        phase="rule-node",
         graph_schema=build_graphrag_schema(schema, relation_types=(), node_types=("RuleDefinition",)),
         prompt_template=revised_prompt(RULE_NODE_PROMPT_TEMPLATE),
         examples=_catalog_for_prompt(entity_nodes), diagnostics=rule_response_diagnostics,
@@ -194,57 +241,92 @@ correct when it conflicts with the source or Schema.
     else:
         # 模型成功返回后，RuleDefinition 仍需经过节点校验；不能直接并入候选图。
         rule_result = normalize_candidate_nodes(
-            rule_graph or Neo4jGraph(), chunk=chunk, schema=schema, allowed_node_types=("RuleDefinition",)
+            rule_graph or Neo4jGraph(),
+            chunk=chunk,
+            schema=schema,
+            allowed_node_types=("RuleDefinition",),
+            allowed_rule_stages=("GRAPH_COMPOSITE",),
+            allowed_rule_logics=("ALL", "ALL_SAME_WINDOW"),
         )
-        # 数学原式常被模型直接填入 rule_expression，例如 ``INR=PTR^ISI``。证据可以正确，
-        # 但该字段的图合同固定为“输出=规则名(输入...)”；只对此形状错误追加一次纠正重试。
-        if any(item.get("reason_code") == "rule_expression_invalid" for item in rule_result.review_items):
-            correction_prompt = revised_prompt(RULE_NODE_PROMPT_TEMPLATE) + """
-
-Your previous rule response used a raw mathematical equation in rule_expression.
-Retry the complete rule phase. Every rule_expression must use exactly
-`output=descriptive_rule_name(input1,input2)` with no spaces around `=`. Put only frozen catalog
-mentions in output and input positions. Preserve the raw mathematical equation only in the
-verbatim formula evidence. Do not omit a source-supported formula merely because OCR damaged an
-operator or exponent.
-"""
-            corrected_graph, corrected_error, _corrected_attempts = await extract_with_retry(
-                graph_schema=build_graphrag_schema(
-                    schema, relation_types=(), node_types=("RuleDefinition",)
-                ),
-                prompt_template=correction_prompt,
-                examples=_catalog_for_prompt(entity_nodes),
-                diagnostics=rule_response_diagnostics,
-            )
-            if corrected_error is None:
-                corrected_result = normalize_candidate_nodes(
-                    corrected_graph or Neo4jGraph(), chunk=chunk, schema=schema,
-                    allowed_node_types=("RuleDefinition",),
-                )
-                if len(corrected_result.accepted) > len(rule_result.accepted):
-                    rule_result = corrected_result
+        record_validation("rule-node", rule_result)
         rule_nodes, rule_holds = rule_result
         judge_drafts.extend(rule_result.judge_drafts)
+        # 规则不能把自身条件重新声明为结论，也不能把“如/例如”引出的例子当结论。
+        # 两类显式结构错误都在模型提示词之后确定性拒绝，不依赖疾病名称或案例金标。
+        rule_nodes, rejected_rules = partition_invalid_rules(rule_nodes)
+        rule_holds.extend(
+            _hold("rule", index, str(item["reason_code"]), item)
+            for index, item in enumerate(rejected_rules)
+        )
     # 此时只有节点，没有关系。VALID 和 PARTIAL 都可保留在候选集合中，
     # 但只有 VALID 可以成为随后关系模型及关系校验器可引用的端点。
     nodes = [*entity_nodes, *rule_nodes]
     frozen_nodes = [item for item in nodes if item.get("extraction_status") == "VALID"]
 
-    # 第三阶段抽取普通业务关系。这里仍然传 entity_nodes 的冻结目录，因为普通关系
+    # 第三阶段只绑定 LabIndicator -> IndicatorState。封闭任务单独穷举，可以避免
+    # HAS_STATE 被更显眼的疾病关联或因果关系挤出模型输出。
+    state_response_diagnostics: list[dict[str, Any]] = []
+    state_audit: dict[str, Any] | None = None
+    if relation_extraction_mode == "two-stage-classification":
+        state_relation_graph, state_audit = await classify_relationships_two_stage(
+            client, chunk=chunk, schema=schema, nodes=frozen_nodes,
+            allowed_relation_types=STATE_RELATION_TYPES, trace=trace,
+        )
+        state_error, state_attempts = None, 1
+    else:
+        state_relation_graph, state_error, state_attempts = await extract_with_retry(
+            phase="state-relation",
+            graph_schema=build_graphrag_schema(
+                schema, relation_types=sorted(STATE_RELATION_TYPES),
+                node_types=sorted(BUSINESS_NODE_TYPES), node_property_names=("mention",),
+                relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
+            ),
+            prompt_template=revised_prompt(STATE_RELATION_PROMPT_TEMPLATE),
+            examples=_catalog_for_prompt(entity_nodes), diagnostics=state_response_diagnostics,
+        )
+    if state_error is not None:
+        state_result = normalize_candidate_relationships(
+            Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
+            allowed_relation_types=sorted(STATE_RELATION_TYPES), validate_rule_structures=False,
+        )
+        state_result.review_items.append(_model_phase_failure_hold(
+            stage="relation", phase="state_relation_phase", error=state_error,
+            response_diagnostics=state_response_diagnostics, attempts=state_attempts,
+        ))
+    else:
+        state_result = normalize_candidate_relationships(
+            state_relation_graph or Neo4jGraph(), chunk=chunk, schema=schema,
+            nodes=frozen_nodes, allowed_relation_types=sorted(STATE_RELATION_TYPES),
+            validate_rule_structures=False,
+        )
+    record_validation("state-relation", state_result)
+    state_relationships, state_holds = state_result
+    judge_drafts.extend(state_result.judge_drafts)
+
+    # 第四阶段抽取普通业务关系。这里仍然传 entity_nodes 的冻结目录，因为普通关系
     # 只能连接业务实体，不应把 RuleDefinition 当作普通关系端点。
     ordinary_response_diagnostics: list[dict[str, Any]] = []
-    ordinary_relation_graph, ordinary_error, ordinary_attempts = await extract_with_retry(
-        graph_schema=build_graphrag_schema(
-            schema, relation_types=sorted(ORDINARY_RELATION_TYPES), node_types=sorted(BUSINESS_NODE_TYPES),
-            # GraphRAG 要求每种节点至少声明一个属性；关系阶段仅保留 mention，
-            # 不再重复实体来源、规则和生命周期等无关字段。
-            node_property_names=("mention",),
-            relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
-        ),
-        prompt_template=revised_prompt(ORDINARY_RELATION_PROMPT_TEMPLATE),
-        examples=_catalog_for_prompt(entity_nodes),
-        diagnostics=ordinary_response_diagnostics,
-    )
+    ordinary_audit: dict[str, Any] | None = None
+    if relation_extraction_mode == "two-stage-classification":
+        ordinary_relation_graph, ordinary_audit = await classify_relationships_two_stage(
+            client, chunk=chunk, schema=schema, nodes=frozen_nodes,
+            allowed_relation_types=ORDINARY_RELATION_TYPES, trace=trace,
+        )
+        ordinary_error, ordinary_attempts = None, 1
+    else:
+        ordinary_relation_graph, ordinary_error, ordinary_attempts = await extract_with_retry(
+            phase="ordinary-relation",
+            graph_schema=build_graphrag_schema(
+                schema, relation_types=sorted(ORDINARY_RELATION_TYPES), node_types=sorted(BUSINESS_NODE_TYPES),
+                # GraphRAG 要求每种节点至少声明一个属性；关系阶段仅保留 mention，
+                # 不再重复实体来源、规则和生命周期等无关字段。
+                node_property_names=("mention",),
+                relationship_property_names=("exact_quote", "exact_quote_occurrence_index"),
+            ),
+            prompt_template=revised_prompt(ORDINARY_RELATION_PROMPT_TEMPLATE),
+            examples=_catalog_for_prompt(entity_nodes),
+            diagnostics=ordinary_response_diagnostics,
+        )
     if ordinary_error is not None:
         # 即使模型阶段失败，也调用一次空图校验以获得统一的 CandidateNormalization，
         # 再追加阶段失败项，避免成功与失败分支返回不同的数据结构。
@@ -267,54 +349,42 @@ operator or exponent.
             allowed_relation_types=sorted(ORDINARY_RELATION_TYPES),
             validate_rule_structures=False,
         )
+    record_validation("ordinary-relation", ordinary_result)
     ordinary_relationships, ordinary_holds = ordinary_result
     judge_drafts.extend(ordinary_result.judge_drafts)
 
-    # 第四阶段抽取 RuleDefinition 的 RULE_INPUT / RULE_OUTPUT 边。只有当前 chunk
-    # 确实产生了 VALID RuleDefinition 才调用模型，避免无规则文本产生无意义费用。
-    rule_edge_response_diagnostics: list[dict[str, Any]] = []
+    # 第五阶段把 RuleDefinition 的结构化表达式确定性投影为 RULE_INPUT / RULE_OUTPUT。
+    # 规则语义已经由上一阶段模型提出；这里不再让另一次模型调用重复解释输入输出方向。
     if any(item.get("entity_type") == "RuleDefinition" for item in frozen_nodes):
-        rule_edge_graph, rule_edge_error, rule_edge_attempts = await extract_with_retry(
-            graph_schema=build_graphrag_schema(schema, relation_types=sorted(RULE_EDGE_TYPES)),
-            prompt_template=revised_prompt(RULE_EDGE_PROMPT_TEMPLATE),
-            examples=_catalog_for_prompt(frozen_nodes), diagnostics=rule_edge_response_diagnostics,
+        rule_result = build_rule_relationships_from_definitions(
+            schema=schema, nodes=frozen_nodes
         )
-        if rule_edge_error is not None:
-            # 规则边阶段失败时保留此前节点和普通关系，同时记录本阶段失败，不伪造规则边。
-            rule_result = normalize_candidate_relationships(
-                Neo4jGraph(),
-                chunk=chunk,
-                schema=schema,
-                nodes=frozen_nodes,
-                allowed_relation_types=sorted(RULE_EDGE_TYPES),
-                validate_rule_structures=True,
-            )
-            rule_result.review_items.append(_model_phase_failure_hold(
-                stage="rule", phase="rule_edge_phase", error=rule_edge_error,
-                response_diagnostics=rule_edge_response_diagnostics, attempts=rule_edge_attempts,
-            ))
-        else:
-            # 规则边必须引用 frozen_nodes 中已有的实体和规则，并检查输入输出结构完整性。
-            rule_result = normalize_candidate_relationships(
-                rule_edge_graph or Neo4jGraph(), chunk=chunk, schema=schema, nodes=frozen_nodes,
-                allowed_relation_types=sorted(RULE_EDGE_TYPES),
-                validate_rule_structures=True,
-            )
+        record_validation("rule-edge", rule_result)
         rule_relationships, rule_edge_holds = rule_result
         invalid_rule_keys = rule_result.invalid_rule_keys
         judge_drafts.extend(rule_result.judge_drafts)
+        trace.record(
+            "extraction/rule-edge/deterministic",
+            chunk_id=chunk.chunk_id,
+            relationship_count=len(rule_relationships),
+        )
     else:
         # 没有 VALID 规则节点时，规则边阶段自然为空，不属于模型调用失败。
         rule_relationships, rule_edge_holds, invalid_rule_keys = [], [], set()
+        trace.record(
+            "extraction/rule-edge/skipped",
+            chunk_id=chunk.chunk_id,
+            reason="no_valid_rule_definition",
+        )
 
     # 合并两类关系。若规则结构复验认定某条规则无效，则从公开候选节点中移除该规则，
     # 但相关原因仍保留在审查队列，不能无记录地静默丢弃。
-    relationships = [*ordinary_relationships, *rule_relationships]
+    relationships = [*state_relationships, *ordinary_relationships, *rule_relationships]
     nodes = _public_candidate_nodes(
         [node for node in nodes if node["candidate_key"] not in invalid_rule_keys]
     )
-    # 四阶段审查项按执行顺序合并，便于回放一个 chunk 的完整处理过程。
-    holds = [*entity_holds, *rule_holds, *ordinary_holds, *rule_edge_holds]
+    # 五阶段审查项按执行顺序合并，便于回放一个 chunk 的完整处理过程。
+    holds = [*entity_holds, *rule_holds, *state_holds, *ordinary_holds, *rule_edge_holds]
 
     # 最终统一写出 graph.json、review-queue.json、judge-queue.json 和运行清单。
     # 所有候选仍为 HOLD；此处没有 Neo4j 数据库写入动作。
@@ -329,10 +399,99 @@ operator or exponent.
         relationships=relationships,
         holds=holds, judge_drafts=judge_drafts,
     )
+    if relation_extraction_mode == "two-stage-classification":
+        atomic_write_json(output_dir / "relation-classification.json", {
+            "schema_version": "two-stage-relation-classification-run/v0.1",
+            "status": "experiment-only",
+            "chunk_id": chunk.chunk_id,
+            "state_relations": state_audit,
+            "ordinary_relations": ordinary_audit,
+        })
+    trace.record(
+        "candidate-graph/artifact",
+        chunk_id=chunk.chunk_id,
+        graph_path=output_dir / "graph.json",
+        node_count=len(nodes),
+        relationship_count=len(relationships),
+        review_count=len(holds),
+        judge_draft_count=len(judge_drafts),
+    )
     return candidate_summary(
         chunk=chunk, nodes=nodes, relationships=relationships, holds=holds, output_dir=output_dir,
         judge_drafts=judge_drafts,
     )
+
+
+async def extract_cross_chunk_relationships(
+    client: DeepSeekGraphBuilderClient,
+    *,
+    chunks: Sequence[EvidenceChunk],
+    schema: Mapping[str, Any],
+    nodes: Sequence[Mapping[str, Any]],
+    trace: TraceRecorder = NULL_TRACE,
+) -> CandidateNormalization:
+    """基于多个真实 EvidenceChunk 提出并校验跨 chunk 普通关系。"""
+    if len(chunks) < 2:
+        raise GraphBuilderConfigurationError("cross_chunk_extraction_requires_multiple_chunks")
+    frozen_nodes = [
+        item for item in nodes
+        if item.get("extraction_status") == "VALID" and item.get("entity_type") in BUSINESS_NODE_TYPES
+    ]
+    source_chunks_json = json.dumps(
+        {
+            "source_chunks": [
+                {"chunk_id": chunk.chunk_id, "chunk_sha256": chunk.chunk_sha256, "text": chunk.text}
+                for chunk in chunks
+            ]
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    graph_schema = build_graphrag_schema(
+        schema,
+        relation_types=sorted(ORDINARY_RELATION_TYPES),
+        node_types=sorted(BUSINESS_NODE_TYPES),
+        node_property_names=("mention",),
+        relationship_property_names=("relation_evidence_json",),
+    )
+    diagnostics: list[dict[str, Any]] = []
+    with trace.stage(
+        "extraction/cross-chunk-relation",
+        chunk_ids=[chunk.chunk_id for chunk in chunks],
+    ) as stage:
+        last_error: LLMGenerationError | None = None
+        for attempt in range(1, 3):
+            try:
+                graph = await _extract_graph(
+                    client,
+                    # GraphRAG 需要一个技术 uid；真正来源身份由 relation_evidence_json
+                    # 中的规范 chunk_id 表达，并由多 chunk 校验器逐项回放。
+                    chunk=chunks[0],
+                    graph_schema=graph_schema,
+                    prompt_template=CROSS_CHUNK_RELATION_PROMPT_TEMPLATE,
+                    examples=_catalog_for_prompt(frozen_nodes),
+                    input_text=source_chunks_json,
+                    response_diagnostics=diagnostics,
+                )
+                result = normalize_cross_chunk_relationships(
+                    graph,
+                    chunks=chunks,
+                    schema=schema,
+                    nodes=frozen_nodes,
+                    allowed_relation_types=ORDINARY_RELATION_TYPES,
+                )
+                stage.update(
+                    attempts=attempt,
+                    proposed_relationship_count=len(graph.relationships),
+                    accepted_count=len(result.accepted),
+                    review_count=len(result.review_items),
+                )
+                return result
+            except LLMGenerationError as error:
+                last_error = error
+        stage.update(status="model_error", attempts=2, error_type="LLMGenerationError")
+    assert last_error is not None
+    raise last_error
 
 
 async def run_candidate_block(
