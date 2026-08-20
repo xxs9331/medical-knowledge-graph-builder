@@ -114,6 +114,42 @@ Naguib et al. 的临床 NER 对比还提醒，提示词优化不能替代独立�
 一个表格状态示例；后续只在评测集显示某类错误持续出现时，替换同类示例或修改相应类型定义。
 提示词本身不承担候选接纳和发布裁决。
 
+### 8. 并列实体与嵌套实体在实体抽取阶段统一处理、分层评测
+
+并列和嵌套首先是实体边界及结构识别问题，不必等到关系抽取阶段再补救。实体抽取模型
+可以在一次调用中同时输出普通实体、并列实体和嵌套实体；后续关系抽取只引用已经接纳的
+原子实体端点。FETA 将生物医学 NER 拆为“先抽取、后标注”，说明即使保留同一实体抽取
+任务，也可以在任务内部解耦边界发现与类型判断。ZeroNER 和 GLiNER-BioMed 则表明，实体
+类型说明以及由 LLM 生成监督数据训练轻量模型，是可行的后续实现方向。
+
+建议实体结果保留两层：`surface_span` 表示原文中的完整连续范围，`atomic_entities` 表示
+拆分或嵌套后的可引用实体。它们不要求成为正式图谱中的两类节点；前者主要服务原文回放和
+结构评分，后者才进入规范实体目录。例如“红细胞计数、血红蛋白和红细胞压积降低”应保留
+完整协调范围，并解析出三个指标及共享状态；“缺铁性贫血患者”若 Schema 同时需要疾病和
+人群概念，则外层人群与内层疾病分别保留各自范围和包含关系。
+
+抽取流程统一不等于评测合并。测试集至少给每个样本标注一种 `structure_slice`：
+`FLAT`、`COORDINATED` 或 `NESTED`；同一句同时存在并列与嵌套时可以多标签。评分分别报告：
+
+| 评测层 | 主要判定 | 防止的问题 |
+| --- | --- | --- |
+| 全体实体 | 严格 span + type 的 P/R/F1 | 观察总体可用性 |
+| 普通实体切片 | 单一连续实体的严格 P/R/F1 | 建立基础边界基线 |
+| 并列实体切片 | 协调范围正确率、原子成员 P/R/F1、共享修饰语/状态附着正确率 | 只抽整串或漏拆成员仍被算对 |
+| 嵌套实体切片 | 外层 P/R/F1、内层 P/R/F1、完整嵌套结构准确率 | 只命中一层掩盖结构错误 |
+
+并列成员必须由原文范围或表格结构支持，不能根据医学常识补齐原文未出现的成员。嵌套实体
+也不是越多越好：只有 Schema 需要且可作为关系端点或检索概念的层级才进入原子实体目录。
+因此，本项目可以先使用同一个 LLM 实体抽取器完成范围发现、拆分、嵌套识别和类型标注，
+再根据错误量决定是否把“边界/结构识别”蒸馏给小模型；无需预先把它设计为独立在线阶段。
+
+实现依据上，KECI 和 HGERE 都把候选 span 作为实体与关系联合推理的基本单元，前者构建
+span graph，后者通过高召回 span pruning 和超图建模高阶交互，因此天然允许重叠或嵌套
+mention。Du et al. 则在中文医学嵌套 NER 数据集 CMeEE 上使用 MRC、词对表示和联合预测。
+并列结构方面，CALM 先分析协调边界并拆为简单句，再执行 OpenIE；RECEEM 直接针对医学
+协调省略恢复完整概念。它们共同支持“模型发现结构、确定性展开、再抽取关系”的组合，
+但不要求把协调范围本身发布为知识图谱实体。
+
 ## 当前可检验的架构假设
 
 建议后续以相同的书籍 evidence chunk、Schema 和人工标注样本比较三种实现：
@@ -251,9 +287,111 @@ A/B/C 对照实验决定。
     *Proceedings of EACL 2024* (pp. 2915-2930).
     https://aclanthology.org/2024.eacl-long.178/
 
+15. Wan, Z., Cheng, F., Mao, Z., Liu, Q., Song, H., Li, J., & Kurohashi, S.
+    (2023). GPT-RE: In-context learning for relation extraction using large
+    language models. In *Proceedings of EMNLP 2023* (pp. 3534-3547).
+    Association for Computational Linguistics.
+    https://doi.org/10.18653/v1/2023.emnlp-main.214
+
+16. Sousa, D. F., & Couto, F. M. (2023). K-RET: knowledgeable biomedical
+    relation extraction system. *Bioinformatics, 39*(4), btad174.
+    https://doi.org/10.1093/bioinformatics/btad174
+
+17. Zhang, W., Chen, C., Wang, J., Liu, J., & Ruan, T. (2023). A co-adaptive
+    duality-aware framework for biomedical relation extraction.
+    *Bioinformatics, 39*(5), btad301.
+    https://doi.org/10.1093/bioinformatics/btad301
+
+18. Nastou, K., Mehryary, F., Ohta, T., Luoma, J., Pyysalo, S., & Jensen,
+    L. J. (2024). RegulaTome: a corpus of typed, directed, and signed
+    relations between biomedical entities in the scientific literature.
+    *Database, 2024*, baae095. https://doi.org/10.1093/database/baae095
+
+19. Gade, F., Lund, O., & Mendoza, M. L. (2025). Benchmarking zero-shot
+    biomedical relation triplet extraction across language model
+    architectures. In *Proceedings of the 24th Workshop on Biomedical
+    Language Processing* (pp. 88-100). Association for Computational
+    Linguistics. https://doi.org/10.18653/v1/2025.bionlp-1.9
+
+20. Jiang, Y., & Kavuluru, R. (2026). GRAFT: Gated retrieval-augmented
+    fine-tuning for relation extraction. In *BioNLP 2026* (pp. 920-931).
+    Association for Computational Linguistics.
+    https://doi.org/10.18653/v1/2026.bionlp-1.74
+
+21. Zhou, Z., Miao, S., Duan, X., Yang, H., & Zhang, M. (2025). Basic reading
+    distillation. In *Proceedings of ACL 2025* (pp. 30489-30502).
+    Association for Computational Linguistics.
+    https://doi.org/10.18653/v1/2025.acl-long.1472
+
+22. Cocchieri, A., Martinez Galindo, M., Frisoni, G., Moro, G., Sartori, C.,
+    & Tagliavini, G. (2025). ZeroNER: Fueling zero-shot named entity
+    recognition via entity type descriptions. In *Findings of ACL 2025*
+    (pp. 15594-15616). Association for Computational Linguistics.
+    https://doi.org/10.18653/v1/2025.findings-acl.805
+
+23. Shlyk, D., Montanelli, S., Mesiti, M., & Hunter, L. (2026). Mind your
+    steps in biomedical named entity recognition: First extract, tag
+    afterwards. In *Proceedings of HeaLing 2026* (pp. 127-141).
+    Association for Computational Linguistics.
+    https://doi.org/10.18653/v1/2026.healing-1.11
+
+24. Yazdani, A., Stepanov, I., & Teodoro, D. (2026). GLiNER-BioMed: A suite
+    of efficient models for open biomedical named entity recognition.
+    *Bioinformatics, 42*(6), btag322.
+    https://doi.org/10.1093/bioinformatics/btag322
+
+25. Lai, T., Ji, H., Zhai, C., & Tran, Q. H. (2021). Joint biomedical entity
+    and relation extraction with knowledge-enhanced collective inference.
+    In *Proceedings of ACL-IJCNLP 2021* (pp. 6248-6260). Association for
+    Computational Linguistics. https://doi.org/10.18653/v1/2021.acl-long.488
+
+26. Yan, Z., Yang, S., Liu, W., & Tu, K. (2023). Joint entity and relation
+    extraction with span pruning and hypergraph neural networks. In
+    *Proceedings of EMNLP 2023* (pp. 7512-7526). Association for
+    Computational Linguistics. https://doi.org/10.18653/v1/2023.emnlp-main.467
+
+27. Du, X., Zhao, H., Xing, D., Jia, Y., & Zan, H. (2024). MRC-based nested
+    medical NER with co-prediction and adaptive pre-training. In
+    *Proceedings of LREC-COLING 2024* (pp. 11669-11679). ELRA and ICCL.
+    https://aclanthology.org/2024.lrec-main.1019/
+
+28. Saha, S., & Mausam. (2018). Open information extraction from conjunctive
+    sentences. In *Proceedings of COLING 2018* (pp. 2288-2299). Association
+    for Computational Linguistics. https://aclanthology.org/C18-1194/
+
+29. Yuan, C., Wang, Y., Shang, N., Li, Z., Zhao, R., & Weng, C. (2020). A
+    graph-based method for reconstructing entities from coordination ellipsis
+    in medical text. *Journal of the American Medical Informatics Association,
+    27*(9), 1364-1373. https://doi.org/10.1093/jamia/ocaa109
+
+30. Saini, P., Pal, S., Nayak, T., & Bhattacharya, I. (2023). 90% F1 score
+    in relation triple extraction: Is it real? In *Proceedings of the 1st
+    GenBench Workshop on (Benchmarking) Generalisation in NLP* (pp. 1-11).
+    Association for Computational Linguistics.
+    https://doi.org/10.18653/v1/2023.genbench-1.1
+
 ## 证据边界
 
 - 文献 1、2、4、5、8 为 arXiv 预印本，应与同行评议结果区分。
 - 各论文的数据集、领域、本体约束、模型版本和评价指标不同；不能将报告的分数直接
   外推到医学教材规则抽取。
+- 文献 15、16、18、20 主要把已给定或已标注的候选实体对转化为二分类、多分类或
+  多标签分类；其关系 F1 不包含上游实体漏抽造成的损失。文献 17 同时报告关系组件与
+  完整三元组结果；比较时必须使用完整三元组指标评估本项目的端到端候选图。
+- 文献 19 是跨 61 个生物医学语料库的零样本端到端关系三元组基准，设置更接近
+  “同时识别实体并生成关系”，但其实体类型、关系集合和宽松匹配规则仍与本项目不同。
+- 文献 21 证明的是通用阅读行为蒸馏，不是医学教材并列/嵌套实体的直接效果；文献 22
+  重点是未见类型泛化。它们支持“小模型可学习 LLM 监督”，但不能替代本项目分层金标评测。
+- 文献 23 的“先抽取、后标注”是一次 NER 任务内部的两步推理，不等于必须部署两个模型。
+  文献 24 使用 LLM 合成标注训练轻量模型，但其公开结果也不能直接外推到中文医学教材。
+- 文献 25、26 支持以 span 为基本单元联合预测实体和关系；其中 25 虽然处理生物医学数据，
+  仍早于本节重点考察的近三年 LLM 工作，只作为嵌套实体进入图抽取的基础方法依据。
+- 文献 27 是中文医学嵌套 NER 的直接证据，但评测目标是实体识别，不包含本项目的实体
+  规范化、状态附着、规则抽取和最终图谱发布质量。
+- 文献 28、29 证明协调分析和省略恢复可提升后续信息抽取或概念映射；它们使用的传统
+  NLP、图搜索和语料与本项目不同，应作为确定性结构处理的设计依据，而非性能基线。
+- 文献 30 表明排除零三元组文本会高估关系三元组抽取质量，因此本项目端到端评测必须
+  同时包含无关系样本，并将实体、关系和完整三元组指标分开报告。
+- 关系分类实验必须显式包含 `NO_RELATION`，并分别报告“给定金标实体的条件关系指标”
+  和“使用模型抽取实体的端到端关系指标”，不能用前者掩盖实体端点漏召回。
 - “LLM Judge”本身可能误判。它只能作为候选路由或审核辅助，不能覆盖原文回放和人工发布门。
